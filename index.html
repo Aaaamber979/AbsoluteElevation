@@ -3,6 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Absolute Elevation - 入口</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            padding: 60px 80px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        h1 {
+            font-size: 48px;
+            color: #333;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            font-size: 18px;
+            color: #666;
+            margin-bottom: 50px;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 18px 40px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            min-width: 180px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+            border: 2px solid #ddd;
+        }
+
+        .btn-secondary:hover {
+            background: #e8e8e8;
+            border-color: #ccc;
+            transform: translateY(-3px);
+        }
+
+        .btn-danger {
+            background: #ff3b30;
+            color: white;
+            box-shadow: 0 4px 15px rgba(255, 59, 48, 0.4);
+        }
+
+        .btn-danger:hover {
+            background: #d63031;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 59, 48, 0.6);
+        }
+
+        .footer {
+            margin-top: 40px;
+            font-size: 14px;
+            color: #999;
+        }
+
+        /* 确认对话框 */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-title {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .modal-text {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .modal-btn {
+            padding: 12px 30px;
+            font-size: 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .modal-btn-cancel {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .modal-btn-cancel:hover {
+            background: #e8e8e8;
+        }
+
+        .modal-btn-confirm {
+            background: #ff3b30;
+            color: white;
+        }
+
+        .modal-btn-confirm:hover {
+            background: #d63031;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Absolute Elevation</h1>
+        <p class="subtitle">沉浸式桌面模拟体验</p>
+        
+        <div class="button-group">
+            <a href="pages/Desktop.html" class="btn btn-primary">🎮 开始游戏</a>
+            <button onclick="showClearCacheModal()" class="btn btn-danger">🗑️ 清除缓存</button>
+        </div>
+
+        <div class="footer">
+            <p>© 2026 Absolute Elevation Project</p>
+        </div>
+    </div>
+
+    <!-- 确认对话框 -->
+    <div id="clearCacheModal" class="modal">
+        <div class="modal-content">
+            <h2 class="modal-title">⚠️ 确认清除缓存</h2>
+            <p class="modal-text">
+                这将清除所有游戏数据，包括：
+                <br><br>
+                • 触发的邮件<br>
+                • 登录状态<br>
+                • 已发送邮件<br>
+                • 其他标记信息
+                <br><br>
+                <strong>此操作不可恢复！</strong>
+            </p>
+            <div class="modal-buttons">
+                <button onclick="hideClearCacheModal()" class="modal-btn modal-btn-cancel">取消</button>
+                <button onclick="clearAllCache()" class="modal-btn modal-btn-confirm">确认清除</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 显示清除缓存确认对话框
+        function showClearCacheModal() {
+            document.getElementById('clearCacheModal').classList.add('show');
+        }
+
+        // 隐藏清除缓存确认对话框
+        function hideClearCacheModal() {
+            document.getElementById('clearCacheModal').classList.remove('show');
+        }
+
+        // 清除所有缓存
+        function clearAllCache() {
+            try {
+                // 清除localStorage中的所有相关数据
+                localStorage.removeItem('triggeredEmailIds');
+                localStorage.removeItem('currentUser');
+                localStorage.removeItem('canReplyMystery');
+                localStorage.removeItem('hasRepliedMystery');
+                localStorage.removeItem('savedEmailData');
+                
+                console.log('✅ 所有缓存已清空');
+                
+                // 显示成功提示
+                alert('缓存已成功清除！\n\n所有游戏数据已被重置。');
+                
+                // 关闭对话框
+                hideClearCacheModal();
+            } catch (error) {
+                console.error('❌ 清除缓存失败:', error);
+                alert('清除缓存时出错，请重试。');
+            }
+        }
+
+        // 点击模态框外部关闭
+        document.getElementById('clearCacheModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideClearCacheModal();
+            }
+        });
+    </script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mac - Desktop</title>
     <link rel="stylesheet" href="css/Desktop.css">
 </head>
