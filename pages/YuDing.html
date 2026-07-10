@@ -1,0 +1,1367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>誉鼎集团 | 赋能城市新生 创造美好未来</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --primary: #0a3d62;
+  --primary-light: #1e5a8a;
+  --accent: #c9a961;
+  --accent-dark: #a88a42;
+  --text: #2c3e50;
+  --text-light: #6c7a89;
+  --bg: #ffffff;
+  --bg-soft: #f7f9fc;
+  --border: #e5e9f0;
+}
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+a { text-decoration: none; color: inherit; }
+img { max-width: 100%; display: block; }
+
+/* ============ NAV ============ */
+.nav {
+  position: fixed; top: 0; left: 0; right: 0;
+  background: rgba(255,255,255,0.96);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+  z-index: 1000;
+  transition: all 0.3s;
+}
+.nav-inner {
+  max-width: 1400px; margin: 0 auto;
+  padding: 0 40px;
+  height: 80px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.logo {
+  display: flex; align-items: center; gap: 12px;
+  font-size: 22px; font-weight: 700; color: var(--primary);
+  letter-spacing: 1px;
+}
+.logo-mark {
+  width: 44px; height: 44px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--accent);
+  font-weight: 900; font-size: 22px;
+  box-shadow: 0 4px 12px rgba(10,61,98,0.25);
+}
+.logo-text { display: flex; flex-direction: column; line-height: 1.1; }
+.logo-text small { font-size: 11px; color: var(--text-light); font-weight: 400; letter-spacing: 2px; }
+
+.nav-menu { display: flex; align-items: center; gap: 8px; list-style: none; }
+.nav-item { position: relative; }
+.nav-link {
+  display: block; padding: 10px 18px;
+  font-size: 15px; color: var(--text);
+  font-weight: 500; cursor: pointer;
+  transition: color 0.2s;
+  position: relative;
+}
+.nav-link::after {
+  content: ''; position: absolute; bottom: 4px; left: 18px; right: 18px;
+  height: 2px; background: var(--accent);
+  transform: scaleX(0); transition: transform 0.3s;
+}
+.nav-link:hover { color: var(--primary); }
+.nav-link:hover::after, .nav-link.active::after { transform: scaleX(1); }
+.nav-link.has-sub::before {
+  content: ''; display: inline-block;
+  width: 0; height: 0;
+  border-left: 4px solid transparent; border-right: 4px solid transparent;
+  border-top: 4px solid currentColor;
+  margin-left: 6px; vertical-align: middle;
+  transition: transform 0.3s;
+}
+.nav-item:hover .nav-link.has-sub::before { transform: rotate(180deg); }
+
+.submenu {
+  position: absolute; top: 100%; left: 0;
+  background: #fff;
+  min-width: 200px;
+  border-radius: 8px;
+  box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+  padding: 8px 0;
+  opacity: 0; visibility: hidden;
+  transform: translateY(10px);
+  transition: all 0.25s;
+}
+.nav-item:hover .submenu { opacity: 1; visibility: visible; transform: translateY(0); }
+.submenu a {
+  display: block; padding: 10px 22px;
+  font-size: 14px; color: var(--text);
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
+.submenu a:hover {
+  background: var(--bg-soft);
+  color: var(--primary);
+  border-left-color: var(--accent);
+}
+
+.btn-login {
+  padding: 10px 24px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: #fff !important;
+  border-radius: 24px;
+  font-size: 14px; font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(10,61,98,0.3);
+  transition: all 0.3s;
+  margin-left: 12px;
+  border: none;
+}
+.btn-login:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(10,61,98,0.4);
+}
+.btn-login::after { display: none !important; }
+
+/* ============ HERO ============ */
+.hero {
+  min-height: 100vh;
+  padding: 120px 40px 60px;
+  background: linear-gradient(135deg, #f7f9fc 0%, #eef3f9 100%);
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: ''; position: absolute;
+  top: -50%; right: -20%;
+  width: 800px; height: 800px;
+  background: radial-gradient(circle, rgba(201,169,97,0.08) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.hero-inner {
+  max-width: 1400px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 60px; align-items: center;
+  position: relative; z-index: 1;
+}
+.hero-tag {
+  display: inline-block;
+  padding: 6px 16px;
+  background: rgba(10,61,98,0.08);
+  color: var(--primary);
+  border-radius: 20px;
+  font-size: 13px; font-weight: 500;
+  margin-bottom: 24px;
+  letter-spacing: 1px;
+}
+.hero h1 {
+  font-size: 56px;
+  line-height: 1.15;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 24px;
+  letter-spacing: 2px;
+}
+.hero h1 .accent { color: var(--accent); }
+.hero-sub {
+  font-size: 17px;
+  color: var(--text-light);
+  line-height: 1.8;
+  margin-bottom: 48px;
+  max-width: 520px;
+}
+.hero-stats {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+.stat-num {
+  font-size: 38px; font-weight: 800;
+  color: var(--primary);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.stat-num .unit { font-size: 18px; color: var(--accent); margin-left: 4px; }
+.stat-label { font-size: 13px; color: var(--text-light); letter-spacing: 1px; }
+
+.hero-visual {
+  position: relative;
+  height: 560px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(10,61,98,0.2);
+}
+.hero-visual img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 8s;
+}
+.hero-visual:hover img { transform: scale(1.05); }
+.hero-badge {
+  position: absolute; bottom: 24px; left: 24px;
+  background: rgba(255,255,255,0.95);
+  backdrop-filter: blur(10px);
+  padding: 16px 24px;
+  border-radius: 12px;
+  display: flex; align-items: center; gap: 12px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+.hero-badge-icon {
+  width: 40px; height: 40px;
+  background: var(--accent);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-weight: 700;
+}
+.hero-badge-text { font-size: 13px; }
+.hero-badge-text strong { display: block; color: var(--primary); font-size: 15px; }
+
+/* ============ SECTION ============ */
+.section {
+  padding: 100px 40px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+.section-alt { background: var(--bg-soft); }
+.section-full { max-width: 100%; padding: 100px 0; }
+.section-header {
+  text-align: center;
+  margin-bottom: 64px;
+}
+.section-tag {
+  display: inline-block;
+  padding: 4px 14px;
+  background: rgba(201,169,97,0.12);
+  color: var(--accent-dark);
+  border-radius: 20px;
+  font-size: 12px; font-weight: 600;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+  text-transform: uppercase;
+}
+.section-title {
+  font-size: 40px; font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 16px;
+  letter-spacing: 1px;
+}
+.section-desc {
+  font-size: 16px; color: var(--text-light);
+  max-width: 640px; margin: 0 auto;
+}
+
+/* ============ GROUP DEVELOPMENT ============ */
+.dev-intro {
+  display: grid; grid-template-columns: 1fr 1.2fr;
+  gap: 60px; align-items: center;
+  margin-bottom: 80px;
+}
+.dev-intro-img {
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(10,61,98,0.15);
+  height: 420px;
+}
+.dev-intro-img img { width: 100%; height: 100%; object-fit: cover; }
+.dev-intro-text h3 {
+  font-size: 30px; color: var(--primary);
+  margin-bottom: 20px; font-weight: 700;
+}
+.dev-intro-text p {
+  color: var(--text-light); line-height: 1.9;
+  margin-bottom: 16px; font-size: 15px;
+}
+.dev-highlight {
+  display: flex; gap: 24px; margin-top: 32px;
+}
+.dev-highlight-item {
+  padding: 16px 20px;
+  background: var(--bg-soft);
+  border-radius: 10px;
+  border-left: 3px solid var(--accent);
+}
+.dev-highlight-item strong { color: var(--primary); font-size: 18px; display: block; }
+.dev-highlight-item span { font-size: 13px; color: var(--text-light); }
+
+/* Timeline */
+.timeline {
+  position: relative;
+  padding: 40px 0;
+}
+.timeline::before {
+  content: ''; position: absolute;
+  left: 50%; top: 0; bottom: 0;
+  width: 2px;
+  background: linear-gradient(to bottom, transparent, var(--border) 10%, var(--border) 90%, transparent);
+}
+.timeline-item {
+  position: relative;
+  width: 50%;
+  padding: 20px 50px;
+  margin-bottom: 20px;
+}
+.timeline-item:nth-child(odd) { left: 0; text-align: right; }
+.timeline-item:nth-child(even) { left: 50%; text-align: left; }
+.timeline-dot {
+  position: absolute; top: 32px;
+  width: 16px; height: 16px;
+  background: var(--accent);
+  border: 3px solid #fff;
+  border-radius: 50%;
+  box-shadow: 0 0 0 4px rgba(201,169,97,0.2);
+}
+.timeline-item:nth-child(odd) .timeline-dot { right: -8px; }
+.timeline-item:nth-child(even) .timeline-dot { left: -8px; }
+.timeline-card {
+  background: #fff;
+  padding: 24px 28px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(10,61,98,0.06);
+  transition: all 0.3s;
+  border: 1px solid var(--border);
+}
+.timeline-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 16px 36px rgba(10,61,98,0.12);
+  border-color: var(--accent);
+}
+.timeline-year {
+  font-size: 28px; font-weight: 800;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+.timeline-title {
+  font-size: 17px; font-weight: 600;
+  color: var(--primary);
+  margin-bottom: 8px;
+}
+.timeline-desc { font-size: 14px; color: var(--text-light); line-height: 1.7; }
+
+/* ============ TEAM ============ */
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+  margin-bottom: 60px;
+}
+.team-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(10,61,98,0.06);
+  transition: all 0.3s;
+  border: 1px solid var(--border);
+}
+.team-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(10,61,98,0.15);
+}
+.team-img {
+  height: 280px;
+  overflow: hidden;
+  position: relative;
+}
+.team-img img {
+  width: 100%; height: 100%; object-fit: cover;
+  transition: transform 0.5s;
+}
+.team-card:hover .team-img img { transform: scale(1.05); }
+.team-info { padding: 20px 24px; }
+.team-name {
+  font-size: 18px; font-weight: 700;
+  color: var(--primary);
+  margin-bottom: 4px;
+}
+.team-role {
+  font-size: 13px; color: var(--accent-dark);
+  margin-bottom: 12px; font-weight: 500;
+}
+.team-bio {
+  font-size: 13px; color: var(--text-light);
+  line-height: 1.6;
+}
+
+/* Award Carousel */
+.award-carousel {
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  border-radius: 20px;
+  padding: 48px;
+  color: #fff;
+  position: relative;
+  overflow: hidden;
+}
+.award-carousel::before {
+  content: ''; position: absolute;
+  top: -50%; right: -10%;
+  width: 400px; height: 400px;
+  background: radial-gradient(circle, rgba(201,169,97,0.15) 0%, transparent 70%);
+  border-radius: 50%;
+}
+.award-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 32px;
+  position: relative; z-index: 1;
+}
+.award-header h3 { font-size: 24px; font-weight: 700; }
+.award-header h3 span { color: var(--accent); }
+.award-nav { display: flex; gap: 12px; }
+.award-nav button {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff; cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s;
+}
+.award-nav button:hover { background: var(--accent); border-color: var(--accent); }
+.award-track {
+  display: flex; gap: 24px;
+  overflow: hidden;
+  position: relative; z-index: 1;
+}
+.award-slide {
+  min-width: 100%;
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  transition: transform 0.5s;
+}
+.award-item {
+  background: rgba(255,255,255,0.08);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+}
+.award-item-icon {
+  width: 56px; height: 56px;
+  margin: 0 auto 12px;
+  background: var(--accent);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24px;
+}
+.award-item h4 { font-size: 15px; margin-bottom: 6px; }
+.award-item p { font-size: 12px; opacity: 0.75; }
+
+/* ============ HONOR WALL ============ */
+.honor-wall {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+.honor-item {
+  aspect-ratio: 3/4;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(10,61,98,0.08);
+  transition: all 0.3s;
+}
+.honor-item:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 20px 40px rgba(10,61,98,0.2); }
+.honor-item img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s; }
+.honor-item:hover img { transform: scale(1.1); }
+.honor-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(10,61,98,0.9) 0%, transparent 60%);
+  display: flex; align-items: flex-end;
+  padding: 20px;
+  color: #fff;
+}
+.honor-overlay h4 { font-size: 15px; font-weight: 600; }
+.honor-overlay p { font-size: 12px; opacity: 0.8; margin-top: 4px; }
+
+/* ============ CLASSIC PROJECTS ============ */
+.projects-carousel {
+  position: relative;
+}
+.projects-track-wrap {
+  overflow: hidden;
+  border-radius: 16px;
+}
+.projects-track {
+  display: flex;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.project-slide {
+  min-width: 100%;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 48px;
+  padding: 20px;
+}
+.project-img {
+  height: 480px;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(10,61,98,0.15);
+}
+.project-img img { width: 100%; height: 100%; object-fit: cover; }
+.project-info { display: flex; flex-direction: column; justify-content: center; }
+.project-meta {
+  display: flex; gap: 16px; margin-bottom: 20px;
+  font-size: 13px; color: var(--text-light);
+}
+.project-meta span {
+  padding: 4px 12px;
+  background: var(--bg-soft);
+  border-radius: 20px;
+  border: 1px solid var(--border);
+}
+.project-info h3 {
+  font-size: 32px; color: var(--primary);
+  margin-bottom: 20px; font-weight: 700;
+}
+.project-info p {
+  color: var(--text-light); line-height: 1.9;
+  margin-bottom: 28px; font-size: 15px;
+}
+.project-awards {
+  padding: 20px 24px;
+  background: var(--bg-soft);
+  border-radius: 12px;
+  border-left: 3px solid var(--accent);
+}
+.project-awards strong { color: var(--primary); display: block; margin-bottom: 8px; font-size: 14px; }
+.project-awards ul { list-style: none; }
+.project-awards li {
+  font-size: 13px; color: var(--text-light);
+  padding: 4px 0;
+  padding-left: 18px;
+  position: relative;
+}
+.project-awards li::before {
+  content: '★'; position: absolute; left: 0;
+  color: var(--accent);
+}
+
+.carousel-controls {
+  display: flex; justify-content: center; align-items: center;
+  gap: 16px; margin-top: 32px;
+}
+.carousel-btn {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid var(--border);
+  color: var(--primary);
+  cursor: pointer;
+  font-size: 16px;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(10,61,98,0.08);
+}
+.carousel-btn:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+.carousel-dots { display: flex; gap: 8px; }
+.carousel-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--border);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+.carousel-dot.active {
+  background: var(--accent);
+  width: 24px; border-radius: 4px;
+}
+
+/* ============ ESG ============ */
+.esg-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+}
+.esg-card {
+  background: #fff;
+  border-radius: 20px;
+  padding: 40px 32px;
+  box-shadow: 0 8px 24px rgba(10,61,98,0.06);
+  border: 1px solid var(--border);
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+.esg-card::before {
+  content: ''; position: absolute;
+  top: 0; left: 0; right: 0; height: 4px;
+  background: var(--esg-color);
+}
+.esg-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 24px 48px rgba(10,61,98,0.15);
+}
+.esg-e { --esg-color: #2ecc71; }
+.esg-s { --esg-color: #3498db; }
+.esg-g { --esg-color: #9b59b6; }
+.esg-icon {
+  width: 64px; height: 64px;
+  border-radius: 16px;
+  background: var(--esg-color);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; font-weight: 800;
+  margin-bottom: 24px;
+}
+.esg-card h3 {
+  font-size: 22px; color: var(--primary);
+  margin-bottom: 8px; font-weight: 700;
+}
+.esg-card .esg-en {
+  font-size: 13px; color: var(--text-light);
+  letter-spacing: 2px; margin-bottom: 20px;
+  text-transform: uppercase;
+}
+.esg-card p {
+  color: var(--text-light); line-height: 1.8;
+  font-size: 14px; margin-bottom: 20px;
+}
+.esg-list { list-style: none; }
+.esg-list li {
+  padding: 8px 0;
+  padding-left: 24px;
+  position: relative;
+  font-size: 14px;
+  color: var(--text);
+  border-bottom: 1px dashed var(--border);
+}
+.esg-list li:last-child { border-bottom: none; }
+.esg-list li::before {
+  content: '✓'; position: absolute; left: 0;
+  color: var(--esg-color);
+  font-weight: 700;
+}
+
+/* ============ NEWS ============ */
+.news-list {
+  max-width: 960px;
+  margin: 0 auto;
+}
+.news-item {
+  background: #fff;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  transition: all 0.3s;
+}
+.news-item:hover { border-color: var(--accent); box-shadow: 0 8px 24px rgba(10,61,98,0.08); }
+.news-header {
+  padding: 20px 28px;
+  display: flex; align-items: center;
+  cursor: pointer;
+  gap: 20px;
+}
+.news-date {
+  flex-shrink: 0;
+  width: 72px;
+  text-align: center;
+  padding: 8px;
+  background: var(--bg-soft);
+  border-radius: 8px;
+}
+.news-date .day { font-size: 22px; font-weight: 800; color: var(--primary); line-height: 1; }
+.news-date .ym { font-size: 11px; color: var(--text-light); margin-top: 4px; }
+.news-title {
+  flex: 1;
+  font-size: 16px; font-weight: 600;
+  color: var(--text);
+  transition: color 0.2s;
+}
+.news-item:hover .news-title { color: var(--primary); }
+.news-toggle {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--bg-soft);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--primary);
+  transition: all 0.3s;
+  flex-shrink: 0;
+}
+.news-item.open .news-toggle { background: var(--primary); color: #fff; transform: rotate(180deg); }
+.news-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+}
+.news-item.open .news-content { max-height: 500px; }
+.news-body {
+  padding: 0 28px 24px 120px;
+  color: var(--text-light);
+  font-size: 14px;
+  line-height: 1.9;
+}
+
+/* ============ FOOTER ============ */
+.footer {
+  background: linear-gradient(135deg, #0a2a42, #0a3d62);
+  color: #fff;
+  padding: 60px 40px 0;
+}
+.footer-inner {
+  max-width: 1400px; margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr;
+  gap: 60px;
+  padding-bottom: 40px;
+}
+.footer-logo {
+  display: flex; align-items: center; gap: 12px;
+  margin-bottom: 24px;
+  font-size: 20px; font-weight: 700;
+}
+.footer-logo .logo-mark { background: rgba(255,255,255,0.1); color: var(--accent); }
+.footer-about {
+  color: rgba(255,255,255,0.7);
+  font-size: 14px; line-height: 1.8;
+  margin-bottom: 20px;
+}
+.footer-contact p {
+  color: rgba(255,255,255,0.8);
+  font-size: 14px;
+  padding: 6px 0;
+  display: flex; align-items: center; gap: 10px;
+}
+.footer-contact .icon {
+  width: 28px; height: 28px;
+  background: rgba(201,169,97,0.15);
+  border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--accent);
+  font-size: 13px;
+}
+.footer h4 {
+  font-size: 15px; font-weight: 600;
+  margin-bottom: 20px;
+  color: #fff;
+  letter-spacing: 1px;
+  position: relative; padding-bottom: 12px;
+}
+.footer h4::after {
+  content: ''; position: absolute;
+  bottom: 0; left: 0;
+  width: 30px; height: 2px;
+  background: var(--accent);
+}
+.footer-links { list-style: none; }
+.footer-links li { padding: 8px 0; }
+.footer-links a {
+  color: rgba(255,255,255,0.7);
+  font-size: 14px;
+  transition: all 0.2s;
+  display: inline-block;
+}
+.footer-links a:hover { color: var(--accent); transform: translateX(4px); }
+
+.footer-qr {
+  display: flex; gap: 20px;
+}
+.qr-item {
+  text-align: center;
+}
+.qr-box {
+  width: 100px; height: 100px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 6px;
+  margin-bottom: 8px;
+}
+.qr-box img { width: 100%; height: 100%; border-radius: 6px; }
+.qr-label { font-size: 12px; color: rgba(255,255,255,0.7); }
+
+.footer-bottom {
+  max-width: 1400px; margin: 0 auto;
+  padding: 20px 0;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  display: flex; justify-content: space-between;
+  font-size: 13px; color: rgba(255,255,255,0.5);
+}
+
+/* ============ RESPONSIVE ============ */
+@media (max-width: 1024px) {
+  .hero-inner, .dev-intro, .project-slide, .login-container { grid-template-columns: 1fr; }
+  .hero-visual { height: 400px; }
+  .team-grid { grid-template-columns: repeat(2, 1fr); }
+  .esg-grid { grid-template-columns: 1fr; }
+  .honor-wall { grid-template-columns: repeat(2, 1fr); }
+  .footer-inner { grid-template-columns: 1fr; gap: 40px; }
+  .timeline-item { width: 100%; left: 0 !important; text-align: left !important; padding-left: 50px; padding-right: 20px; }
+  .timeline::before { left: 20px; }
+  .timeline-dot { left: 12px !important; right: auto !important; }
+  .nav-menu { display: none; }
+}
+@media (max-width: 640px) {
+  .hero h1 { font-size: 36px; }
+  .section-title { font-size: 28px; }
+  .hero-stats { grid-template-columns: 1fr; }
+  .team-grid, .honor-wall { grid-template-columns: 1fr; }
+  .nav-inner { padding: 0 20px; }
+  .section { padding: 60px 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#home" class="logo">
+      <div class="logo-mark">誉</div>
+      <div class="logo-text">
+        <span>誉鼎城市发展控股集团</span>
+        <small>YUDING HOLDINGS GROUP</small>
+      </div>
+    </a>
+    <ul class="nav-menu">
+      <li class="nav-item"><a href="#home" class="nav-link active">首页</a></li>
+      <li class="nav-item">
+        <a href="#about" class="nav-link has-sub">关于誉鼎</a>
+        <div class="submenu">
+          <a href="#dev">集团发展</a>
+          <a href="#team">管理团队</a>
+          <a href="#honor">荣誉资质</a>
+        </div>
+      </li>
+      <li class="nav-item">
+        <a href="#industry" class="nav-link has-sub">产业版图</a>
+        <div class="submenu">
+          <a href="#classic">经典业绩</a>
+          <a href="#realestate">高品质地产开发</a>
+          <a href="#esg">ESG与可持续发展</a>
+        </div>
+      </li>
+      <li class="nav-item"><a href="#news" class="nav-link">集团动态</a></li>
+      <li class="nav-item"><a href="YuDingOaLogin.html" class="nav-link btn-login">员工登录</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-inner">
+    <div>
+      <span class="hero-tag">YUDING HOLDINGS · SINCE 1995</span>
+      <h1>赋能城市<span class="accent">新生</span><br>创造美好未来</h1>
+      <p class="hero-sub">三十载深耕，与城市共生长。以绿色建筑重塑天际线，以城市更新温暖烟火气。</p>
+      <div class="hero-stats">
+        <div>
+          <div class="stat-num">500<span class="unit">亿+</span></div>
+          <div class="stat-label">总资产规模</div>
+        </div>
+        <div>
+          <div class="stat-num">12<span class="unit">座</span></div>
+          <div class="stat-label">业务覆盖城市</div>
+        </div>
+        <div>
+          <div class="stat-num">50<span class="unit">万+</span></div>
+          <div class="stat-label">服务业主家庭</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <img src="https://images.unsplash.placeholder/hero" id="heroImg" alt="集团宣传">
+      <div class="hero-badge">
+        <div class="hero-badge-icon">★</div>
+        <div class="hero-badge-text">
+          <strong>地产百强</strong>
+          连续8年荣膺行业殊荣
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT - DEVELOPMENT -->
+<section class="section" id="about">
+  <div class="section-header">
+    <span class="section-tag">About Yuding</span>
+    <h2 class="section-title">关于誉鼎</h2>
+    <p class="section-desc">以远见筑就城市未来，以匠心承载万家灯火</p>
+  </div>
+</section>
+
+<section class="section" id="dev" style="padding-top: 0;">
+  <div class="dev-intro">
+    <div class="dev-intro-img">
+      <img src="https://images.unsplash.placeholder/dev" id="devImg" alt="集团发展">
+    </div>
+    <div class="dev-intro-text">
+      <h3>集团简介</h3>
+      <p>誉鼎城市发展控股集团有限公司（简称"誉鼎集团"，英文缩写YDH）成立于2000年，总部位于江州市滨江区CBD中心誉鼎金融大厦。</p>
+      <p>经过三十余年的稳健发展，集团已从一家区域性房地产开发企业，成长为集城市更新、房地产开发、资产管理、物业服务于一体的综合性城市运营服务商。</p>
+      <p>集团始终秉持"责任、创新、卓越"的核心价值观，坚持可持续发展理念，深度参与城市有机更新与社区营造，致力于为客户创造价值、为员工搭建平台、为社会贡献力量。截至目前，集团总资产规模超500亿元，业务覆盖江州及周边12个城市，累计开发项目200余个，服务业主超50万户。</p>
+      <p>面向未来，誉鼎集团将继续践行ESG理念，以绿色建筑、智慧社区、人文关怀为抓手，推动企业高质量发展，为打造宜居、韧性、智慧城市贡献誉鼎力量。</p>
+    </div>
+  </div>
+
+  <div class="section-header" style="margin-bottom: 40px;">
+    <h3 style="font-size: 28px; color: var(--primary); font-weight: 700;">发展历程</h3>
+    <p class="section-desc">三十年栉风沐雨，与城市共成长</p>
+  </div>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <div class="timeline-year">2000</div>
+        <div class="timeline-title">创业起航</div>
+        <div class="timeline-desc">誉鼎公司正式成立，开启城市发展新征程</div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <div class="timeline-year">2004</div>
+        <div class="timeline-title">区域扩张</div>
+        <div class="timeline-desc">集团总部大楼竣工投入使用，标志着公司迈入规模化发展阶段</div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <div class="timeline-year">2006</div>
+        <div class="timeline-title">业务拓展</div>
+        <div class="timeline-desc">业务多元化拓展期，成功完成多个住宅及商业项目开发，夯实企业发展基础</div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <div class="timeline-year">2011</div>
+        <div class="timeline-title">战略转型</div>
+        <div class="timeline-desc">集团化战略转型，成立誉鼎控股集团，构建房地产开发、资产管理、物业服务三大业务板块</div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <div class="timeline-year">2016</div>
+        <div class="timeline-title">深耕领域</div>
+        <div class="timeline-desc">深耕城市更新领域，打造多个老旧小区改造标杆项目，获得政府及社会广泛认可</div>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot"></div>
+      <div class="timeline-card">
+        <div class="timeline-year">2025</div>
+        <div class="timeline-title">百年愿景</div>
+        <div class="timeline-desc">全面践行ESG理念，发布首份ESG报告，推动绿色建筑与可持续发展</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TEAM -->
+<section class="section section-alt" id="team">
+  <div class="section-header">
+    <span class="section-tag">Management</span>
+    <h2 class="section-title">管理团队</h2>
+    <p class="section-desc">汇聚行业精英，以专业与远见引领集团前行</p>
+  </div>
+  <div class="team-grid" id="teamGrid"></div>
+
+</section>
+
+<!-- HONOR -->
+<section class="section" id="honor">
+  <div class="section-header">
+    <span class="section-tag">Honors</span>
+    <h2 class="section-title">荣誉资质</h2>
+    <p class="section-desc">每一份荣誉，都是对品质的最好见证</p>
+  </div>
+  <div class="honor-wall" id="honorWall"></div>
+</section>
+
+<!-- INDUSTRY -->
+<section class="section section-alt" id="industry">
+  <div class="section-header">
+    <span class="section-tag">Industry</span>
+    <h2 class="section-title">产业版图</h2>
+    <p class="section-desc">多元协同，构建城市美好生活生态</p>
+  </div>
+</section>
+
+<!-- CLASSIC PROJECTS -->
+<section class="section" id="classic" style="padding-top: 0;">
+  <div class="section-header">
+    <h3 style="font-size: 28px; color: var(--primary); font-weight: 700;">经典业绩</h3>
+    <p class="section-desc">每一座建筑，都是一段城市记忆的承载</p>
+  </div>
+  <div class="projects-carousel">
+    <div class="projects-track-wrap">
+      <div class="projects-track" id="classicTrack"></div>
+    </div>
+    <div class="carousel-controls">
+      <button class="carousel-btn" onclick="classicPrev()">‹</button>
+      <div class="carousel-dots" id="classicDots"></div>
+      <button class="carousel-btn" onclick="classicNext()">›</button>
+    </div>
+  </div>
+</section>
+
+<!-- REAL ESTATE -->
+<section class="section section-alt" id="realestate">
+  <div class="section-header">
+    <h3 style="font-size: 28px; color: var(--primary); font-weight: 700;">高品质地产开发</h3>
+    <p class="section-desc">以匠心致初心，筑就理想人居</p>
+  </div>
+  <div class="projects-carousel">
+    <div class="projects-track-wrap">
+      <div class="projects-track" id="realestateTrack"></div>
+    </div>
+    <div class="carousel-controls">
+      <button class="carousel-btn" onclick="realestatePrev()">‹</button>
+      <div class="carousel-dots" id="realestateDots"></div>
+      <button class="carousel-btn" onclick="realestateNext()">›</button>
+    </div>
+  </div>
+</section>
+
+<!-- ESG -->
+<section class="section" id="esg">
+  <div class="section-header">
+    <span class="section-tag">ESG</span>
+    <h2 class="section-title">ESG与可持续发展</h2>
+    <p class="section-desc">以责任为基，以可持续为径，共筑绿色未来</p>
+  </div>
+  <div class="esg-grid">
+    <div class="esg-card esg-e">
+      <div class="esg-icon">E</div>
+      <h3>环境 · Environment</h3>
+      <div class="esg-en">GREEN FUTURE</div>
+      <p>践行绿色建筑理念，推动低碳转型，让每一座建筑都成为城市的生态名片。</p>
+      <ul class="esg-list">
+        <li>100% 新建项目达到绿色建筑星级标准</li>
+        <li>年减排二氧化碳 12.8 万吨</li>
+        <li>雨水回收系统覆盖 80% 社区</li>
+      </ul>
+    </div>
+    <div class="esg-card esg-s">
+      <div class="esg-icon">S</div>
+      <h3>社会 · Social</h3>
+      <div class="esg-en">COMMUNITY CARE</div>
+      <p>以人为本，回馈社会，让企业发展成果惠及更多社区与家庭。坚持“员工是企业最宝贵的财富”</p>
+      <ul class="esg-list">
+        <li>累计公益捐赠逾 8000 万元</li>
+        <li>员工培训时长年均 60 小时/人</li>
+        <li>安全生产零重大事故连续 8 年</li>
+      </ul>
+    </div>
+    <div class="esg-card esg-g">
+      <div class="esg-icon">G</div>
+      <h3>治理 · Governance</h3>
+      <div class="esg-en">INTEGRITY RULES</div>
+      <p>坚持规范透明的公司治理，以诚信立企，以制度护航百年基业。坚持“员工是企业最宝贵的财富”</p>
+      <ul class="esg-list">
+        <li>连续 5 年发布 ESG 专项报告</li>
+        <li>AAA 级企业信用评级</li>
+        <li>廉洁合规体系全覆盖</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- NEWS -->
+<section class="section section-alt" id="news">
+  <div class="section-header">
+    <span class="section-tag">News</span>
+    <h2 class="section-title">集团动态</h2>
+    <p class="section-desc">了解誉鼎最新发展动态</p>
+  </div>
+  <div class="news-list" id="newsList"></div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-inner">
+    <div>
+      <div class="footer-logo">
+        <div class="logo-mark">誉</div>
+        <div>誉鼎城市发展控股集团</div>
+      </div>
+      <p class="footer-about">以远见筑就城市未来，以匠心承载万家灯火。誉鼎集团，与城市共生长。</p>
+      <div class="footer-contact">
+        <p><span class="icon">☎</span> 0571-8888-9900</p>
+        <p><span class="icon">✉</span> info@yuding-holdings.cn</p>
+        <p><span class="icon">⌂</span> 浙江省杭州市钱江新城誉鼎大厦 38F</p>
+      </div>
+    </div>
+    <div>
+      <h4>快速链接</h4>
+      <ul class="footer-links">
+        <li><a href="#home">网站地图</a></li>
+        <li><a href="#">隐私政策</a></li>
+        <li><a href="#">廉洁举报</a></li>
+        <li><a href="#">供应商入口</a></li>
+        <li><a href="#about">关于誉鼎</a></li>
+        <li><a href="#industry">产业版图</a></li>
+      </ul>
+    </div>
+    <div>
+      <h4>关注我们</h4>
+      <div class="footer-qr">
+        <div class="qr-item">
+          <div class="qr-box"><img id="qrWechat" alt="微信公众号"></div>
+          <div class="qr-label">微信公众号</div>
+        </div>
+        <div class="qr-item">
+          <div class="qr-box" style="display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#fe2c55,#ff0050);color:#fff;font-size:28px;">▶</div>
+          <div class="qr-label">视频号</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div>© 2000-2030 Yuding Holdings Group. All Rights Reserved.</div>
+    <div>浙ICP备XXXXXXXX号</div>
+  </div>
+</footer>
+
+<script>
+/* ============ IMAGE PLACEHOLDERS (SVG data URIs) ============ */
+function svgPlaceholder(w, h, text, bg1, bg2) {
+  const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='${w}' height='${h}' viewBox='0 0 ${w} ${h}'>
+    <defs>
+      <linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'>
+        <stop offset='0%' stop-color='${bg1}'/>
+        <stop offset='100%' stop-color='${bg2}'/>
+      </linearGradient>
+    </defs>
+    <rect width='${w}' height='${h}' fill='url(#g)'/>
+    <text x='50%' y='50%' font-family='sans-serif' font-size='${Math.min(w,h)/12}' fill='rgba(255,255,255,0.85)' text-anchor='middle' dominant-baseline='middle' font-weight='600'>${text}</text>
+  </svg>`;
+  return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
+}
+
+/* Generate images via tool */
+async function genImages() {
+  const prompts = [
+    { id: 'heroImg', prompt: 'Modern Chinese city skyline at golden hour, luxury skyscrapers with glass facades reflecting sunset, aerial view of a prosperous metropolis with river, cinematic lighting, ultra high quality, professional corporate photography' },
+    { id: 'devImg', prompt: 'Elegant modern corporate headquarters building with traditional Chinese architectural elements, lush landscaping, blue sky, professional architectural photography, warm afternoon light' },
+    { id: 'team1', prompt: 'Professional headshot portrait of a confident Chinese male executive in his 50s, wearing dark business suit, neutral studio background, corporate photography, sharp focus' },
+    { id: 'team2', prompt: 'Professional headshot portrait of an elegant Chinese female executive in her 40s, wearing navy business attire, neutral studio background, corporate photography, warm lighting' },
+    { id: 'team3', prompt: 'Professional headshot portrait of a distinguished Chinese male executive in his 40s, wearing grey suit with tie, neutral studio background, corporate photography' },
+    { id: 'team4', prompt: 'Professional headshot portrait of a professional Chinese female executive in her 30s, wearing business blazer, neutral studio background, corporate photography, confident smile' },
+    { id: 'honor1', prompt: 'Elegant gold framed corporate award certificate with red ribbon and official seal on dark blue background, premium quality, studio lighting' },
+    { id: 'honor2', prompt: 'Prestigious crystal trophy award on marble pedestal, golden accent, corporate recognition award, studio photography, dark background' },
+    { id: 'honor3', prompt: 'Collection of corporate certificates and awards displayed on wooden wall, gold frames, warm lighting, professional photography' },
+    { id: 'honor4', prompt: 'Modern architectural award plaque with Chinese characters, metallic finish, displayed on elegant background, studio photography' },
+    { id: 'classic1', prompt: 'Luxury modern residential tower complex with landscaped gardens, aerial view, blue sky, Chinese city, professional real estate photography' },
+    { id: 'classic2', prompt: 'Iconic commercial skyscraper with unique architectural design, glass curtain wall, city center location, dramatic perspective, professional photography' },
+    { id: 'classic3', prompt: 'Modern cultural center building with flowing curves, waterfront location, evening blue hour lighting, architectural photography' },
+    { id: 'classic4', prompt: 'Urban renewal project showing renovated historic district with modern amenities, tree-lined streets, pedestrians, warm daylight, architectural photography' },
+    { id: 'realestate1', prompt: 'Luxury high-end residential community entrance with grand gate, manicured gardens, water features, premium materials, professional real estate photography' },
+    { id: 'realestate2', prompt: 'Modern minimalist luxury apartment interior with floor-to-ceiling windows overlooking city, elegant furniture, warm lighting, interior design photography' },
+    { id: 'realestate3', prompt: 'Premium villa community with Mediterranean style architecture, swimming pool, lush landscaping, sunny day, luxury real estate photography' },
+    { id: 'realestate4', prompt: 'Elegant residential lobby with marble floors, modern chandelier, sophisticated design, warm ambient lighting, luxury real estate photography' },
+    { id: 'qrWechat', prompt: 'Clean minimalist QR code design with green accent colors on white background, centered, suitable for WeChat official account, high contrast' }
+  ];
+  for (const p of prompts) {
+    try {
+      const url = await image_gen({ prompt: p.prompt });
+      document.getElementById(p.id).src = url;
+    } catch(e) {
+      document.getElementById(p.id).src = svgPlaceholder(800, 600, p.id, '#0a3d62', '#1e5a8a');
+    }
+  }
+}
+genImages();
+
+/* ============ TEAM DATA ============ */
+const teamData = [
+  { img: 'team1', name: '陈振华', role: '誉鼎集团董事长', bio: '陈先生于2000年创办誉鼎公司，带领公司完成了从传统房地产开发商向综合性城市运营服务商的战略转型。在陈先生的领导下，集团资产规模从2000年的100亿元增长至2030...' },
+  { img: 'team2', name: '王丽华', role: '誉鼎集团总裁', bio: '王女士于2010年加入誉鼎集团，先后担任财务总监、运营副总裁等职务，2020年起担任集团总裁。在担任总裁期间，王女士推动集团完成了数字化转型，建立了智慧物务平台...' },
+  { img: 'team3', name: '苏柏年', role: '誉鼎集团副总裁', bio: '誉鼎集团创始人之一，现任集团副总裁。苏先生于2000年参与创立誉鼎公司，是集团初代合伙人之一，见证并推动了公司从小型开发企业成长为区域性龙头企业的全过程。在...' },
+  { img: 'team4', name: '李明远', role: '誉鼎集团副总裁', bio: '现任集团副总裁，分管物业服务与社区运营板块。李先生于2012年加入誉鼎集团，带领物业服务公司实现了从传统物业管理向现代社区服务的转型升级。在李先生的推动下...' }
+];
+const teamGrid = document.getElementById('teamGrid');
+teamData.forEach((m, i) => {
+  teamGrid.innerHTML += `
+    <div class="team-card">
+      <div class="team-img"><img id="team${i+1}" alt="${m.name}"></div>
+      <div class="team-info">
+        <div class="team-name">${m.name}</div>
+        <div class="team-role">${m.role}</div>
+        <div class="team-bio">${m.bio}</div>
+      </div>
+    </div>`;
+});
+
+/* ============ HONOR DATA ============ */
+const honorData = [
+  { img: 'honor1', title: '国家房地产开发一级资质', year: '城市规划协会' },
+  { img: 'honor4', title: 'ISO14001环境管理体系认证', year: '国家住建部认证' },
+  { img: 'honor2', title: '江州市优秀企业', year: '2018-2030 连续12年' },
+  { img: 'honor3', title: '房地产百强企业', year: '2018-2030 连续12年' },
+];
+const honorWall = document.getElementById('honorWall');
+honorData.forEach((h, i) => {
+  honorWall.innerHTML += `
+    <div class="honor-item">
+      <img id="honor${(i%4)+1}" alt="${h.title}">
+      <div class="honor-overlay">
+        <div>
+          <h4>${h.title}</h4>
+          <p>${h.year}</p>
+        </div>
+      </div>
+    </div>`;
+});
+
+/* ============ CLASSIC PROJECTS ============ */
+const classicData = [
+  { img: 'classic1', name: '誉鼎·滨江金融中心', time: '2004年落成', desc: '作为誉鼎集团成立初期的奠基之作，滨江金融中心（项目曾用名：海伯利安大厦）见证了集团从区域开发商向综合城市运营商跨越的历史性时刻。项目坐落于江州市滨江区核心腹地，以其前瞻性的建筑美学与扎实的工程质量，成为千禧年初江州天际线的重要组成部分。', awards: ['2005年度江州市“优秀建筑工程奖”', 'LEED 金级认证'] },
+  { img: 'classic2', name: '誉鼎·未来城', time: '2030年落成', desc: '集团2030年度旗舰作品。项目深度融合物联网与人工智能技术，打造“无感通行、智慧安防、健康环境”三位一体的未来人居体验。社区内配建全龄段活动中心与垂直绿化系统，实现建筑与自然的和谐共生。', awards: ['国家优质工程金奖', '国家绿色建筑三星级认证', '住建部“智慧社区试点项目”'] },
+  { img: 'classic3', name: '誉鼎·文化艺术中心', time: '2024年落成', desc: '以"流动的水墨"为设计理念，融合传统东方美学与现代建筑语言，集美术馆、剧院、图书馆于一体的城市文化新名片。', awards: ['Architizer A+ Awards', '年度最佳公共建筑'] },
+ ];
+const classicTrack = document.getElementById('classicTrack');
+const classicDots = document.getElementById('classicDots');
+let classicIdx = 0;
+classicData.forEach((p, i) => {
+  classicTrack.innerHTML += `
+    <div class="project-slide">
+      <div class="project-img"><img id="classic${i+1}" alt="${p.name}"></div>
+      <div class="project-info">
+        <div class="project-meta">
+          <span>📍 ${p.name.split('·')[1] || p.name}</span>
+          <span>📅 ${p.time}</span>
+        </div>
+        <h3>${p.name}</h3>
+        <p>${p.desc}</p>
+        <div class="project-awards">
+          <strong>🏆 项目荣誉</strong>
+          <ul>${p.awards.map(a => `<li>${a}</li>`).join('')}</ul>
+        </div>
+      </div>
+    </div>`;
+  classicDots.innerHTML += `<div class="carousel-dot ${i===0?'active':''}" onclick="classicGo(${i})"></div>`;
+});
+function classicGo(i) {
+  classicIdx = i;
+  classicTrack.style.transform = `translateX(-${i*100}%)`;
+  document.querySelectorAll('#classicDots .carousel-dot').forEach((d, idx) => d.classList.toggle('active', idx===i));
+}
+function classicNext() { classicGo((classicIdx+1) % classicData.length); }
+function classicPrev() { classicGo((classicIdx-1+classicData.length) % classicData.length); }
+
+/* ============ REALESTATE ============ */
+const realestateData = [
+  { img: 'realestate1', name: '誉鼎·臻系', concept: '汇聚全球顶尖设计资源，采用超低能耗建筑标准与定制化精装体系，为城市塔尖人群打造具有收藏价值的传世府邸。' },
+  { img: 'realestate2', name: '誉鼎·和系', concept: '主打“自然、健康、社交”。社区规划强调高绿化率与全龄互动空间，引入新风除霾系统与同层排水技术，满足现代家庭对健康人居的极致追求。' },
+  { img: 'realestate3', name: '誉鼎·悦系', concept: '聚焦新市民与青年创客，通过模块化空间设计与共享社区配套（共享厨房、健身房、路演厅），打造充满活力与归属感的青年聚居地' },
+];
+const realestateTrack = document.getElementById('realestateTrack');
+const realestateDots = document.getElementById('realestateDots');
+let realestateIdx = 0;
+realestateData.forEach((p, i) => {
+  realestateTrack.innerHTML += `
+    <div class="project-slide">
+      <div class="project-img"><img id="realestate${i+1}" alt="${p.name}"></div>
+      <div class="project-info">
+        <div class="project-meta">
+          <span>🏡 高品质住宅</span>
+          <span>⭐ 誉鼎出品</span>
+        </div>
+        <h3>${p.name}</h3>
+        <p>${p.concept}</p>
+        <div class="project-awards">
+          <strong>💎 产品理念</strong>
+          <ul><li>匠心设计 · 精工品质</li><li>绿色健康 · 智慧人居</li><li>全龄友好 · 温暖社区</li></ul>
+        </div>
+      </div>
+    </div>`;
+  realestateDots.innerHTML += `<div class="carousel-dot ${i===0?'active':''}" onclick="realestateGo(${i})"></div>`;
+});
+function realestateGo(i) {
+  realestateIdx = i;
+  realestateTrack.style.transform = `translateX(-${i*100}%)`;
+  document.querySelectorAll('#realestateDots .carousel-dot').forEach((d, idx) => d.classList.toggle('active', idx===i));
+}
+function realestateNext() { realestateGo((realestateIdx+1) % realestateData.length); }
+function realestatePrev() { realestateGo((realestateIdx-1+realestateData.length) % realestateData.length); }
+
+/* ============ AWARD CAROUSEL ============ */
+let awardIdx = 0;
+const awardTrack = document.getElementById('awardTrack');
+function awardGo(i) {
+  awardIdx = i;
+  awardTrack.style.transform = `translateX(-${i*100}%)`;
+}
+function awardNext() { awardGo((awardIdx+1) % 2); }
+function awardPrev() { awardGo((awardIdx-1+2) % 2); }
+setInterval(awardNext, 6000);
+
+/* ============ NEWS ============ */
+const newsData = [
+  { date: '2030-06-25', title: '苏柏年副总裁荣获"江州市杰出企业家"称号', img:'newsData1', content: '6月20日，江州市工商业联合会举行"杰出企业家"颁奖典礼，誉鼎集团副总裁苏柏年先生荣获该荣誉称号。<br>苏柏年先生作为誉鼎集团创始人之一，三十年来始终致力于城市发展与房地产事业，为江州市的城市建设与经济发展做出了重要贡献。他表示，这份荣誉不仅是对个人的肯定，更是对誉鼎集团全体员工的鼓励。未来将继续秉持"责任、创新、卓越"的理念，为江州市的高质量发展贡献力量。' },
+  { date: '2030-06-10', title: '集团召开2030年度安全生产专题会议', img:'newsData2', content: '6月8日，誉鼎集团召开2030年度安全生产专题会议，集团领导班子、各部门负责人及项目负责人参加了会议。<br>会议强调了安全生产工作的重要性，要求各部门、各项目严格落实安全生产责任制，加强安全隐患排查与整改，确保集团各项业务安全平稳运行。会议还通报了上半年安全生产工作情况，部署了下半年安全生产重点任务。<br>集团董事长陈振华指出："安全是企业发展的生命线，必须时刻绷紧安全生产这根弦，确保万无一失。' },
+  { date: '2030-02-18', title: '集团召开2029年度总结表彰大会', img:'newsData3', content: '2月15日，誉鼎集团在总部多功能厅隆重召开2029年度总结表彰大会，集团领导班子、各部门负责人及优秀员工代表共计300余人参加了会议。<br>会议全面总结了2029年度各项工作完成情况，表彰了在过去一年中表现突出的优秀团队与个人。林建国同志荣获2028年度"老黄牛奖"，苏柏年先生荣获2029年度"杰出贡献奖"，杨敏同志荣获2029年度"优秀新员工奖"，城市更新事业部荣获2029年度"优秀团队奖"。<br>集团董事长陈振华在讲话中指出，2029年是誉鼎集团发展史上具有重要意义的一年，集团在经济规模、品牌建设、ESG实践等方面都取得了显著成绩。他要求全体员工在2030年继续发扬"责任、创新、卓越"的精神，推动集团实现更高质量的发展。' },
+  { date: '2028-05-15', title: '集团总部迁址誉鼎金融大厦68层', img:'newsData4', content: '5月10日，誉鼎集团总部正式迁址至江州市滨江区CBD中心誉鼎金融大厦68层。新办公场所总面积达15000平方米，采用现代化办公设计理念，配备了先进的办公设施与智能化系统。<br>新总部的启用，标志着誉鼎集团迈向了新的发展阶段。集团董事长陈振华表示："新总部不仅是办公场所的升级，更是集团品牌形象与企业文化的全新展示。我们将以此为契机，推动集团实现更高质量的发展。' },
+  { date: '2027-04-20', title: '誉鼎集团入选"中国房地产百强企业"', img:'newsData5', content: '4月15日，由中国房地产研究会发布的"2027中国房地产百强企业"榜单揭晓，誉鼎集团凭借稳健的经营业绩与良好的品牌形象，成功入选该榜单。<br>这是誉鼎集团连续第五年入选中国房地产百强企业，充分体现了行业对誉鼎发展实力的认可。集团副总裁苏柏年表示："这份荣誉是对誉鼎过去发展的肯定，更是对未来发展的鞭策。我们将继续努力，为行业健康发展贡献力量。"' },
+];
+const newsList = document.getElementById('newsList');
+newsData.forEach((n, i) => {
+  const d = new Date(n.date);
+  newsList.innerHTML += `
+    <div class="news-item" onclick="toggleNews(${i})">
+      <div class="news-header">
+        <div class="news-date">
+          <div class="day">${d.getDate().toString().padStart(2,'0')}</div>
+          <div class="ym">${d.getFullYear()}-${(d.getMonth()+1).toString().padStart(2,'0')}</div>
+        </div>
+        <div class="news-title">${n.title}</div>
+        <div class="news-toggle">▼</div>
+      </div>
+      <div class="news-content">
+        <div class="news-body">${n.content}</div>
+        <div class="project-img"><img id="newsData${i+1}" alt="${n.name}"></div>
+      </div>
+    </div>`;
+});
+function toggleNews(i) {
+  const items = document.querySelectorAll('.news-item');
+  items[i].classList.toggle('open');
+}
+
+/* ============ NAV SCROLL ============ */
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+  a.addEventListener('click', function(e) {
+    const href = this.getAttribute('href');
+    if (href === '#' || this.classList.contains('btn-login')) return;
+    e.preventDefault();
+    const target = document.querySelector(href);
+    if (target) {
+      const offset = target.offsetTop - 80;
+      window.scrollTo({ top: offset, behavior: 'smooth' });
+    }
+    // close submenus
+    document.querySelectorAll('.nav-item').forEach(n => n.blur());
+  });
+});
+
+/* Active nav on scroll */
+const sections = ['home','about','dev','team','honor','industry','classic','realestate','esg','news'];
+window.addEventListener('scroll', () => {
+  const scrollPos = window.scrollY + 150;
+  let current = 'home';
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.offsetTop <= scrollPos) current = id;
+  });
+  document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+  const map = { home:0, about:1, dev:1, team:1, honor:1, industry:2, classic:2, realestate:2, esg:2, news:3 };
+  const links = document.querySelectorAll('.nav-menu > .nav-item > .nav-link');
+  if (map[current] !== undefined && links[map[current]]) links[map[current]].classList.add('active');
+});
+
+/* Auto rotate classic projects */
+setInterval(classicNext, 7000);
+setInterval(realestateNext, 8000);
+</script>
+</body>
+</html>
+

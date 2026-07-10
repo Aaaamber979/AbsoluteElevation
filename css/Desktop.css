@@ -1,0 +1,996 @@
+/* ================= 基础重置与桌面背景 ================= */
+* { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
+body, html {
+    width: 100%; height: 100%;
+    background: url('../assets/background.png') no-repeat center center fixed;
+    background-size: cover;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* ================= 顶部菜单栏 (macOS 亮色) ================= */
+.menu-bar {
+    height: 28px;
+    background-color: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+    font-size: 13px;
+    font-weight: 500;
+    color: #000;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    z-index: 1000;
+}
+.menu-left, .menu-right { display: flex; gap: 15px; align-items: center; }
+.apple-logo { font-size: 15px; }
+
+/* ================= Dock 栏 ================= */
+.dock-container {
+    position: absolute;
+    bottom: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    padding: 8px 12px;
+    border-radius: 20px;
+    display: flex;
+    gap: 15px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    z-index: 1000;
+}
+.dock-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), margin-bottom 0.2s;
+    position: relative;
+}
+
+.dock-icon img {
+    width: 100%;
+    height: auto;
+}
+
+/* Dock图标悬停放大效果 */
+.dock-icon:hover {
+    transform: scale(1.3) translateY(-10px);
+    z-index: 10;
+}
+
+/* 相邻图标轻微放大 */
+.dock-container:hover .dock-icon:not(:hover) {
+    transform: scale(1.1);
+}
+
+/* 未读消息气泡 */
+.notification-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #ff3b30;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    min-width: 20px;
+    height: 20px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    z-index: 20;
+}
+
+/* ================= 应用窗口样式 ================= */
+.app-window {
+    position: absolute;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    overflow: hidden;
+    display: none;
+    animation: windowOpen 0.3s ease-out;
+    min-width: 800px;
+    min-height: 600px;
+}
+
+@keyframes windowOpen {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.window-header {
+    height: 38px;
+    background: linear-gradient(to bottom, #f0f0f0, #e0e0e0);
+    display: flex;
+    align-items: center;
+    padding: 0 12px;
+    gap: 8px;
+    border-bottom: 1px solid #d0d0d0;
+    cursor: move;
+}
+
+.window-btn {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.btn-close { background: #ff5f57; }
+.btn-minimize { background: #febc2e; }
+.btn-maximize { background: #28c840; }
+
+.window-title {
+    flex: 1;
+    text-align: center;
+    font-size: 13px;
+    color: #333;
+    font-weight: 500;
+}
+
+.window-content {
+    height: calc(100% - 38px);
+    overflow: auto;
+}
+
+/* AI应用窗口 */
+.ai-window {
+    top: 100px;
+    left: 200px;
+    width: 900px;
+    height: 650px;
+}
+
+.ai-content {
+    display: flex;
+    height: 100%;
+    background: #f5f5f7;
+}
+
+.ai-left-panel {
+    width: 300px;
+    background: #e8e8ed;
+    border-right: 1px solid #d0d0d0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+}
+
+.drop-zone {
+    flex: 1;
+    border: 2px dashed #999;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255,255,255,0.5);
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.drop-zone.drag-over {
+    border-color: #0066cc;
+    background: rgba(0,102,204,0.1);
+}
+
+.drop-zone.has-file {
+    border-style: solid;
+    border-color: #28c840;
+    background: rgba(40,200,64,0.1);
+}
+
+.drop-icon {
+    font-size: 48px;
+    margin-bottom: 10px;
+}
+
+.drop-text {
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+}
+
+.file-list {
+    margin-top: 15px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+.file-item {
+    padding: 8px;
+    background: white;
+    border-radius: 5px;
+    margin-bottom: 5px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.ai-right-panel {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: white;
+}
+
+.analysis-log {
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+    line-height: 2;
+    color: #333;
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    border: 1px solid #e0e0e0;
+}
+
+.log-line {
+    padding: 8px 0;
+    border-bottom: 1px solid #e0e0e0;
+    position: relative;
+    padding-left: 20px;
+}
+
+.log-line::before {
+    content: '▶';
+    position: absolute;
+    left: 0;
+    color: #667eea;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+.log-line.success {
+    color: #28c840;
+    font-weight: bold;
+}
+
+.log-line.success::before {
+    content: '✓';
+    animation: none;
+}
+
+.log-line.warning {
+    color: #ff9500;
+}
+
+.progress-indicator {
+    display: inline-block;
+    width: 20px;
+    animation: spin 1s linear infinite;
+    color: #667eea;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.view-details-btn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: #999;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    float: right;
+    clear: both;
+}
+
+.view-details-btn:hover {
+    background: #777;
+}
+
+/* OA打卡窗口 */
+.oa-window {
+    top: 120px;
+    left: 250px;
+    width: 700px;
+    height: 500px;
+}
+
+.oa-content {
+    padding: 30px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.oa-time-display {
+    font-size: 48px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.oa-date {
+    font-size: 20px;
+    margin-bottom: 40px;
+}
+
+.oa-checkin-btn {
+    padding: 15px 50px;
+    background: white;
+    color: #667eea;
+    border: none;
+    border-radius: 30px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.oa-checkin-btn:hover {
+    transform: scale(1.05);
+}
+
+/* Email窗口 */
+.email-window {
+    top: 80px;
+    left: 150px;
+    width: 1000px;
+    height: 700px;
+}
+
+.email-content {
+    display: flex;
+    height: 100%;
+}
+
+.email-sidebar {
+    width: 200px;
+    background: #f0f0f0;
+    padding: 15px;
+    border-right: 1px solid #ddd;
+}
+
+.email-folder {
+    padding: 10px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.email-folder:hover {
+    background: #e0e0e0;
+}
+
+.email-list {
+    width: 300px;
+    border-right: 1px solid #ddd;
+    overflow-y: auto;
+}
+
+.email-item {
+    padding: 15px;
+    border-bottom: 1px solid #eee;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.email-item:hover {
+    background: #f5f5f5;
+}
+
+.email-detail {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+}
+
+.reply-btn {
+    margin-top: 20px;
+    padding: 8px 18px;
+    background: #999;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    float: right;
+    clear: both;
+}
+
+.reply-btn:hover {
+    background: #777;
+}
+
+#logoutBtn {
+    transition: all 0.2s;
+}
+
+#logoutBtn:hover {
+    background: #ff2d55;
+    transform: scale(1.05);
+}
+
+.attachment-item {
+    padding: 12px 15px;
+    background: #f8f8f8;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s;
+}
+
+.attachment-item:hover {
+    background: #e8f4ff;
+    border-color: #0066cc;
+}
+
+.attachment-item.downloaded {
+    background: #f0f0f0;
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.download-status {
+    font-size: 12px;
+    color: #0066cc;
+    font-weight: 500;
+}
+
+.attachment-item.downloaded .download-status {
+    color: #999;
+}
+
+/* 进度条样式 */
+.progress-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.progress-box {
+    background: white;
+    padding: 30px 50px;
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    text-align: center;
+    min-width: 400px;
+}
+
+.progress-title {
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 8px;
+    background: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 10px;
+}
+
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #0066cc, #0099ff);
+    width: 0%;
+    transition: width 0.3s ease;
+    border-radius: 4px;
+}
+
+.progress-text {
+    font-size: 14px;
+    color: #666;
+}
+
+/* WeChat窗口 */
+.wechat-window {
+    top: 90px;
+    left: 180px;
+    width: 1100px;
+    height: 750px;
+}
+
+.wechat-content {
+    display: flex;
+    height: 100%;
+    background: #2e2e2e;
+}
+
+/* 最左侧导航栏 - 最窄 */
+.wechat-nav {
+    width: 60px;
+    min-width: 60px;
+    background: #2a2a2a;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 15px;
+    border-right: 1px solid #3a3a3a;
+}
+
+.wechat-user-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 5px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.wechat-nav-item {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    font-size: 20px;
+    color: #999;
+    transition: all 0.2s;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+}
+
+.wechat-nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.wechat-nav-item.active {
+    background: #07c160;
+}
+
+.wechat-nav-item img {
+    width: 24px;
+    height: 24px;
+    pointer-events: none;
+}
+
+/* 中间列表区域 - 较窄 */
+.wechat-list-panel {
+    width: 280px;
+    min-width: 280px;
+    background: #2e2e2e;
+    border-right: 1px solid #3a3a3a;
+    display: flex;
+    flex-direction: column;
+}
+
+.wechat-search-bar {
+    padding: 12px;
+    background: #2e2e2e;
+}
+
+.wechat-search-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    background: #3a3a3a;
+    color: #fff;
+    font-size: 13px;
+    outline: none;
+}
+
+.wechat-search-input::placeholder {
+    color: #999;
+}
+
+.wechat-contact-list {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.wechat-contact {
+    padding: 12px;
+    cursor: pointer;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 1px solid #3a3a3a;
+}
+
+.wechat-contact:hover {
+    background: #3a3a3a;
+}
+
+.wechat-contact.active {
+    background: #3a3a3a;
+}
+
+.wechat-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 5px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.wechat-contact-info {
+    flex: 1;
+    overflow: hidden;
+}
+
+.wechat-contact-name {
+    font-size: 14px;
+    color: #fff;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.wechat-contact-preview {
+    font-size: 12px;
+    color: #999;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.wechat-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #1e1e1e;
+}
+
+.wechat-chat-header {
+    height: 60px;
+    background: #2e2e2e;
+    border-bottom: 1px solid #3a3a3a;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+
+.wechat-chat-title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+}
+
+.wechat-chat-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.wechat-action-btn {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.wechat-action-btn:hover {
+    opacity: 1;
+}
+
+.wechat-messages {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+    background: #1e1e1e;
+}
+
+.wechat-time-divider {
+    text-align: center;
+    color: #999;
+    font-size: 12px;
+    margin-bottom: 15px;
+}
+
+.wechat-message {
+    display: flex;
+    margin-bottom: 20px;
+    align-items: flex-start;
+}
+
+.wechat-message.self {
+    flex-direction: row-reverse;
+}
+
+.wechat-msg-avatar {
+    width: 36px;
+    height: 36px;
+    border-radius: 5px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    flex-shrink: 0;
+}
+
+.wechat-message.self .wechat-msg-avatar {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.wechat-msg-content {
+    max-width: 60%;
+    margin: 0 10px;
+}
+
+.wechat-msg-bubble {
+    padding: 10px 14px;
+    border-radius: 5px;
+    background: #3a3a3a;
+    font-size: 14px;
+    line-height: 1.6;
+    color: #fff;
+}
+
+.wechat-message.self .wechat-msg-bubble {
+    background: #07c160;
+}
+
+.wechat-msg-time {
+    font-size: 11px;
+    color: #999;
+    margin-top: 5px;
+}
+
+.wechat-message.self .wechat-msg-time {
+    text-align: right;
+}
+
+.wechat-input-area {
+    min-height: 180px;
+    background: #2e2e2e;
+    border-top: 1px solid #3a3a3a;
+    display: flex;
+    flex-direction: column;
+}
+
+.wechat-toolbar {
+    height: 40px;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    gap: 15px;
+}
+
+.wechat-tool-btn {
+    width: 24px;
+    height: 24px;
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+    font-size: 18px;
+}
+
+.wechat-tool-btn:hover {
+    opacity: 1;
+}
+
+.wechat-textarea {
+    flex: 1;
+    padding: 10px 15px;
+    border: none;
+    resize: none;
+    font-size: 14px;
+    outline: none;
+    background: transparent;
+    color: #fff;
+}
+
+.wechat-send-bar {
+    height: 50px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 0 15px;
+    gap: 10px;
+}
+
+.wechat-send-btn {
+    padding: 6px 20px;
+    background: #07c160;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.wechat-send-btn:hover {
+    background: #06ad56;
+}
+
+/* 朋友圈弹窗 */
+.moments-modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    z-index: 10000;
+    display: none;
+    justify-content: center;
+    align-items: center;
+}
+
+.moments-modal.show {
+    display: flex;
+}
+
+.moments-container {
+    width: 90%;
+    max-width: 800px;
+    height: 90%;
+    background: #1e1e1e;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.moments-header {
+    height: 60px;
+    background: #2e2e2e;
+    border-bottom: 1px solid #3a3a3a;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+}
+
+.moments-title {
+    font-size: 18px;
+    font-weight: 500;
+    color: #fff;
+}
+
+.moments-close-btn {
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    color: #999;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.moments-close-btn:hover {
+    color: #fff;
+}
+
+.moments-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+/* Safari浏览器窗口 */
+.safari-window {
+    top: 70px;
+    left: 100px;
+    width: 1100px;
+    height: 750px;
+}
+
+.safari-toolbar {
+    height: 40px;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    gap: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.safari-nav-btn {
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.safari-url-bar {
+    flex: 1;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 13px;
+}
+
+.safari-content {
+    height: calc(100% - 78px);
+    background: white;
+}
+
+.safari-iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+}
+
+/* 桌面文件图标 */
+.desktop-file {
+    position: absolute;
+    width: 80px;
+    text-align: center;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 5px;
+    transition: background 0.2s;
+    user-select: none;
+}
+
+.desktop-file:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.desktop-file.dragging {
+    opacity: 0.5;
+}
+
+.file-icon-img {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 5px;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+}
+
+.file-name {
+    font-size: 11px;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    word-wrap: break-word;
+    line-height: 1.3;
+}
