@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mac - Desktop</title>
+    <link rel="stylesheet" href="css/Desktop.css">
+</head>
+<body>
+
+    <div class="menu-bar">
+        <div class="menu-left">
+            <span class="apple-logo"><img src="assets/iphone.png" alt="iPhone" style="width: 18px; height: 18px;"></span>
+            <span style="font-weight: 700;">Music</span>
+            <span>File</span>
+            <span>Edit</span>
+            <span>Song</span>
+            <span>View</span>
+            <span>Controls</span>
+            <span>Help</span>
+        </div>
+        <div class="menu-right">
+            <span>100%</span>
+            <span id="current-time">2030-04-15 16:30</span>
+        </div>
+    </div>
+
+    <div class="dock-container">
+        <div class="dock-icon" data-app="ai"><img src="assets/ai.png"></div>
+        <div class="dock-icon" data-app="oa"><img src="assets/oa.png"></div>
+        <div class="dock-icon" data-app="email">
+            <img src="assets/email.png">
+            <span class="notification-badge" id="emailBadge">1</span>
+        </div>
+        <div class="dock-icon" data-app="wechat"><img src="assets/wechat.png"></div>
+        <div class="dock-icon" data-app="safari"><img src="assets/safari.png"></div>
+    </div>
+
+    <!-- AI应用窗口 -->
+    <div class="app-window ai-window" id="ai-window">
+        <div class="window-header">
+            <div class="window-btn btn-close" onclick="closeWindow('ai')"></div>
+            <div class="window-btn btn-minimize"></div>
+            <div class="window-btn btn-maximize"></div>
+            <div class="window-title">AI Assistant - 结构分析工具</div>
+        </div>
+        <div class="window-content">
+            <div class="ai-content">
+                <div class="ai-left-panel">
+                    <h3 style="margin-bottom: 15px; color: #333;">文件上传区</h3>
+                    <div class="drop-zone" id="dropZone">
+                        <div class="drop-icon">??</div>
+                        <div class="drop-text">将DWG文件拖放到此处<br>或点击选择文件</div>
+                    </div>
+                    <input type="file" id="fileInput" accept=".dwg" style="display: none;">
+                    <div class="file-list" id="fileList"></div>
+                </div>
+                <div class="ai-right-panel" id="analysisPanel">
+                    <div style="text-align: center; color: #999; margin-top: 100px;">
+                        <div style="font-size: 64px; margin-bottom: 20px;">??</div>
+                        <p>请从左侧拖入DWG图纸文件开始分析</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- OA打卡窗口 -->
+    <div class="app-window oa-window" id="oa-window">
+        <div class="window-header">
+            <div class="window-btn btn-close" onclick="closeWindow('oa')"></div>
+            <div class="window-btn btn-minimize"></div>
+            <div class="window-btn btn-maximize"></div>
+            <div class="window-title">OA 考勤系统</div>
+        </div>
+        <div class="window-content">
+            <div class="oa-content">
+                <div style="text-align: center; margin-bottom: 30px;">
+                    <div class="oa-time-display" id="oa-time">09:30</div>
+                    <div class="oa-date" id="oa-date">2030年7月10日 星期五</div>
+                </div>
+                
+                <div style="display: flex; gap: 20px; justify-content: center; margin-bottom: 30px;">
+                    <button class="oa-checkin-btn" id="checkInBtn" onclick="performCheckIn('上班')">上班打卡</button>
+                    <button class="oa-checkin-btn" id="checkOutBtn" onclick="performCheckIn('下班')" style="background: white; color: #667eea;">下班打卡</button>
+                </div>
+                
+                <div style="flex: 1; width: 100%; background: rgba(255,255,255,0.95); border-radius: 10px; padding: 20px; overflow-y: auto;">
+                    <h3 style="margin-bottom: 15px; color: #333; font-size: 16px;">?? 今日打卡记录</h3>
+                    <div id="attendanceRecords" style="font-size: 14px; color: #666; line-height: 2;">
+                        <!-- 打卡记录将在这里显示 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Email窗口 -->
+    <div class="app-window email-window" id="email-window">
+        <div class="window-header">
+            <div class="window-btn btn-close" onclick="closeWindow('email')"></div>
+            <div class="window-btn btn-minimize"></div>
+            <div class="window-btn btn-maximize"></div>
+            <div class="window-title">邮件</div>
+        </div>
+        <div class="window-content">
+            <div class="email-content">
+                <div class="email-sidebar" style="position: relative;">
+                    <div class="email-folder" id="inboxFolder" onclick="showInbox()">?? 收件箱 (<span id="inboxCount">4</span>)</div>
+                    <div class="email-folder" onclick="showSent()">?? 已发送 (<span id="sentCount">0</span>)</div>
+                    <div class="email-folder">? 星标</div>
+                    <div class="email-folder">?? 草稿</div>
+                    <div class="email-folder">??? 垃圾箱</div>
+                    
+                    <!-- 左下角用户菜单 -->
+                    <div style="position: absolute; bottom: 15px; left: 15px; right: 15px; padding: 0; border-top: 1px solid #ddd; background: transparent;">
+                        <div id="userMenuTrigger" style="display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 8px; border-radius: 5px; transition: background 0.2s;"
+                             onmouseover="this.style.background='#e0e0e0'"
+                             onmouseout="this.style.background='transparent'"
+                             onclick="toggleUserMenu()">
+                            <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 14px;">??</div>
+                            <div style="flex: 1;">
+                                <div id="currentUserName" style="font-size: 13px; font-weight: 500; color: #333;">主角</div>
+                                <div style="font-size: 11px; color: #999;">在线</div>
+                            </div>
+                            <div style="color: #999; font-size: 12px;">??</div>
+                        </div>
+                        
+                        <!-- 用户菜单弹窗 -->
+                        <div id="userMenuPopup" style="display: none; position: absolute; bottom: 60px; left: 0; right: 0; background: white; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.15); border: 1px solid #e0e0e0; z-index: 1000;">
+                            <div style="padding: 10px 0;">
+                                <div style="border-top: 1px solid #f0f0f0;"></div>
+                                <div style="padding: 10px 15px; cursor: pointer; transition: background 0.2s; font-size: 13px; color: #ff3b30;"
+                                     onmouseover="this.style.background='#fff5f5'"
+                                     onmouseout="this.style.background='transparent'"
+                                     onclick="logout(); toggleUserMenu();">
+                                    ?? 登出
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="email-list" id="emailList">
+                    <!-- 邮件列表将通过JavaScript动态生成 -->
+                </div>
+                <div class="email-detail" id="email-detail-content">
+                    <div style="text-align: center; color: #999; margin-top: 100px;">
+                        <div style="font-size: 64px; margin-bottom: 20px;">??</div>
+                        <p>请选择一封邮件查看详情</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WeChat窗口 -->
+    <div class="app-window wechat-window" id="wechat-window">
+        <div class="window-header">
+            <div class="window-btn btn-close" onclick="closeWindow('wechat')"></div>
+            <div class="window-btn btn-minimize"></div>
+            <div class="window-btn btn-maximize"></div>
+            <div class="window-title">微信</div>
+        </div>
+        <div class="window-content">
+            <div class="wechat-content">
+                <!-- 最左侧导航栏 -->
+                <div class="wechat-nav">
+                    <div class="wechat-user-avatar">我</div>
+                    <div class="wechat-nav-item active" onclick="switchWechatTab('messages', event)" title="消息">
+                        <img src="assets/message.png" alt="消息" style="width: 24px; height: 24px;">
+                    </div>
+                    <div class="wechat-nav-item" onclick="switchWechatTab('contacts', event)" title="通讯录">
+                        <img src="assets/contacts.png" alt="通讯录" style="width: 24px; height: 24px;">
+                    </div>
+                    <div class="wechat-nav-item" onclick="switchWechatTab('moments', event)" title="朋友圈">
+                        <img src="assets/moments.png" alt="朋友圈" style="width: 24px; height: 24px;">
+                    </div>
+                </div>
+                <!-- 中间列表区域 -->
+                <div class="wechat-list-panel">
+                    <div class="wechat-search-bar" id="searchBar">
+                        <input type="text" class="wechat-search-input" placeholder="搜索">
+                    </div>
+                    <div class="wechat-contact-list" id="contactList">
+                        <!-- 联系人/消息列表将通过JavaScript动态生成 -->
+                    </div>
+                </div>
+                <!-- 最右侧聊天内容区域 -->
+                <div class="wechat-main">
+                    <div class="wechat-chat-header">
+                        <div class="wechat-chat-title" id="chatHeader">工作群</div>
+                        <div class="wechat-chat-actions">
+                            <span class="wechat-action-btn"></span>
+                        </div>
+                    </div>
+                    <div class="wechat-messages" id="chatMessages">
+                        <div class="wechat-time-divider">昨天 14:30</div>
+                        <div class="wechat-message">
+                            <div class="wechat-msg-avatar">张</div>
+                            <div class="wechat-msg-content">
+                                <div class="wechat-msg-bubble">你好，今天有空吗？</div>
+                                <div class="wechat-msg-time">14:30</div>
+                            </div>
+                        </div>
+                        <div class="wechat-message self">
+                            <div class="wechat-msg-avatar">我</div>
+                            <div class="wechat-msg-content">
+                                <div class="wechat-msg-bubble">有的，什么事？</div>
+                                <div class="wechat-msg-time">14:32</div>
+                            </div>
+                        </div>
+                        <div class="wechat-message">
+                            <div class="wechat-msg-avatar">张</div>
+                            <div class="wechat-msg-content">
+                                <div class="wechat-msg-bubble">关于海伯利安大厦的项目，有些技术细节想和你讨论一下</div>
+                                <div class="wechat-msg-time">14:33</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="wechat-input-area">
+                        <div class="wechat-toolbar">
+                            <span class="wechat-tool-btn">??</span>
+                            <span class="wechat-tool-btn">??</span>
+                            <span class="wechat-tool-btn">??</span>
+                        </div>
+                        <textarea class="wechat-textarea" placeholder=""></textarea>
+                        <div class="wechat-send-bar">
+                            <button class="wechat-send-btn" onclick="sendWechatMessage()">发送(S)</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 朋友圈弹窗 -->
+    <div class="moments-modal" id="momentsModal">
+        <div class="moments-container">
+            <div class="moments-header">
+                <div class="moments-title">朋友圈</div>
+                <div class="moments-close-btn" onclick="closeMoments()">?</div>
+            </div>
+            <div class="moments-content" id="momentsContent">
+                <!-- 朋友圈内容将通过JavaScript动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Safari浏览器窗口 -->
+    <div class="app-window safari-window" id="safari-window">
+        <div class="window-header">
+            <div class="window-btn btn-close" onclick="closeWindow('safari')"></div>
+            <div class="window-btn btn-minimize"></div>
+            <div class="window-btn btn-maximize"></div>
+            <div class="window-title">Safari</div>
+        </div>
+        <div class="window-content">
+            <div class="safari-toolbar">
+                <button class="safari-nav-btn">?</button>
+                <button class="safari-nav-btn">?</button>
+                <input type="text" class="safari-url-bar" id="searchInput" placeholder="搜索或输入网站名称" onkeypress="handleSearch(event)">
+                <button onclick="performSearch()" style="padding: 5px 15px; background: #0066cc; color: white; border: none; border-radius: 4px; cursor: pointer;">搜索</button>
+            </div>
+            <div class="safari-content" id="safariContent">
+                <!-- 搜索引擎主页 -->
+                <div id="searchEngine" style="height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: white;">
+                    <h1 style="color: #333; font-size: 48px; margin-bottom: 30px;">江江搜索</h1>
+                    <div style="width: 600px; max-width: 90%;">
+                        <input type="text" id="mainSearchInput" placeholder="输入关键词搜索..." 
+                               style="width: 100%; padding: 15px 20px; font-size: 16px; border: 2px solid #e0e0e0; border-radius: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); outline: none; transition: border-color 0.3s;"
+                               onfocus="this.style.borderColor='#0066cc'"
+                               onblur="this.style.borderColor='#e0e0e0'"
+                               onkeypress="if(event.key==='Enter') performMainSearch()">
+                    </div>
+                    <div id="searchHistory" style="margin-top: 40px; width: 600px; max-width: 90%;">
+                        <!-- 搜索历史将在这里显示 -->
+                    </div>
+                </div>
+                <!-- 搜索结果页面 -->
+                <div id="searchResults" style="display: none; height: 100%; overflow-y: auto; padding: 30px; background: white;">
+                    <!-- 搜索结果内容 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 下载进度条 -->
+    <div class="progress-overlay" id="progress-overlay">
+        <div class="progress-box">
+            <div class="progress-title" id="progress-title">正在下载...</div>
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <div class="progress-text" id="progress-text">0%</div>
+        </div>
+    </div>
+
+    <!-- 异常提示弹窗 -->
+    <div class="progress-overlay" id="warning-overlay">
+        <div class="progress-box" style="min-width: 600px; max-width: 700px;">
+            <div class="progress-title" style="color: #ff3b30; font-size: 18px; font-weight: bold; margin-bottom: 20px;">
+                ?? warning! 异常提示!
+            </div>
+            <div style="text-align: left; line-height: 1.8; color: #333; font-size: 14px;">
+                <p style="margin-bottom: 15px;">初步检测到核心筒面积数据存在偏差，建议人工复查。</p>
+                <p style="margin-bottom: 15px;">图纸对<strong style="color: #ff3b30;">第8层</strong>核心筒的"实心"设计严重违背常规设备层的建筑逻辑。</p>
+                <p style="background: #fff3cd; padding: 15px; border-left: 4px solid #ff9500; border-radius: 5px;">
+                    请人工核查该区域图纸参数是否录入错误，或使用"工具箱 - 构件体积与质量校验模块"核算该"实心区域"的实际物理质量，以修正有限元模型。
+                </p>
+            </div>
+            <button onclick="closeWarning()" style="margin-top: 20px; padding: 10px 30px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">确定</button>
+        </div>
+    </div>
+
+    <script src="js/Desktop.js"></script>
+
+</body>
+</html>
