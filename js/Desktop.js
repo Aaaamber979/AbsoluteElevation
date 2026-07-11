@@ -888,9 +888,9 @@
                         fromEmail: 'ting.li@yuding-holdings.cn',
                         to: 'hejia@jz-structure.cn',
                         cc: 'bonian.su@yuding-holdings.cn',
-                        subject: '【受苏总委托】海伯利安大厦定向爆破结构安全评估项目合同及资料确认',
+                        subject: '海伯利安大厦定向爆破结构安全评估项目合同及资料确认',
                         date: getCurrentTime(),
-                        preview: '禾总，您好：受集团苏柏年副总裁委...',
+                        preview: '禾总，您好：现就“海伯利安大厦定向...',
                         hasAttachment: true,
                         attachments: [
                             { name: '《爆破安全评估外包合同》(已盖章扫描件).pdf', size: '2.3 MB', type: 'contract' },
@@ -899,7 +899,7 @@
                         ],
                         content: `
                             <p>禾总，您好：</p>
-                            <p>受集团苏柏年副总裁委托，现就“海伯利安大厦定向爆破结构安全评估”项目的相关事宜与贵司进行最终确认。</p>
+                            <p>现就“海伯利安大厦定向爆破结构安全评估”项目的相关事宜与贵司进行最终确认。</p>
                             <p>本项目总包费用为人民币 <strong>280,000 元（贰拾捌万元整）</strong>。根据苏总的特别指示，鉴于该大厦年代久远且爆破工期紧迫，集团特批本项目免除现场实地勘测环节。</p>
                             <p>请贵司务必严格按照附件中提供的《2008年改造竣工图》进行3D有限元建模与力学演算。苏总及集团法务部特别强调以下合规与责任条款，请贵司在出具正式报告前务必核对：</p>
                             <ul style="margin-left: 20px; margin-top: 10px;">
@@ -1067,7 +1067,7 @@
             hasAttachment: false,
             content: `
                 <p>我相信你已经发现了这栋楼的异常，但是我不能说太多。</p>
-                <p>去江城论坛里搜一下历史帖子吧，看看当年到底发生了什么。</p>
+                <p>去江城热线里搜一下历史帖子吧，看看当年到底发生了什么。</p>
             `,
             canReply: false
         };
