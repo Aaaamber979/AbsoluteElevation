@@ -887,10 +887,10 @@
                         from: '李婷 (誉鼎集团总裁办)',
                         fromEmail: 'ting.li@yuding-holdings.cn',
                         to: 'hejia@jz-structure.cn',
-                        cc: 'bonian.su@yuding-holdings.cn (苏柏年 - 副总裁)；法务部-合规组',
+                        cc: 'bonian.su@yuding-holdings.cn',
                         subject: '【受苏总委托】海伯利安大厦定向爆破结构安全评估项目合同及资料确认',
                         date: getCurrentTime(),
-                        preview: '受集团苏柏年副总裁委托，现就“海伯利安...',
+                        preview: '禾总，您好：受集团苏柏年副总裁委...',
                         hasAttachment: true,
                         attachments: [
                             { name: '《爆破安全评估外包合同》(已盖章扫描件).pdf', size: '2.3 MB', type: 'contract' },
@@ -928,18 +928,16 @@
                         to: 'hejia@jz-structure.cn',
                         subject: '关于下周项目进度会议的通知',
                         date: '2030-07-09 14:30',
-                        preview: '各位同事，下周一上午10点将召开项目进...',
+                        preview: '各位同事，下周一上午10点将召开项...',
                         hasAttachment: false,
                         content: `
                             <p>各位同事，</p>
                             <p>下周一上午10点将召开项目进度会议，请大家准时参加。</p>
                             <p>会议地点：会议室A</p>
                             <p>会议议程：</p>
-                            <ol>
-                                <li>各项目组汇报本周进度</li>
-                                <li>讨论存在的问题和解决方案</li>
-                                <li>确定下周工作计划</li>
-                            </ol>
+                            <p>1、各项目组汇报本周进度</p>
+                            <p>2、讨论存在的问题和解决方案</p>
+                            <p>3、确定下周工作计划</p>
                             <p>请提前准备好相关材料。</p>
                         `,
                         canReply: true
