@@ -1,7 +1,36 @@
-﻿        // 更新时间显示
+﻿        // 开屏黑屏淡出效果
+        window.addEventListener('load', () => {
+            console.log('页面加载完成');
+            const bootScreen = document.getElementById('bootScreen');
+            if (bootScreen) {
+                console.log('找到开屏遮罩');
+                // 短暂延迟后开始淡出
+                setTimeout(() => {
+                    console.log('开始淡出开屏遮罩');
+                    bootScreen.classList.add('fade-out');
+                    
+                    // 淡出完成后移除元素
+                    setTimeout(() => {
+                        console.log('开屏遮罩已隐藏');
+                        bootScreen.style.display = 'none';
+                        
+                        // 开屏完成后显示新邮件通知
+                        setTimeout(() => {
+                            console.log('准备显示邮件通知');
+                            showEmailNotification();
+                        }, 500);
+                    }, 1500);
+                }, 300);
+            } else {
+                console.log('未找到开屏遮罩元素');
+            }
+        });
+
+        // 更新时间显示
         function updateTime() {
             const now = new Date();
-            const timeStr = now.getFullYear() + '-' + 
+            // 年份替换为2030
+            const timeStr = '2030-' + 
                           String(now.getMonth() + 1).padStart(2, '0') + '-' + 
                           String(now.getDate()).padStart(2, '0') + ' ' + 
                           String(now.getHours()).padStart(2, '0') + ':' + 
@@ -37,6 +66,13 @@
                         if (badge) {
                             badge.style.display = 'none';
                         }
+                        // 标记用户已打开过邮箱
+                        localStorage.setItem('hasOpenedEmail', 'true');
+                    }
+                    
+                    // 如果是Safari，重新加载搜索历史
+                    if (appName === 'safari') {
+                        loadSearchHistory();
                     }
                 }
             });
@@ -51,6 +87,70 @@
             }
         }
 
+        // 显示新邮件通知
+        function showEmailNotification() {
+            console.log('showEmailNotification 被调用');
+            
+            // 检查用户是否已经打开过邮箱
+            const hasOpenedEmail = localStorage.getItem('hasOpenedEmail') === 'true';
+            if (hasOpenedEmail) {
+                console.log('用户已打开过邮箱,不显示通知');
+                return;
+            }
+            
+            const notification = document.getElementById('emailNotification');
+            console.log('notification 元素:', notification);
+            if (notification) {
+                console.log('设置 display: flex');
+                notification.style.display = 'flex';
+                console.log('当前 display:', notification.style.display);
+                
+                // 点击通知内容打开邮箱
+                const content = notification.querySelector('.notification-content');
+                if (content) {
+                    content.onclick = () => {
+                        // 标记用户已打开过邮箱
+                        localStorage.setItem('hasOpenedEmail', 'true');
+                        openEmailWindow();
+                        closeEmailNotification();
+                    };
+                }
+                
+                // 5秒后自动关闭
+                setTimeout(() => {
+                    closeEmailNotification();
+                }, 5000);
+            } else {
+                console.log('未找到 emailNotification 元素');
+            }
+        }
+
+        // 关闭新邮件通知
+        function closeEmailNotification() {
+            const notification = document.getElementById('emailNotification');
+            if (notification && notification.style.display !== 'none') {
+                notification.classList.add('fade-out');
+                
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                    notification.classList.remove('fade-out');
+                }, 400);
+            }
+        }
+
+        // 打开邮箱窗口
+        function openEmailWindow() {
+            const emailWindow = document.getElementById('email-window');
+            if (emailWindow) {
+                zIndex++;
+                emailWindow.style.zIndex = zIndex;
+                emailWindow.style.display = 'block';
+                
+                // 刷新邮箱界面，确保收件箱计数正确
+                updateEmailUI();
+            }
+        }
+
         // OA打卡功能
         const attendanceData = {
             records: []
@@ -59,10 +159,155 @@
         // 从localStorage加载打卡记录
         function loadAttendanceRecords() {
             const saved = localStorage.getItem('attendanceRecords');
+            console.log('加载打卡记录 - localStorage中有数据:', !!saved);
             if (saved) {
                 attendanceData.records = JSON.parse(saved);
+                console.log('已加载', attendanceData.records.length, '条记录');
+                
+                // 检查是否需要补充缺失的工作日记录
+                checkAndFillMissingRecords();
+            } else {
+                console.log('localStorage中无数据，开始初始化...');
+                // 如果没有记录，初始化本月工作日的正常打卡记录
+                initializeMonthAttendance();
             }
             renderAttendanceRecords();
+        }
+        
+        // 检查并补充缺失的工作日打卡记录
+        function checkAndFillMissingRecords() {
+            const now = new Date();
+            const currentYear = 2030;
+            const currentMonth = now.getMonth();
+            const actualCurrentDate = now.getDate();
+            
+            console.log('检查缺失记录 - 2030年' + (currentMonth + 1) + '月, 当前实际日期:', actualCurrentDate);
+            console.log('将遍历日期范围: 1 到', actualCurrentDate - 1, '(不含当日)');
+            
+            let addedCount = 0;
+            
+            // 遍历当天之前的所有工作日(不含当日)
+            for (let day = 1; day < actualCurrentDate; day++) {
+                const date = new Date(currentYear, currentMonth, day);
+                const dayOfWeek = date.getDay();
+                
+                // 只处理工作日（周一到周五）
+                if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+                    const dateStr = currentYear + '-' + 
+                                  String(currentMonth + 1).padStart(2, '0') + '-' + 
+                                  String(day).padStart(2, '0');
+                    
+                    // 检查该日期是否有完整的上下班记录
+                    const dayRecords = attendanceData.records.filter(r => r.date === dateStr);
+                    const hasCheckIn = dayRecords.some(r => r.type === '上班');
+                    const hasCheckOut = dayRecords.some(r => r.type === '下班');
+                    
+                    // 如果缺少上班或下班记录，则补充
+                    if (!hasCheckIn || !hasCheckOut) {
+                        // 清除该日期的不完整记录
+                        attendanceData.records = attendanceData.records.filter(r => r.date !== dateStr);
+                        
+                        // 添加完整的上下班记录
+                        const checkInHour = 8;
+                        const checkInMinute = Math.floor(Math.random() * 31);
+                        const checkInTime = String(checkInHour).padStart(2, '0') + ':' + 
+                                          String(checkInMinute).padStart(2, '0');
+                        
+                        attendanceData.records.push({
+                            date: dateStr,
+                            type: '上班',
+                            time: checkInTime,
+                            status: '正常'
+                        });
+                        
+                        const checkOutHour = 17 + Math.floor(Math.random() * 2);
+                        const checkOutMinute = Math.floor(Math.random() * 60);
+                        const checkOutTime = String(checkOutHour).padStart(2, '0') + ':' + 
+                                           String(checkOutMinute).padStart(2, '0');
+                        
+                        attendanceData.records.push({
+                            date: dateStr,
+                            type: '下班',
+                            time: checkOutTime,
+                            status: '正常'
+                        });
+                        
+                        addedCount++;
+                        console.log('补充工作日打卡:', dateStr, '星期' + ['日','一','二','三','四','五','六'][dayOfWeek]);
+                    }
+                }
+            }
+            
+            if (addedCount > 0) {
+                saveAttendanceRecords();
+                console.log('补充完成，共补充', addedCount, '个工作日的记录');
+            } else {
+                console.log('所有工作日记录完整，无需补充');
+            }
+        }
+
+        // 初始化本月工作日的打卡记录
+        function initializeMonthAttendance() {
+            const now = new Date();
+            const currentYear = 2030;
+            const currentMonth = now.getMonth();
+            const currentDate = now.getDate();
+            
+            // 获取本月天数
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            
+            console.log('初始化打卡记录 - 当前日期:', currentYear + '-' + (currentMonth + 1) + '-' + currentDate);
+            
+            // 遍历本月每一天，只处理当天之前的工作日
+            for (let day = 1; day < currentDate; day++) {
+                const date = new Date(currentYear, currentMonth, day);
+                const dayOfWeek = date.getDay();
+                
+                // 只处理工作日（周一到周五）
+                if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+                    const dateStr = currentYear + '-' + 
+                                  String(currentMonth + 1).padStart(2, '0') + '-' + 
+                                  String(day).padStart(2, '0');
+                    
+                    // 检查是否已经存在该日期的记录
+                    const existingRecord = attendanceData.records.find(r => r.date === dateStr);
+                    if (existingRecord) {
+                        continue; // 跳过已存在的记录
+                    }
+                    
+                    // 添加上班打卡（8:30-9:00之间随机时间）
+                    const checkInHour = 8;
+                    const checkInMinute = Math.floor(Math.random() * 31); // 0-30分钟
+                    const checkInTime = String(checkInHour).padStart(2, '0') + ':' + 
+                                      String(checkInMinute).padStart(2, '0');
+                    
+                    attendanceData.records.push({
+                        date: dateStr,
+                        type: '上班',
+                        time: checkInTime,
+                        status: '正常'
+                    });
+                    
+                    // 添加下班打卡（17:30-18:30之间随机时间）
+                    const checkOutHour = 17 + Math.floor(Math.random() * 2); // 17或18点
+                    const checkOutMinute = Math.floor(Math.random() * 60);
+                    const checkOutTime = String(checkOutHour).padStart(2, '0') + ':' + 
+                                       String(checkOutMinute).padStart(2, '0');
+                    
+                    attendanceData.records.push({
+                        date: dateStr,
+                        type: '下班',
+                        time: checkOutTime,
+                        status: '正常'
+                    });
+                    
+                    console.log('添加工作日打卡:', dateStr, '星期' + ['日','一','二','三','四','五','六'][dayOfWeek]);
+                }
+            }
+            
+            // 保存到localStorage
+            saveAttendanceRecords();
+            console.log('打卡记录初始化完成，共', attendanceData.records.length, '条记录');
         }
 
         // 保存打卡记录
@@ -75,33 +320,99 @@
             const container = document.getElementById('attendanceRecords');
             if (!container) return;
             
-            // 获取今天的日期
-            const today = new Date();
-            const dateStr = today.getFullYear() + '-' + 
-                          String(today.getMonth() + 1).padStart(2, '0') + '-' + 
-                          String(today.getDate()).padStart(2, '0');
+            // 获取当前日期（年份替换为2030）
+            const now = new Date();
+            const currentYear = 2030;
+            const currentMonth = now.getMonth();
+            const currentDate = now.getDate();
             
-            // 过滤今天的记录
-            const todayRecords = attendanceData.records.filter(r => r.date === dateStr);
+            // 生成本月日历数据
+            const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
+            const firstDayOfWeek = new Date(currentYear, currentMonth, 1).getDay();
             
-            if (todayRecords.length === 0) {
-                container.innerHTML = '<div style="text-align: center; color: #999; padding: 20px;">暂无今日打卡记录</div>';
-                return;
+            // 构建本月打卡记录映射
+            const monthRecordsMap = {};
+            attendanceData.records.forEach(record => {
+                const recordDate = new Date(record.date);
+                if (recordDate.getFullYear() === currentYear && recordDate.getMonth() === currentMonth) {
+                    const day = recordDate.getDate();
+                    if (!monthRecordsMap[day]) {
+                        monthRecordsMap[day] = { checkIn: null, checkOut: null };
+                    }
+                    if (record.type === '上班') {
+                        monthRecordsMap[day].checkIn = record.time;
+                    } else if (record.type === '下班') {
+                        monthRecordsMap[day].checkOut = record.time;
+                    }
+                }
+            });
+            
+            // 生成日历HTML
+            let html = '<div style="margin-bottom: 20px;">';
+            html += '<h4 style="margin-bottom: 15px; color: #333; font-size: 16px;">' + currentYear + '年' + (currentMonth + 1) + '月 打卡记录</h4>';
+            html += '<div style="display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px;">';
+            
+            // 星期标题
+            const weekDays = ['日', '一', '二', '三', '四', '五', '六'];
+            weekDays.forEach(day => {
+                html += '<div style="text-align: center; font-weight: bold; color: #666; padding: 8px 0; font-size: 12px;">' + day + '</div>';
+            });
+            
+            // 空白填充
+            for (let i = 0; i < firstDayOfWeek; i++) {
+                html += '<div></div>';
             }
             
-            let html = '';
-            todayRecords.forEach(record => {
-                const statusColor = record.status === '正常' ? '#28c840' : '#ff9500';
-                html += `
-                    <div style="padding: 10px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <div style="font-weight: 500; color: #333;">${record.type}打卡</div>
-                            <div style="font-size: 12px; color: #999;">${record.time}</div>
-                        </div>
-                        <div style="color: ${statusColor}; font-weight: 500;">${record.status}</div>
-                    </div>
-                `;
-            });
+            // 日期格子
+            for (let day = 1; day <= daysInMonth; day++) {
+                const isToday = day === currentDate;
+                const records = monthRecordsMap[day];
+                const hasCheckIn = records && records.checkIn;
+                const hasCheckOut = records && records.checkOut;
+                
+                let bgColor = '#f5f5f5';
+                if (isToday) {
+                    bgColor = '#e3f2fd';
+                } else if (hasCheckIn && hasCheckOut) {
+                    bgColor = '#e8f5e9';
+                } else if (hasCheckIn || hasCheckOut) {
+                    bgColor = '#fff3cd';
+                }
+                
+                html += '<div style="border: 1px solid #ddd; border-radius: 4px; padding: 8px; text-align: center; background: ' + bgColor + '; min-height: 60px;">';
+                html += '<div style="font-weight: bold; margin-bottom: 5px; color: ' + (isToday ? '#0066cc' : '#333') + ';">' + day + '</div>';
+                
+                if (records) {
+                    if (records.checkIn) {
+                        html += '<div style="font-size: 11px; color: #28c840; margin-bottom: 2px;">上:' + records.checkIn + '</div>';
+                    }
+                    if (records.checkOut) {
+                        html += '<div style="font-size: 11px; color: #ff9500;">下:' + records.checkOut + '</div>';
+                    }
+                }
+                
+                html += '</div>';
+            }
+            
+            html += '</div></div>';
+            
+            // 今日打卡记录
+            const dateStr = currentYear + '-' + String(currentMonth + 1).padStart(2, '0') + '-' + String(currentDate).padStart(2, '0');
+            const todayRecords = attendanceData.records.filter(r => r.date === dateStr);
+            
+            if (todayRecords.length > 0) {
+                html += '<div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #e0e0e0;">';
+                html += '<h4 style="margin-bottom: 15px; color: #333; font-size: 16px;">今日打卡记录</h4>';
+                todayRecords.forEach(record => {
+                    const statusColor = record.status === '正常' ? '#28c840' : '#ff9500';
+                    html += '<div style="padding: 10px; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between; align-items: center;">';
+                    html += '<div><div style="font-weight: 500; color: #333;">' + record.type + '打卡</div><div style="font-size: 12px; color: #999;">' + record.time + '</div></div>';
+                    html += '<div style="color: ' + statusColor + '; font-weight: 500;">' + record.status + '</div></div>';
+                });
+                html += '</div>';
+            } else {
+                html += '<div style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #e0e0e0; text-align: center; color: #999; padding: 20px;">暂无今日打卡记录</div>';
+            }
             
             container.innerHTML = html;
         }
@@ -110,7 +421,8 @@
         function performCheckIn(type) {
             const now = new Date();
             const timeStr = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0');
-            const dateStr = now.getFullYear() + '-' + 
+            // 年份替换为2030
+            const dateStr = '2030-' + 
                           String(now.getMonth() + 1).padStart(2, '0') + '-' + 
                           String(now.getDate()).padStart(2, '0');
             
@@ -224,7 +536,7 @@
                 detailContent.innerHTML = `
                     <h2 style="margin-bottom: 15px;">海伯利安大厦定向爆破结构安全评估项目合同及资料确认</h2>
                     <p style="color: #666; margin-bottom: 8px;"><strong>发件人：</strong>ting.li@yuding-holdings.cn</p>
-                    <p style="color: #666; margin-bottom: 8px;"><strong>收件人：</strong>[主角邮箱]</p>
+                    <p style="color: #666; margin-bottom: 8px;"><strong>收件人：</strong>hejia@jz-structure.cn</p>
                     <p style="color: #666; margin-bottom: 8px;"><strong>抄送：</strong>bonian.su@yuding-holdings.cn；法务部-合规组邮箱</p>
                     <hr style="margin: 15px 0; border: none; border-top: 1px solid #ddd;">
                     
@@ -469,40 +781,67 @@
 
         // 开始分析
         function startAnalysis(filename) {
-            analysisPanel.innerHTML = `
-                <div style="text-align: center; margin-top: 50px;">
-                    <div class="progress-indicator" style="font-size: 48px;">⚙️</div>
-                    <p style="color: #667eea; margin-top: 20px; font-size: 16px;">正在初始化分析引擎...</p>
-                </div>
-            `;
+            const terminalBody = document.getElementById('terminalBody');
+            if (!terminalBody) return;
+            
+            // 清空终端内容
+            terminalBody.innerHTML = '';
             
             const steps = [
                 { text: '【结构有限元分析引擎 v4.1】正在初始化...', delay: 800 },
-                { text: `导入图纸文件：${filename}`, delay: 1200 },
-                { text: '提取结构构件：框架柱、剪力墙、核心筒、楼盖板...', delay: 1500 },
-                { text: '读取图纸材料属性与截面参数...', delay: 1000 },
-                { text: '正在构建3D空间有限元模型...', delay: 1800 },
-                { text: '施加爆破工况荷载（定向倾覆力矩）...', delay: 1200 },
-                { text: '正在计算整体质心（Center of Mass）与倒塌轨迹...', delay: 1500 },
+                { text: `导入图纸文件：${filename}`, delay: 800 },
+                { text: '提取结构构件：框架柱、剪力墙、核心筒、楼盖板...', delay: 800 },
+                { text: '正在构建3D空间有限元模型...', delay: 800 },
+                { text: '正在计算整体质心（Center of Mass）与倒塌轨迹...', delay: 800 },
                 { text: '分析完成。', delay: 800, success: true }
             ];
             
             let currentStep = 0;
-            let html = '<div class="analysis-log">';
             
             function processStep() {
                 if (currentStep < steps.length) {
                     const step = steps[currentStep];
-                    const className = step.success ? 'log-line success' : 'log-line';
-                    html += `<div class="${className}">${step.text}</div>`;
-                    analysisPanel.innerHTML = html + '</div>';
                     
-                    currentStep++;
-                    setTimeout(processStep, step.delay);
-                } else {
-                    // 分析完成，显示查看明细按钮
-                    html += '<button class="view-details-btn" onclick="showWarning()">查看明细</button>';
-                    analysisPanel.innerHTML = html + '</div>';
+                    // 创建新的日志行
+                    const logLine = document.createElement('div');
+                    logLine.className = step.success ? 'log-line success' : 'log-line';
+                    terminalBody.appendChild(logLine);
+                    
+                    // 添加光标
+                    const cursor = document.createElement('span');
+                    cursor.className = 'cursor-blink';
+                    logLine.appendChild(cursor);
+                    
+                    // 打字机效果 - 逐字符输出
+                    let charIndex = 0;
+                    const typingSpeed = 20; // 每个字符的打字速度(毫秒) - 加快速度
+                    
+                    function typeChar() {
+                        if (charIndex < step.text.length) {
+                            // 在光标前插入字符
+                            cursor.insertAdjacentText('beforebegin', step.text[charIndex]);
+                            charIndex++;
+                            setTimeout(typeChar, typingSpeed);
+                        } else {
+                            // 当前行完成，移除光标
+                            cursor.remove();
+                            
+                            currentStep++;
+                            
+                            if (currentStep < steps.length) {
+                                // 继续下一行 - 缩短间隔
+                                setTimeout(processStep, step.delay * 0.6);
+                            } else {
+                                // 所有步骤完成，显示警告弹窗
+                                setTimeout(() => {
+                                    showWarningPopup();
+                                }, 500);
+                            }
+                        }
+                    }
+                    
+                    // 开始打字 - 减少初始延迟
+                    setTimeout(typeChar, 150);
                 }
             }
             
@@ -510,13 +849,24 @@
         }
 
         // 显示异常提示弹窗
-        function showWarning() {
-            document.getElementById('warning-overlay').style.display = 'flex';
-        }
-
-        // 关闭异常提示弹窗
-        function closeWarning() {
-            document.getElementById('warning-overlay').style.display = 'none';
+        function showWarningPopup() {
+            const warningPopup = document.getElementById('warningPopup');
+            const warningText = document.getElementById('warningText');
+            
+            if (warningPopup && warningText) {
+                warningText.innerHTML = `
+                    <span style="color: #EF4444; font-weight: bold;">WARNING：</span><span style="color: #EF4444; font-weight: 900; font-size: 15px; text-shadow: 0 0 8px rgba(239, 68, 68, 0.6);">第8层</span><span style="color: #EF4444; font-weight: bold;">核心筒结构异常</span><br><br>
+                    该区域结构截面被定义为"实心实体"（或几何尺寸异常巨大）。<br><br>
+                    <span style="color: rgba(239, 68, 68, 0.8);">请人工核查该区域</span><br><br>
+                    <span style="color: rgba(107, 114, 128, 0.6);">报告编号：AE-2030-0710-STR</span>
+                `;
+                warningPopup.style.display = 'block';
+                
+                // AI分析结束后5秒，触发神秘线索邮件
+                setTimeout(() => {
+                    window.triggerMysteryEmail();
+                }, 1000);
+            }
         }
 
         // ==================== 邮件系统 ====================
@@ -533,13 +883,52 @@
             'protagonist': {
                 inbox: [
                     {
+                        id: 1,
+                        from: '李婷 (誉鼎集团总裁办)',
+                        fromEmail: 'ting.li@yuding-holdings.cn',
+                        to: 'hejia@jz-structure.cn',
+                        cc: 'bonian.su@yuding-holdings.cn (苏柏年 - 副总裁)；法务部-合规组',
+                        subject: '【受苏总委托】海伯利安大厦定向爆破结构安全评估项目合同及资料确认',
+                        date: getCurrentTime(),
+                        preview: '受集团苏柏年副总裁委托，现就“海伯利安...',
+                        hasAttachment: true,
+                        attachments: [
+                            { name: '《爆破安全评估外包合同》(已盖章扫描件).pdf', size: '2.3 MB', type: 'contract' },
+                            { name: '海伯利安大厦2008年改造竣工图.dwg', size: '15.8 MB', type: 'drawing' },
+                            { name: '项目执行人员确认表.docx', size: '1.2 MB', type: 'form' }
+                        ],
+                        content: `
+                            <p>禾总，您好：</p>
+                            <p>受集团苏柏年副总裁委托，现就“海伯利安大厦定向爆破结构安全评估”项目的相关事宜与贵司进行最终确认。</p>
+                            <p>本项目总包费用为人民币 <strong>280,000 元（贰拾捌万元整）</strong>。根据苏总的特别指示，鉴于该大厦年代久远且爆破工期紧迫，集团特批本项目免除现场实地勘测环节。</p>
+                            <p>请贵司务必严格按照附件中提供的《2008年改造竣工图》进行3D有限元建模与力学演算。苏总及集团法务部特别强调以下合规与责任条款，请贵司在出具正式报告前务必核对：</p>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li>任何图纸数据与物理现状的偏差，均以甲方提供的图纸为准，乙方无需（也不得）进行现场复核。</li>
+                                <li>贵司出具的《结构安全评估报告》需经注册结构工程师签字并加盖公章，即视为贵司对模型数据真实性、准确性的最终法律背书。</li>
+                                <li>若因贵司核算失误、模型失真导致爆破审批受阻，或在爆破过程中因结构受力计算错误产生任何安全及法律纠纷，贵司需承担全部法律及经济赔偿责任。</li>
+                            </ul>
+                            <p>附件为已走完集团内部审批流的合同扫描件及图纸资料。请贵司于今日18:00前回复本邮件确认，并安排项目执行人员（如前期沟通的助理结构工程师）尽快开展底稿核算工作。</p>
+                            <p>如有任何流程上的疑问，请随时与我联系。</p>
+                            <p style="margin-top: 20px;">顺颂商祺！</p>
+                            <p style="margin-top: 15px;">
+                                <strong>李婷 (Ting Li)</strong><br>
+                                高级秘书 | 总裁办<br>
+                                誉鼎城市发展控股集团有限公司<br>
+                                Mobile: 138-XXXX-XXXX<br>
+                                Email: ting.li@yuding-holdings.cn<br>
+                                Add: 江州市滨江区CBD中心，誉鼎金融大厦68层
+                            </p>
+                        `,
+                        canReply: true
+                    },
+                    {
                         id: 2,
                         from: '王经理 (项目部)',
-                        fromEmail: 'wang.pm@company.com',
-                        to: '[主角邮箱]',
+                        fromEmail: 'wang.pm@jz-structure.cn',
+                        to: 'hejia@jz-structure.cn',
                         subject: '关于下周项目进度会议的通知',
                         date: '2030-07-09 14:30',
-                        preview: '各位同事，下周一上午10点将召开项目进度会议...',
+                        preview: '各位同事，下周一上午10点将召开项目进...',
                         hasAttachment: false,
                         content: `
                             <p>各位同事，</p>
@@ -558,8 +947,8 @@
                     {
                         id: 3,
                         from: 'HR部门',
-                        fromEmail: 'hr@company.com',
-                        to: '[主角邮箱]',
+                        fromEmail: 'hr@jz-structure.cn',
+                        to: 'hejia@jz-structure.cn',
                         subject: '员工培训通知',
                         date: '2030-07-08 10:00',
                         preview: '公司将于本月举办新员工入职培训...',
@@ -575,8 +964,8 @@
                     {
                         id: 4,
                         from: 'IT支持',
-                        fromEmail: 'it-support@company.com',
-                        to: '[主角邮箱]',
+                        fromEmail: 'it-support@jz-structure.cn',
+                        to: 'hejia@jz-structure.cn',
                         subject: '系统维护通知',
                         date: '2030-07-07 16:00',
                         preview: '本周六凌晨2:00-4:00将进行系统维护...',
@@ -631,17 +1020,19 @@
                 currentUser = JSON.parse(savedUser);
             } else {
                 // 默认登录主角
-                currentUser = { username: '主角', email: '[主角邮箱]' };
+                currentUser = { username: '禾佳', email: 'hejia@jz-structure.cn' };
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
             }
             
             // 根据用户类型切换邮件数据
-            if (currentUser.username === '主角') {
+            if (currentUser.username === '禾佳') {
                 switchUserEmailData('protagonist');
                 // 恢复触发的邮件
                 restoreTriggeredEmails();
             } else {
                 switchUserEmailData('special');
+                // 恢复特殊用户的已发送和收件箱
+                restoreSentEmails();
             }
             
             updateEmailUI();
@@ -649,95 +1040,118 @@
         
         // 恢复触发的邮件（从localStorage）
         function restoreTriggeredEmails() {
-            if (!currentUser || currentUser.username !== '主角') return;
+            if (!currentUser || currentUser.username !== '禾佳') return;
             
             // 获取已触发的邮件ID列表
             const triggeredEmailIds = JSON.parse(localStorage.getItem('triggeredEmailIds') || '[]');
             
-            // 恢复海伯利安大厦邮件
-            if (triggeredEmailIds.includes(1)) {
-                addHyperionEmailToInbox();
-            }
-            
-            // 恢复神秘线索邮件
+            // 恢复神秘线索邮件(海伯利安邮件是默认存在的,不需要恢复)
             if (triggeredEmailIds.includes(101)) {
                 addMysteryEmailToInbox();
             }
-        }
-        
-        // 添加海伯利安大厦邮件到收件箱
-        function addHyperionEmailToInbox() {
-            // 检查是否已经存在
-            const existingEmail = emailData.inbox.find(e => e.id === 1);
-            if (existingEmail) return;
             
-            const hyperionEmail = {
-                id: 1,
-                from: '李婷 (总裁办)',
-                fromEmail: 'ting.li@yuding-holdings.cn',
-                to: '[主角邮箱]',
-                cc: 'bonian.su@yuding-holdings.cn；法务部-合规组邮箱',
-                subject: '海伯利安大厦定向爆破结构安全评估项目合同及资料确认',
-                date: '2030-07-10 09:00',
-                preview: '受集团苏柏年副总裁委托，现就"海伯利安大厦定向爆破结构安全评估"项目...',
-                hasAttachment: true,
-                attachments: [
-                    { name: '《爆破安全评估外包合同》(已盖章扫描件).pdf', type: 'pdf' },
-                    { name: '海伯利安大厦2008年改造竣工图.dwg', type: 'dwg' },
-                    { name: '项目执行人员确认表.docx', type: 'docx' }
-                ],
-                content: `
-                    <p>禾总，您好：</p>
-                    <p>受集团苏柏年副总裁委托，现就"<strong>海伯利安大厦</strong>定向爆破结构安全评估"项目的相关事宜与贵司进行最终确认。</p>
-                    <p>本项目总包费用为人民币 <strong>280,000 元（贰拾捌万元整）</strong>。根据苏总的特别指示，鉴于该大厦年代久远且爆破工期紧迫，集团特批本项目免除现场实地勘测环节。</p>
-                    <p>请贵司务必严格按照附件中提供的《2008年改造竣工图》进行3D有限元建模与力学演算。苏总及集团法务部特别强调以下合规与责任条款，请贵司在出具正式报告前务必核对：</p>
-                    <ul style="margin-left: 20px; margin-top: 10px;">
-                        <li>任何图纸数据与物理现状的偏差，均以甲方提供的图纸为准，乙方无需（也不得）进行现场复核。</li>
-                        <li>贵司出具的《结构安全评估报告》需经注册结构工程师签字并加盖公章，即视为贵司对模型数据真实性、准确性的最终法律背书。</li>
-                        <li>若因贵司核算失误、模型失真导致爆破审批受阻，或在爆破过程中因结构受力计算错误产生任何安全及法律纠纷，贵司需承担全部法律及经济赔偿责任。</li>
-                    </ul>
-                    <p>附件为已走完集团内部审批流的合同扫描件及图纸资料。请贵司于今日18:00前回复本邮件确认，并安排项目执行人员（如前期沟通的助理结构工程师）尽快开展底稿核算工作。</p>
-                    <p>如有任何流程上的疑问，请随时与我联系。</p>
-                    <p style="margin-top: 20px;">顺颂商祺！</p>
-                    <p style="margin-top: 15px;">
-                        <strong>李婷 (Ting Li)</strong><br>
-                        高级秘书 | 总裁办<br>
-                        誉鼎城市发展控股集团有限公司<br>
-                        Mobile: 138-XXXX-XXXX<br>
-                        Email: ting.li@yuding-holdings.cn<br>
-                        Add: 江州市滨江区CBD中心，誉鼎金融大厦68层
-                    </p>
-                `,
-                canReply: true
-            };
-            
-            emailData.inbox.unshift(hyperionEmail);
+            // 恢复regret回复邮件
+            if (triggeredEmailIds.includes(102)) {
+                addRegretReplyEmailToInbox();
+            }
         }
         
         // 添加神秘线索邮件到收件箱
+        // 神秘线索邮件模板(统一数据源)
+        const MYSTERY_EMAIL_TEMPLATE = {
+            id: 101,
+            from: '匿名',
+            fromEmail: 'regret_0928@privatemail.com',
+            to: 'hejia@jz-structure.cn',
+            subject: '匿名',
+            date: getCurrentTime(),
+            preview: '我相信你已经发现了这栋楼的异常，但是...',
+            hasAttachment: false,
+            content: `
+                <p>我相信你已经发现了这栋楼的异常，但是我不能说太多。</p>
+                <p>去江城论坛里搜一下历史帖子吧，看看当年到底发生了什么。</p>
+            `,
+            canReply: false
+        };
+        
+        // 添加神秘线索邮件到主角收件箱
         function addMysteryEmailToInbox() {
             // 检查是否已经存在
             const existingEmail = emailData.inbox.find(e => e.id === 101);
             if (existingEmail) return;
             
-            const mysteryEmail = {
-                id: 101,
-                from: '匿名',
-                fromEmail: 'unknown@darkweb.net',
-                to: '[主角邮箱]',
-                subject: '神秘线索',
-                date: '2030-07-10 03:33',
-                preview: '我知道你在调查什么，但有些事情你还不清楚...',
-                hasAttachment: false,
-                content: `
-                    <p>我知道你在调查什么，但有些事情你还不清楚。</p>
-                    <p>海伯利安大厦的秘密比你想象的更深。</p>
-                    <p>小心行事。</p>
-                `,
-                canReply: false
-            };
-            
+            // 深拷贝模板,避免引用污染
+            const mysteryEmail = JSON.parse(JSON.stringify(MYSTERY_EMAIL_TEMPLATE));
             emailData.inbox.unshift(mysteryEmail);
+        }
+        
+        // 添加regret回复邮件到主角收件箱
+        function addRegretReplyEmailToInbox() {
+            // 检查是否已经存在
+            const existingEmail = emailData.inbox.find(e => e.id === 102);
+            if (existingEmail) return;
+            
+            // 深拷贝模板,避免引用污染
+            const regretEmail = JSON.parse(JSON.stringify(REGRET_REPLY_EMAIL_TEMPLATE));
+            emailData.inbox.unshift(regretEmail);
+        }
+        
+        // regret_0928的回复邮件模板(统一数据源)
+        const REGRET_REPLY_EMAIL_TEMPLATE = {
+            id: 102,
+            from: '匿名',
+            fromEmail: 'regret_0928@privatemail.com',
+            to: 'hejia@jz-structure.cn',
+            subject: '匿名',
+            date: getCurrentTime(),
+            preview: '对不起，我对不起小敏，对不起老杨。。。',
+            hasAttachment: false,
+            content: `
+                <p>对不起，我对不起小敏，对不起老杨。。。</p>
+                <p>你应该已经登过我的账号了吧，后勤部的管理员密码是xxxxxxxx，如果可以，我也恳求你，一起撕碎这些吃人血的家伙。</p>
+            `,
+            canReply: false
+        };
+        
+        // 触发regret_0928的回复邮件
+        function triggerRegretReplyEmail() {
+            if (!currentUser || currentUser.username !== '禾佳') {
+                console.log('当前用户不是禾佳，无法接收邮件');
+                return;
+            }
+            
+            // 检查是否已经存在该邮件
+            const existingEmail = emailData.inbox.find(e => e.id === 102);
+            if (existingEmail) {
+                console.log('regret回复邮件已存在');
+                return;
+            }
+            
+            // 深拷贝模板,避免引用污染
+            const regretEmail = JSON.parse(JSON.stringify(REGRET_REPLY_EMAIL_TEMPLATE));
+            emailData.inbox.unshift(regretEmail);
+            
+            // 同时添加到特殊用户的已发送（因为是从regret发出的）
+            const specialSentEmail = JSON.parse(JSON.stringify(REGRET_REPLY_EMAIL_TEMPLATE));
+            userEmailData['special'].sent.unshift(specialSentEmail);
+            
+            // 保存到localStorage，标记为已触发
+            const triggeredEmailIds = JSON.parse(localStorage.getItem('triggeredEmailIds') || '[]');
+            if (!triggeredEmailIds.includes(102)) {
+                triggeredEmailIds.push(102);
+                localStorage.setItem('triggeredEmailIds', JSON.stringify(triggeredEmailIds));
+            }
+            
+            // 保存数据
+            saveAllUserData();
+            
+            // 刷新收件箱显示
+            showInbox();
+            
+            // 显示新邮件弹窗通知
+            showRegretEmailNotification();
+            
+            console.log('收到regret_0928的回复邮件');
         }
         
         // 更新邮箱界面显示
@@ -816,7 +1230,7 @@
                                  onmouseover="this.style.background='#e8f4ff'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.1)'"
                                  onmouseout="this.style.background='#f5f5f5'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
                                 <div style="width: 64px; height: 64px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); margin: 0 auto 15px; display: flex; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 28px;">👤</div>
-                                <div id="lastUserName" style="font-size: 18px; font-weight: 500; color: #333; margin-bottom: 5px;">主角</div>
+                                <div id="lastUserName" style="font-size: 18px; font-weight: 500; color: #333; margin-bottom: 5px;">禾佳</div>
                                 <div style="font-size: 13px; color: #999;">点击快速登录</div>
                             </div>
                         </div>
@@ -863,7 +1277,7 @@
         
         // 快速登录（主角）
         function quickLogin() {
-            currentUser = { username: '主角', email: '[主角邮箱]' };
+            currentUser = { username: '禾佳', email: 'hejia@jz-structure.cn' };
             localStorage.setItem('currentUser', JSON.stringify(currentUser));
             
             // 切换为主角的邮件数据
@@ -1158,10 +1572,14 @@
             
             // 特殊处理：神秘线索邮件(ID=101)的回复
             if (email.id === 101) {
-                // 检查是否可以回复（由其他HTML触发）
-                const canReplyMystery = localStorage.getItem('canReplyMystery') === 'true';
+                // 检查是否可以回复（需要达成多个条件）
+                const conditions = JSON.parse(localStorage.getItem('mysteryReplyConditions') || '[]');
+                const canReplyMystery = conditions.length >= 2; // 需要至少2个条件
+                
                 if (!canReplyMystery) {
-                    return; // 无响应，不弹窗
+                    // 显示灰色浮框提示
+                    showToast(`先找找他的身份信息再回复吧...`);
+                    return;
                 }
                 
                 // 检查是否已经回复过
@@ -1185,8 +1603,8 @@
             const replyContent = '你就是林建国吧？我是杨敏的大学同学，你为什么要冒充她爸爸给她写信，她爸爸到底怎么了？！';
             
             detailContent.innerHTML = `
-                <h2 style="margin-bottom: 15px;">回复：海伯利安</h2>
-                <p style="color: #666; margin-bottom: 8px;"><strong>收件人：</strong>regret_0928@163.com</p>
+                <h2 style="margin-bottom: 15px;">回复：匿名</h2>
+                <p style="color: #666; margin-bottom: 8px;"><strong>收件人：</strong>regret_0928@privatemail.com</p>
                 <hr style="margin: 15px 0; border: none; border-top: 1px solid #ddd;">
                 
                 <div style="margin-top: 20px;">
@@ -1279,11 +1697,11 @@
             // 添加到已发送（主角的已发送）
             const sentEmail = {
                 id: Date.now(),
-                from: '[主角邮箱]',
-                to: 'regret_0928@163.com',
-                subject: 'Re: 海伯利安',
+                from: 'hejia@jz-structure.cn',
+                to: 'regret_0928@privatemail.com',
+                subject: 'Re: 匿名',
                 date: getCurrentTime(),
-                preview: replyContent.substring(0, 50) + '...',
+                preview: replyContent.substring(0, 15) + '...',
                 hasAttachment: false,
                 content: `<p>${replyContent}</p>`,
                 canReply: false
@@ -1294,12 +1712,12 @@
             // 同时添加到特殊用户的收件箱
             const receivedEmail = {
                 id: Date.now() + 1,
-                from: '[主角邮箱]',
-                fromEmail: '[主角邮箱]',
+                from: 'hejia@jz-structure.cn',
+                fromEmail: 'hejia@jz-structure.cn',
                 to: 'regret_0928@privatemail.com',
-                subject: 'Re: 海伯利安',
+                subject: 'Re: 匿名',
                 date: getCurrentTime(),
-                preview: replyContent.substring(0, 50) + '...',
+                preview: replyContent.substring(0, 15) + '...',
                 hasAttachment: false,
                 content: `<p>${replyContent}</p>`,
                 canReply: true
@@ -1316,6 +1734,11 @@
             
             // 立即保存两个用户的数据到localStorage
             saveAllUserData();
+            
+            // 2秒后收到来自regret_0928的回复邮件
+            setTimeout(() => {
+                triggerRegretReplyEmail();
+            }, 3000);
             
             // 显示成功提示（使用进度条文字变化代替alert）
             const progressText = document.getElementById('progressText');
@@ -1336,7 +1759,7 @@
             const savedData = JSON.parse(localStorage.getItem('savedEmailData') || '{}');
             
             // 保存主角的已发送
-            if (currentUser && currentUser.username === '主角' && emailData) {
+            if (currentUser && currentUser.username === '禾佳' && emailData) {
                 savedData['protagonist'] = {
                     sent: emailData.sent
                 };
@@ -1374,7 +1797,7 @@
             const savedData = JSON.parse(localStorage.getItem('savedEmailData') || '{}');
             
             // 根据用户类型恢复
-            if (currentUser.username === '主角' && savedData['protagonist']) {
+            if (currentUser.username === '禾佳' && savedData['protagonist']) {
                 // 恢复主角的已发送
                 if (savedData['protagonist'].sent) {
                     userEmailData['protagonist'].sent = savedData['protagonist'].sent;
@@ -1398,82 +1821,9 @@
         
         // ==================== 跨页面触发功能 ====================
         
-        // 从其他页面触发显示海伯利安大厦邮件
-        function triggerHyperionEmail() {
-            if (!currentUser || currentUser.username !== '主角') {
-                console.log('当前用户不是主角，无法触发邮件');
-                return;
-            }
-            
-            // 检查是否已经存在该邮件
-            const existingEmail = emailData.inbox.find(e => e.id === 1);
-            if (existingEmail) {
-                console.log('邮件已存在');
-                return;
-            }
-            
-            // 添加海伯利安大厦邮件
-            const hyperionEmail = {
-                id: 1,
-                from: '李婷 (总裁办)',
-                fromEmail: 'ting.li@yuding-holdings.cn',
-                to: '[主角邮箱]',
-                cc: 'bonian.su@yuding-holdings.cn；法务部-合规组邮箱',
-                subject: '海伯利安大厦定向爆破结构安全评估项目合同及资料确认',
-                date: '2030-07-10 09:00',
-                preview: '受集团苏柏年副总裁委托，现就"海伯利安大厦定向爆破结构安全评估"项目...',
-                hasAttachment: true,
-                attachments: [
-                    { name: '《爆破安全评估外包合同》(已盖章扫描件).pdf', type: 'pdf' },
-                    { name: '海伯利安大厦2008年改造竣工图.dwg', type: 'dwg' },
-                    { name: '项目执行人员确认表.docx', type: 'docx' }
-                ],
-                content: `
-                    <p>禾总，您好：</p>
-                    <p>受集团苏柏年副总裁委托，现就"<strong>海伯利安大厦</strong>定向爆破结构安全评估"项目的相关事宜与贵司进行最终确认。</p>
-                    <p>本项目总包费用为人民币 <strong>280,000 元（贰拾捌万元整）</strong>。根据苏总的特别指示，鉴于该大厦年代久远且爆破工期紧迫，集团特批本项目免除现场实地勘测环节。</p>
-                    <p>请贵司务必严格按照附件中提供的《2008年改造竣工图》进行3D有限元建模与力学演算。苏总及集团法务部特别强调以下合规与责任条款，请贵司在出具正式报告前务必核对：</p>
-                    <ul style="margin-left: 20px; margin-top: 10px;">
-                        <li>任何图纸数据与物理现状的偏差，均以甲方提供的图纸为准，乙方无需（也不得）进行现场复核。</li>
-                        <li>贵司出具的《结构安全评估报告》需经注册结构工程师签字并加盖公章，即视为贵司对模型数据真实性、准确性的最终法律背书。</li>
-                        <li>若因贵司核算失误、模型失真导致爆破审批受阻，或在爆破过程中因结构受力计算错误产生任何安全及法律纠纷，贵司需承担全部法律及经济赔偿责任。</li>
-                    </ul>
-                    <p>附件为已走完集团内部审批流的合同扫描件及图纸资料。请贵司于今日18:00前回复本邮件确认，并安排项目执行人员（如前期沟通的助理结构工程师）尽快开展底稿核算工作。</p>
-                    <p>如有任何流程上的疑问，请随时与我联系。</p>
-                    <p style="margin-top: 20px;">顺颂商祺！</p>
-                    <p style="margin-top: 15px;">
-                        <strong>李婷 (Ting Li)</strong><br>
-                        高级秘书 | 总裁办<br>
-                        誉鼎城市发展控股集团有限公司<br>
-                        Mobile: 138-XXXX-XXXX<br>
-                        Email: ting.li@yuding-holdings.cn<br>
-                        Add: 江州市滨江区CBD中心，誉鼎金融大厦68层
-                    </p>
-                `,
-                canReply: true
-            };
-            
-            emailData.inbox.unshift(hyperionEmail);
-            
-            // 保存到localStorage，标记为已触发
-            const triggeredEmailIds = JSON.parse(localStorage.getItem('triggeredEmailIds') || '[]');
-            if (!triggeredEmailIds.includes(1)) {
-                triggeredEmailIds.push(1);
-                localStorage.setItem('triggeredEmailIds', JSON.stringify(triggeredEmailIds));
-            }
-            
-            // 刷新收件箱显示
-            showInbox();
-            
-            console.log('海伯利安大厦邮件已触发');
-        }
-        
-        // 将函数暴露到全局作用域
-        window.triggerHyperionEmail = triggerHyperionEmail;
-        
         // 从其他页面触发显示神秘线索邮件（给主角）
         function triggerMysteryEmail() {
-            if (!currentUser || currentUser.username !== '主角') {
+            if (!currentUser || currentUser.username !== '禾佳') {
                 console.log('当前用户不是主角，无法触发邮件');
                 return;
             }
@@ -1485,25 +1835,8 @@
                 return;
             }
             
-            // 添加神秘线索邮件到主角收件箱
-            const mysteryEmail = {
-                id: 101,
-                from: '匿名',
-                fromEmail: 'unknown@darkweb.net',
-                to: '[主角邮箱]',
-                subject: '神秘线索',
-                date: '2030-07-10 03:33',
-                preview: '我知道你在调查什么，但有些事情你还不清楚...',
-                hasAttachment: false,
-                content: `
-                    <p>我知道你在调查什么，但有些事情你还不清楚。</p>
-                    <p>海伯利安大厦的秘密比你想象的更深。</p>
-                    <p>小心行事。</p>
-                `,
-                canReply: false
-            };
-            
-            emailData.inbox.unshift(mysteryEmail);
+            // 添加神秘线索邮件到主角收件箱(复用已有函数)
+            addMysteryEmailToInbox();
             
             // 保存到localStorage，标记为已触发
             const triggeredEmailIds = JSON.parse(localStorage.getItem('triggeredEmailIds') || '[]');
@@ -1518,29 +1851,157 @@
             // 刷新收件箱显示
             showInbox();
             
+            // 显示新邮件弹窗通知
+            showMysteryEmailNotification();
+            
             console.log('神秘线索邮件已触发');
+        }
+        
+        // 显示神秘线索邮件的弹窗通知
+        function showMysteryEmailNotification() {
+            const notification = document.createElement('div');
+            notification.id = 'mysteryEmailNotification';
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 100px;
+                right: 30px;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                border-radius: 12px;
+                padding: 15px 20px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                min-width: 280px;
+                max-width: 350px;
+                z-index: 9999;
+                animation: slideInRight 0.5s ease-out;
+                border: 1px solid rgba(0, 0, 0, 0.08);
+                cursor: pointer;
+            `;
+            
+            notification.innerHTML = `
+                <div style="font-size: 28px;">📧</div>
+                <div style="flex: 1;">
+                    <div style="font-size: 14px; font-weight: 600; color: #1d1d1f; margin-bottom: 4px;">新邮件提醒</div>
+                    <div style="font-size: 13px; color: #6e6e73;">您收到一封神秘线索邮件</div>
+                </div>
+                <button onclick="this.parentElement.remove()" style="background: transparent; border: none; font-size: 20px; color: #86868b; cursor: pointer; padding: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">×</button>
+            `;
+            
+            // 点击通知打开邮箱
+            notification.onclick = (e) => {
+                if (!e.target.tagName || e.target.tagName !== 'BUTTON') {
+                    openEmailWindow();
+                    notification.remove();
+                }
+            };
+            
+            document.body.appendChild(notification);
+            
+            // 5秒后自动关闭
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.style.animation = 'slideOutRight 0.4s ease-in forwards';
+                    setTimeout(() => {
+                        if (notification.parentElement) {
+                            notification.remove();
+                        }
+                    }, 400);
+                }
+            }, 5000);
+        }
+        
+        // 显示regret回复邮件的弹窗通知
+        function showRegretEmailNotification() {
+            const notification = document.createElement('div');
+            notification.id = 'regretEmailNotification';
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 100px;
+                right: 30px;
+                background: rgba(255, 255, 255, 0.95);
+                backdrop-filter: blur(20px);
+                -webkit-backdrop-filter: blur(20px);
+                border-radius: 12px;
+                padding: 15px 20px;
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                min-width: 280px;
+                max-width: 350px;
+                z-index: 9999;
+                animation: slideInRight 0.5s ease-out;
+                border: 1px solid rgba(0, 0, 0, 0.08);
+                cursor: pointer;
+            `;
+            
+            notification.innerHTML = `
+                <div style="font-size: 28px;">📧</div>
+                <div style="flex: 1;">
+                    <div style="font-size: 14px; font-weight: 600; color: #1d1d1f; margin-bottom: 4px;">新邮件提醒</div>
+                    <div style="font-size: 13px; color: #6e6e73;">您收到一封来自regret_0928的回复</div>
+                </div>
+                <button onclick="this.parentElement.remove()" style="background: transparent; border: none; font-size: 20px; color: #86868b; cursor: pointer; padding: 0; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; border-radius: 50%;">×</button>
+            `;
+            
+            // 点击通知打开邮箱
+            notification.onclick = (e) => {
+                if (!e.target.tagName || e.target.tagName !== 'BUTTON') {
+                    openEmailWindow();
+                    notification.remove();
+                }
+            };
+            
+            document.body.appendChild(notification);
+            
+            // 5秒后自动关闭
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.style.animation = 'slideOutRight 0.4s ease-in forwards';
+                    setTimeout(() => {
+                        if (notification.parentElement) {
+                            notification.remove();
+                        }
+                    }, 400);
+                }
+            }, 5000);
         }
         
         // 将函数暴露到全局作用域
         window.triggerMysteryEmail = triggerMysteryEmail;
+        window.addMysteryReplyCondition = addMysteryReplyCondition;
+        window.checkMysteryReplyConditions = checkMysteryReplyConditions;
         
         // ==================== 清空缓存功能 ====================
         
         // 清空所有标记和状态信息
         function clearAllCache() {
-            // 清除触发的邮件ID列表
+            // 清除触发的邮件ID列表(包括海伯利安邮件ID=1和神秘线索邮件ID=101)
             localStorage.removeItem('triggeredEmailIds');
-            
+                    
             // 清除当前用户登录状态
             localStorage.removeItem('currentUser');
-            
-            // 清除其他可能的标记（根据实际需求添加）
+                    
+            // 清除邮件相关标记
             localStorage.removeItem('canReplyMystery');
             localStorage.removeItem('hasRepliedMystery');
-            
-            // 清除已发送邮件和收件箱数据
             localStorage.removeItem('savedEmailData');
+            localStorage.removeItem('mysteryReplyConditions');
             
+            // 清除UI状态标记
+            localStorage.removeItem('hasOpenedEmail');
+            localStorage.removeItem('forumUser');
+                    
+            // 清除OA打卡记录
+            localStorage.removeItem('attendanceRecords');
+            
+            // 清除搜索历史
+            localStorage.removeItem('searchHistory');
+                    
             console.log('所有缓存已清空');
         }
         
@@ -1548,6 +2009,7 @@
         window.clearAllCache = clearAllCache;
         
         // 在特殊用户的发件箱中添加神秘线索邮件
+        // 添加神秘线索邮件到特殊用户发件箱(双向同步)
         function addMysteryEmailToSpecialUserSent() {
             // 获取特殊用户的邮件数据
             const specialUserData = userEmailData['special'];
@@ -1559,23 +2021,8 @@
                 return;
             }
             
-            // 添加到发件箱
-            const sentEmail = {
-                id: 101,
-                from: 'regret_0928@privatemail.com',
-                to: '[主角邮箱]',
-                subject: '神秘线索',
-                date: '2030-07-10 03:33',
-                preview: '我知道你在调查什么，但有些事情你还不清楚...',
-                hasAttachment: false,
-                content: `
-                    <p>我知道你在调查什么，但有些事情你还不清楚。</p>
-                    <p>海伯利安大厦的秘密比你想象的更深。</p>
-                    <p>小心行事。</p>
-                `,
-                canReply: false
-            };
-            
+            // 深拷贝模板,避免引用污染
+            const sentEmail = JSON.parse(JSON.stringify(MYSTERY_EMAIL_TEMPLATE));
             specialUserData.sent.unshift(sentEmail);
             
             console.log('神秘线索邮件已添加到特殊用户发件箱');
@@ -1586,10 +2033,68 @@
         setInterval(updateOATime, 1000);
         updateOATime();
 
+        // ==================== 工具函数 ====================
+        
+        // 神秘线索邮件回复条件管理
+        function addMysteryReplyCondition(conditionName) {
+            const conditions = JSON.parse(localStorage.getItem('mysteryReplyConditions') || '[]');
+            if (!conditions.includes(conditionName)) {
+                conditions.push(conditionName);
+                localStorage.setItem('mysteryReplyConditions', JSON.stringify(conditions));
+            }
+        }
+        
+        function checkMysteryReplyConditions() {
+            const conditions = JSON.parse(localStorage.getItem('mysteryReplyConditions') || '[]');
+            return conditions.length >= 2;
+        }
+        
+        // 显示灰色浮框提示
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.textContent = message;
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 100px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(0, 0, 0, 0.7);
+                color: white;
+                padding: 12px 24px;
+                border-radius: 6px;
+                font-size: 14px;
+                z-index: 99999;
+                pointer-events: none;
+                animation: fadeInOut 2s ease-in-out;
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // 2秒后自动消失
+            setTimeout(() => {
+                toast.remove();
+            }, 2000);
+        }
+        
+        // 添加淡入淡出动画样式
+        if (!document.getElementById('toast-style')) {
+            const style = document.createElement('style');
+            style.id = 'toast-style';
+            style.textContent = `
+                @keyframes fadeInOut {
+                    0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+                    20% { opacity: 1; transform: translateX(-50%) translateY(0); }
+                    80% { opacity: 1; transform: translateX(-50%) translateY(0); }
+                    100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
         // ==================== 搜索引擎系统 ====================
         
         // Base64编码的搜索重定向配置
-        const encryptedSearchConfig = 'eyLmtbfkvK/liKnlrokiOnsicmVzdWx0cyI6W3sidXJsIjoiaHR0cHM6Ly9qaWFuZ2ppYW5nLWZvcnVtLmNvbS9oaXN0b3J5L2h5cGVyaW9uIiwidGl0bGUiOiLmtbfkvK/liKnlronlpKfljqYgLSDmsZ/msZ/orrrlnZvljoblj7Llv6vnhaciLCJkZXNjcmlwdGlvbiI6Iuafpeeci+a1t+S8r+WIqeWuieWkp+WOpueahOWOhuWPsuW4luWtkOWSjOiuqOiuuiJ9LHsidXJsIjoiaHR0cHM6Ly9qaWFuZ2ppYW5nLWZvcnVtLmNvbS90b3BpYy9oeXBlcmlvbi0yMDA4IiwidGl0bGUiOiIyMDA45bm05rW35Lyv5Yip5a6J5aSn5Y6m5pS56YCg5bel56iL6aG555uu6K6w5b2VIiwiZGVzY3JpcHRpb24iOiLor6bnu4borrDlvZXkuoYyMDA45bm05rW35Lyv5Yip5a6J5aSn5Y6m55qE5pS56YCg5bel56iL6L+H56iL5ZKM55u45YWz6LWE5paZIn0seyJ1cmwiOiJodHRwczovL2ppYW5namlhbmctZm9ydW0uY29tL25ld3MvaHlwZXJpb24tZXhwbG9zaW9uIiwidGl0bGUiOiLmtbfkvK/liKnlronlpKfljqblrprlkJHniIbnoLTlronlhajor4TkvLDmiqXlkYoiLCJkZXNjcmlwdGlvbiI6IuWFs+S6jua1t+S8r+WIqeWuieWkp+WOpuWumuWQkeeIhuegtOeahOe7k+aehOWuieWFqOivhOS8sOS4k+S4muaKgOacr+aWh+ahoyJ9XX0sIuiqiem8jumbhuWboiI6eyJyZXN1bHRzIjpbeyJ1cmwiOiJZdURpbmcuaHRtbCIsInRpdGxlIjoi6KqJ6byO6ZuG5ZuiIC0g5a6Y572RIiwiZGVzY3JpcHRpb24iOiLoqonpvI7ln47luILlj5HlsZXmjqfogqHpm4blm6It5a6Y572RIn1dfSwi6KqJ6byOIjp7InJlc3VsdHMiOlt7InVybCI6Ill1RGluZy5odG1sIiwidGl0bGUiOiLoqonpvI7pm4blm6IgLSDlrpjnvZEiLCJkZXNjcmlwdGlvbiI6Iuiqiem8juWfjuW4guWPkeWxleaOp+iCoembhuWboi3lrpjnvZEifV19fQ==';
+        const encryptedSearchConfig = 'eyLmsZ/ln47ng63nur8iOnsicmVzdWx0cyI6W3sidXJsIjoiRm9ydW0uaHRtbCIsInRpdGxlIjoi5rGf5Z+O54Ot57q/IiwiZGVzY3JpcHRpb24iOiLmsZ/lt57kurrnmoTnvZHkuIrlrrblm60ifV19LCLoqonpvI7pm4blm6IiOnsicmVzdWx0cyI6W3sidXJsIjoiWXVEaW5nLmh0bWwiLCJ0aXRsZSI6Iuiqiem8jumbhuWboiAtIOWumOe9kSIsImRlc2NyaXB0aW9uIjoi6KqJ6byO5Z+O5biC5Y+R5bGV5o6n6IKh6ZuG5ZuiLeWumOe9kSJ9XX19';
         
         // 解密函数（Base64解码 + UTF-8转换）
         function decryptSearchConfig() {
@@ -1827,42 +2332,42 @@
                 id: 'boss',
                 name: '老板',
                 avatar: '老',
-                preview: '海伯利安大厦的项目进度怎么样了？',
+                preview: '嗯，注意时间节点。',
                 type: 'chat'
             },
             {
                 id: 'yangmin',
                 name: '杨敏',
                 avatar: '杨',
-                preview: '周末有空没？出来喝一杯，我请客！',
+                preview: '哎。',
                 type: 'chat'
             },
             {
                 id: 'workgroup',
                 name: '工作群',
                 avatar: '工',
-                preview: '张三: 你好，今天有空吗？',
+                preview: '我：......',
                 type: 'chat'
             },
             {
                 id: 'zhangsan',
                 name: '张三',
                 avatar: '张',
-                preview: '在吗？有个事情想请教你',
+                preview: '不渴。',
                 type: 'chat'
             },
             {
                 id: 'lisi',
                 name: '李四',
                 avatar: '李',
-                preview: '[图片]',
+                preview: '周末去爬山拍的',
                 type: 'chat'
             },
             {
                 id: 'family',
                 name: '家庭群',
                 avatar: '家',
-                preview: '妈妈: 周末回家吃饭吗？',
+                preview: '妈妈: 好吧，工作要紧，注意身体',
                 type: 'chat'
             }
         ];
@@ -1871,10 +2376,10 @@
         const momentsData = [
             {
                 id: 1,
-                user: '杨敏',
-                avatar: '杨',
+                user: '老板',
+                avatar: '老',
                 time: '2小时前',
-                content: '周末的咖啡时光 ☕️',
+                content: '咖啡时光 ☕️',
                 images: ['coffee.jpg'],
                 likes: ['张三', '李四'],
                 comments: [
@@ -1888,7 +2393,7 @@
                 time: '昨天',
                 content: '爬山看到的风景，空气真好 🏔️',
                 images: ['mountain.jpg'],
-                likes: ['杨敏'],
+                likes: ['张三', '李四'],
                 comments: []
             },
             {
@@ -1900,8 +2405,30 @@
                 images: [],
                 likes: [],
                 comments: [
-                    { user: '杨敏', text: '注意休息啊' },
-                    { user: 'me', text: '辛苦了' }
+                ]
+            },
+            {
+                id: 4,
+                user: '杨敏',
+                avatar: '杨',
+                time: '5天前',
+                content: '列表里有没有江州工作的？如果你们认识照片里这个人，请你们告诉我他在哪！',
+                images: ['杨伟江.jpg'],
+                likes: [],
+                comments: [
+                    {user:'me', 'text':'我在江州工作！有消息会帮你留意的。'},
+                    {user:'杨敏', 'text':'谢谢！'}
+                ]
+            },
+            {
+                id: 4,
+                user: '杨敏',
+                avatar: '杨',
+                time: '7天前',
+                content: '大老远跑来江州，连个面都不让见。发邮件说“工程保密”、“别再发邮件了”。爸，你到底在躲什么？我是你亲闺女，不是来要债的……[心碎][流泪]',
+                images: ['邮件截图.jpg'],
+                likes: [],
+                comments: [
                 ]
             }
         ];
@@ -1914,25 +2441,22 @@
                     messages: [
                         { from: 'boss', text: '海伯利安大厦的爆破安全评估项目，你负责跟进一下。', time: '10:15' },
                         { from: 'me', text: '好的，收到。', time: '10:16' },
-                        { from: 'boss', text: '这个项目比较紧急，苏总那边催得紧。你先和李婷对接，把合同和图纸资料拿到手。', time: '10:17' },
+                        { from: 'boss', text: '这个项目比较紧急。你先和李婷对接，把合同和图纸资料拿到手。', time: '10:17' },
                         { from: 'me', text: '明白，我这就联系她。', time: '10:18' },
-                        { from: 'boss', text: '嗯，注意时间节点，今天18:00前要确认回复。', time: '10:19' }
+                        { from: 'boss', text: '嗯，注意时间节点。', time: '10:19' }
                     ]
                 }
             ],
             'yangmin': [
                 {
-                    time: '2030-07-05 15:30',
+                    time: '三天前',
                     messages: [
-                        { from: 'yangmin', text: '[图片]', time: '15:30', isImage: true, imagePlaceholder: 'hair_selfie.jpg' },
-                        { from: 'yangmin', text: '看看我新做的头发！Tony老师这次没翻车吧？', time: '15:31' },
-                        { from: 'me', text: '哟，不错啊，看着像换了个人，挺有气质的。', time: '15:35' },
-                        { from: 'me', text: '在哪呢？环境看着挺好。', time: '15:35' },
-                        { from: 'yangmin', text: '哈哈，好看就行！在滨江那边新开的咖啡店。周末有空没？出来喝一杯，我请客！', time: '15:36' },
-                        { from: 'me', text: '周末得加班[流泪]。', time: '15:40' },
-                        { from: 'yangmin', text: '惨。刚毕业就成了无情的画图机器。', time: '15:41' },
-                        { from: 'yangmin', text: '算了，不打扰你赚钱，改天再约。', time: '15:42' },
-                        { from: 'me', text: '[叹气] 打工人哪有不疯的。祝你周末愉快。', time: '15:43' }
+                        { from: 'me', text: '刚看你朋友圈了。别太难过，叔叔可能真的有苦衷，慢慢来。', time: '15:30' },
+                        { from: 'yangmin', text: '哎，不提他了，心累。[叹气]', time: '15:31' },
+                        { from: 'me', text: '行，那咱先不想了。你刚工作事情也多，别把自己逼太紧。', time: '15:35' },
+                        { from: 'yangmin', text: '嗯。真是整宿整宿都在想。', time: '15:36' },
+                        { from: 'yangmin', text: '想不通。', time: '15:41' },
+                        { from: 'me', text: '哎。', time: '15:43' }
                     ]
                 }
             ],
@@ -1940,19 +2464,21 @@
                 {
                     time: '昨天 14:30',
                     messages: [
-                        { from: 'zhangsan', text: '你好，今天有空吗？', time: '14:30' },
+                        { from: 'zhangsan', text: '你好，今天有空吗？@禾佳', time: '14:30' },
                         { from: 'me', text: '有的，什么事？', time: '14:32' },
-                        { from: 'zhangsan', text: '关于海伯利安大厦的项目，有些技术细节想和你讨论一下', time: '14:33' }
+                        { from: 'zhangsan', text: '有个项目的内容我感觉涉及到你领域了，钉钉转发你了。', time: '14:33' },
+                        { from: 'me', text: '......', time: '14:32' },
                     ]
                 }
             ],
             'zhangsan': [
                 {
-                    time: '2030-07-09 09:20',
+                    time: '昨天 16:35',
                     messages: [
-                        { from: 'zhangsan', text: '在吗？有个事情想请教你', time: '09:20' },
-                        { from: 'me', text: '你说', time: '09:25' },
-                        { from: 'zhangsan', text: '那个结构计算软件你用哪个版本比较好？', time: '09:26' }
+                        { from: 'zhangsan', text: '姐，感谢感谢！', time: '16:30' },
+                        { from: 'me', text: '不会还有什么事要我帮忙把？', time: '16:32' },
+                        { from: 'zhangsan', text: '没有没有，想请姐喝奶茶！', time: '16:33' },
+                        { from: 'me', text: '不渴。', time: '16:35' }
                     ]
                 }
             ],
@@ -2122,13 +2648,13 @@
                 if (moment.comments && moment.comments.length > 0) {
                     commentsHtml = '<div style="margin-top: 5px; padding: 8px; background: #2e2e2e; border-radius: 5px; font-size: 13px;">';
                     moment.comments.forEach(comment => {
-                        commentsHtml += `<div><span style="color: #576b95;">${comment.user}:</span> ${comment.text}</div>`;
+                        commentsHtml += `<div><span style="color: #576b95;">${comment.user}:</span> <span style="color: #FFFFFF;">${comment.text}</span></div>`;
                     });
                     commentsHtml += '</div>';
                 }
                 
                 html += `
-                    <div style="padding: 15px; border-bottom: 1px solid #3a3a3a;">
+                    <div style="padding: 15px; border-bottom: 1px solid #C1C1BF;">
                         <div style="display: flex; gap: 10px;">
                             <div class="wechat-avatar" style="width: 40px; height: 40px; font-size: 16px;">${moment.avatar}</div>
                             <div style="flex: 1;">

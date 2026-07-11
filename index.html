@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Absolute Elevation - 入口</title>
+    <title>Absolute Elevation</title>
     <style>
         * {
             margin: 0;
@@ -12,239 +12,420 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Courier New', 'Consolas', monospace;
             background: #000000;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             overflow: hidden;
+            position: relative;
+        }
+
+        /* CRT噪点效果 */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                repeating-linear-gradient(
+                    0deg,
+                    rgba(0, 255, 0, 0.03) 0px,
+                    rgba(0, 255, 0, 0.03) 1px,
+                    transparent 1px,
+                    transparent 2px
+                );
+            pointer-events: none;
+            z-index: 10;
+            animation: scanlines 8s linear infinite;
+        }
+
+        /* CAD网格背景 */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(100, 100, 100, 0.08) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(100, 100, 100, 0.08) 1px, transparent 1px);
+            background-size: 50px 50px;
+            pointer-events: none;
+            z-index: 5;
+        }
+
+        @keyframes scanlines {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(10px); }
         }
 
         .container {
             text-align: center;
-            padding: 60px 80px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
+            position: relative;
+            z-index: 20;
+            max-width: 900px;
+            padding: 40px;
         }
 
-        h1 {
-            font-size: 48px;
-            color: #333;
-            margin-bottom: 20px;
-            font-weight: 700;
+        /* 打字机文本区域 */
+        .typewriter-text {
+            color: #6b7280;
+            font-size: 16px;
+            line-height: 1.8;
+            letter-spacing: 1px;
+            white-space: pre-wrap;
+            opacity: 1;
+            transition: opacity 2s ease-out, transform 2s ease-out;
         }
 
-        .subtitle {
-            font-size: 18px;
-            color: #666;
-            margin-bottom: 50px;
+        .typewriter-text.fade-out {
+            opacity: 0;
+            transform: translateY(-30px);
         }
 
-        .button-group {
+        .line {
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        /* 光标闪烁效果 */
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 18px;
+            background-color: #6b7280;
+            animation: blink 0.8s step-end infinite;
+            vertical-align: middle;
+            margin-left: 2px;
+        }
+
+        @keyframes blink {
+            0%, 50% { opacity: 1; }
+            51%, 100% { opacity: 0; }
+        }
+
+        /* 按钮容器 */
+        .button-container {
+            display: none;
+            opacity: 0;
+            transition: opacity 1.5s ease-in;
+            margin-top: 60px;
+        }
+
+        .button-container.show {
             display: flex;
-            gap: 20px;
+            gap: 30px;
             justify-content: center;
+            opacity: 1;
         }
 
+        /* 极简线框按钮 */
         .btn {
-            padding: 18px 40px;
-            font-size: 18px;
-            font-weight: 600;
-            border: none;
-            border-radius: 12px;
+            padding: 16px 40px;
+            font-size: 15px;
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-weight: normal;
+            background: transparent;
+            border: 1px solid #4a5568;
+            color: #9ca3af;
             cursor: pointer;
             transition: all 0.3s ease;
             text-decoration: none;
-            display: inline-block;
-            min-width: 180px;
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
         }
 
+        /* 主按钮 - Glitch效果 + 冷蓝光晕 */
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            border-color: #60a5fa;
+            color: #60a5fa;
         }
 
         .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.6);
+            border-color: #3b82f6;
+            color: #3b82f6;
+            box-shadow: 
+                0 0 10px rgba(59, 130, 246, 0.5),
+                0 0 20px rgba(59, 130, 246, 0.3),
+                0 0 30px rgba(59, 130, 246, 0.2);
+            animation: glitch 0.3s cubic-bezier(.25, .46, .45, .94) both infinite;
         }
 
+        @keyframes glitch {
+            0% {
+                transform: translate(0);
+            }
+            20% {
+                transform: translate(-2px, 2px);
+            }
+            40% {
+                transform: translate(-2px, -2px);
+            }
+            60% {
+                transform: translate(2px, 2px);
+            }
+            80% {
+                transform: translate(2px, -2px);
+            }
+            100% {
+                transform: translate(0);
+            }
+        }
+
+        /* 次按钮 - 暗红色 */
         .btn-secondary {
-            background: #f5f5f5;
-            color: #333;
-            border: 2px solid #ddd;
+            border-color: #7f1d1d;
+            color: #991b1b;
         }
 
         .btn-secondary:hover {
-            background: #e8e8e8;
-            border-color: #ccc;
-            transform: translateY(-3px);
+            border-color: #dc2626;
+            color: #dc2626;
+            background: rgba(220, 38, 38, 0.05);
+            box-shadow: 0 0 15px rgba(220, 38, 38, 0.3);
         }
 
-        .btn-danger {
-            background: #ff3b30;
-            color: white;
-            box-shadow: 0 4px 15px rgba(255, 59, 48, 0.4);
+        /* 隐藏元素 */
+        .hidden {
+            display: none !important;
         }
 
-        .btn-danger:hover {
-            background: #d63031;
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(255, 59, 48, 0.6);
-        }
-
-        .footer {
-            margin-top: 40px;
-            font-size: 14px;
-            color: #999;
-        }
-
-        /* 确认对话框 */
-        .modal {
+        /* 确认弹窗 */
+        .modal-overlay {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 100;
             justify-content: center;
             align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        .modal.show {
+        .modal-overlay.show {
             display: flex;
+            opacity: 1;
         }
 
-        .modal-content {
-            background: white;
-            padding: 40px;
-            border-radius: 15px;
-            max-width: 400px;
+        .modal-box {
+            background: #0a0a0a;
+            border: 1px solid #4a5568;
+            padding: 40px 50px;
+            max-width: 450px;
             text-align: center;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            box-shadow: 
+                0 0 20px rgba(0, 0, 0, 0.8),
+                0 0 40px rgba(0, 0, 0, 0.4);
         }
 
         .modal-title {
-            font-size: 24px;
-            color: #333;
-            margin-bottom: 15px;
+            color: #9ca3af;
+            font-size: 16px;
+            letter-spacing: 2px;
+            margin-bottom: 20px;
+            font-family: 'Courier New', 'Consolas', monospace;
         }
 
         .modal-text {
-            font-size: 16px;
-            color: #666;
-            margin-bottom: 30px;
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.8;
+            margin-bottom: 35px;
+            font-family: 'Courier New', 'Consolas', monospace;
         }
 
         .modal-buttons {
             display: flex;
-            gap: 15px;
+            gap: 20px;
             justify-content: center;
         }
 
         .modal-btn {
             padding: 12px 30px;
-            font-size: 16px;
-            border: none;
-            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Courier New', 'Consolas', monospace;
+            background: transparent;
+            border: 1px solid #4a5568;
+            color: #9ca3af;
             cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .modal-btn-cancel {
-            background: #f5f5f5;
-            color: #333;
+            transition: all 0.3s ease;
+            letter-spacing: 2px;
         }
 
         .modal-btn-cancel:hover {
-            background: #e8e8e8;
+            border-color: #dc2626;
+            color: #dc2626;
+            background: rgba(220, 38, 38, 0.05);
         }
 
         .modal-btn-confirm {
-            background: #ff3b30;
-            color: white;
+            border-color: #60a5fa;
+            color: #60a5fa;
         }
 
         .modal-btn-confirm:hover {
-            background: #d63031;
+            border-color: #3b82f6;
+            color: #3b82f6;
+            box-shadow: 
+                0 0 10px rgba(59, 130, 246, 0.5),
+                0 0 20px rgba(59, 130, 246, 0.3);
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Absolute Elevation</h1>
-        <p class="subtitle">沉浸式桌面模拟体验</p>
+        <!-- 打字机文本 -->
+        <div id="typewriter" class="typewriter-text"></div>
         
-        <div class="button-group">
-            <a href="pages/Desktop.html" class="btn btn-primary">🎮 开始游戏</a>
-            <button onclick="showClearCacheModal()" class="btn btn-danger">🗑️ 清除缓存</button>
-        </div>
-
-        <div class="footer">
-            <p>© 2026 Absolute Elevation Project</p>
+        <!-- 按钮组 -->
+        <div id="buttons" class="button-container">
+            <a href="pages/Desktop.html" class="btn btn-primary">[ 开始评估 ]</a>
+            <button onclick="showResetConfirm()" class="btn btn-secondary">[ 重置系统 ]</button>
         </div>
     </div>
 
-    <!-- 确认对话框 -->
-    <div id="clearCacheModal" class="modal">
-        <div class="modal-content">
-            <h2 class="modal-title">⚠️ 确认清除缓存</h2>
-            <p class="modal-text">
-                这将清除所有本地存储的游戏数据。<br><br>
-                <strong>此操作不可恢复！</strong>
-            </p>
+    <!-- 确认弹窗 -->
+    <div id="resetModal" class="modal-overlay">
+        <div class="modal-box">
+            <div class="modal-title">⚠ 确认重置系统</div>
+            <div class="modal-text">
+                此操作将清除所有本地存储数据。<br><br>
+                包括：邮件状态、打卡记录、用户登录信息<br>
+                该操作不可恢复。
+            </div>
             <div class="modal-buttons">
-                <button onclick="hideClearCacheModal()" class="modal-btn modal-btn-cancel">取消</button>
-                <button onclick="clearAllCache()" class="modal-btn modal-btn-confirm">确认清除</button>
+                <button onclick="hideResetConfirm()" class="modal-btn modal-btn-cancel">取消</button>
+                <button onclick="executeReset()" class="modal-btn modal-btn-confirm">确认重置</button>
             </div>
         </div>
     </div>
 
     <script>
-        // 显示清除缓存确认对话框
-        function showClearCacheModal() {
-            document.getElementById('clearCacheModal').classList.add('show');
+        // 打字机效果配置
+        const lines = [
+            "结构安全评估协议 v2.30 | 机密等级：A",
+            "警告：所有操作将被记录并追溯"
+        ];
+        
+        const typingSpeed = 50; // 每个字符的打字速度（毫秒）
+        const lineDelay = 800; // 行与行之间的延迟
+        const fadeOutDelay = 2000; // 文本显示完毕后淡出的延迟
+        
+        let currentLineIndex = 0;
+        let currentCharIndex = 0;
+        
+        function typeWriter() {
+            const typewriterEl = document.getElementById('typewriter');
+            
+            if (currentLineIndex < lines.length) {
+                const currentLine = lines[currentLineIndex];
+                
+                if (currentCharIndex === 0) {
+                    // 创建新的行元素
+                    const lineEl = document.createElement('span');
+                    lineEl.className = 'line';
+                    lineEl.id = `line-${currentLineIndex}`;
+                    typewriterEl.appendChild(lineEl);
+                }
+                
+                const lineEl = document.getElementById(`line-${currentLineIndex}`);
+                
+                if (currentCharIndex < currentLine.length) {
+                    // 逐字添加
+                    lineEl.textContent = currentLine.substring(0, currentCharIndex + 1);
+                    currentCharIndex++;
+                    
+                    // 添加光标
+                    const existingCursor = typewriterEl.querySelector('.cursor');
+                    if (existingCursor) {
+                        existingCursor.remove();
+                    }
+                    const cursor = document.createElement('span');
+                    cursor.className = 'cursor';
+                    lineEl.appendChild(cursor);
+                    
+                    setTimeout(typeWriter, typingSpeed);
+                } else {
+                    // 当前行完成，移除光标
+                    const existingCursor = typewriterEl.querySelector('.cursor');
+                    if (existingCursor) {
+                        existingCursor.remove();
+                    }
+                    
+                    currentLineIndex++;
+                    currentCharIndex = 0;
+                    
+                    if (currentLineIndex < lines.length) {
+                        setTimeout(typeWriter, lineDelay);
+                    } else {
+                        // 所有文本完成，准备淡出
+                        setTimeout(fadeOutText, fadeOutDelay);
+                    }
+                }
+            }
         }
-
-        // 隐藏清除缓存确认对话框
-        function hideClearCacheModal() {
-            document.getElementById('clearCacheModal').classList.remove('show');
+        
+        function fadeOutText() {
+            const typewriterEl = document.getElementById('typewriter');
+            typewriterEl.classList.add('fade-out');
+            
+            // 淡出完成后显示按钮
+            setTimeout(() => {
+                typewriterEl.classList.add('hidden');
+                showButtons();
+            }, 2000);
         }
-
-        // 清除所有缓存
-        function clearAllCache() {
+        
+        function showButtons() {
+            const buttonsEl = document.getElementById('buttons');
+            buttonsEl.classList.add('show');
+        }
+        
+        // 显示重置确认弹窗
+        function showResetConfirm() {
+            const modal = document.getElementById('resetModal');
+            modal.classList.add('show');
+        }
+        
+        // 隐藏重置确认弹窗
+        function hideResetConfirm() {
+            const modal = document.getElementById('resetModal');
+            modal.classList.remove('show');
+        }
+        
+        // 执行重置操作
+        function executeReset() {
             try {
-                // 清除localStorage中的所有相关数据
-                localStorage.removeItem('triggeredEmailIds');
-                localStorage.removeItem('currentUser');
-                localStorage.removeItem('canReplyMystery');
-                localStorage.removeItem('hasRepliedMystery');
-                localStorage.removeItem('savedEmailData');
+                localStorage.clear();
+                console.log('✅ 系统已重置');
                 
-                console.log('✅ 所有缓存已清空');
+                // 关闭弹窗
+                hideResetConfirm();
                 
-                // 显示成功提示
-                alert('缓存已成功清除！\n\n所有游戏数据已被重置。');
-                
-                // 关闭对话框
-                hideClearCacheModal();
+                // 不刷新页面,仅清空缓存
             } catch (error) {
-                console.error('❌ 清除缓存失败:', error);
-                alert('清除缓存时出错，请重试。');
+                console.error('❌ 重置失败:', error);
             }
         }
-
-        // 点击模态框外部关闭
-        document.getElementById('clearCacheModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                hideClearCacheModal();
-            }
+        
+        // 清除所有缓存（保留以便其他地方调用）
+        function clearAllCache() {
+            showResetConfirm();
+        }
+        
+        // 页面加载时启动打字机效果
+        window.addEventListener('load', () => {
+            setTimeout(typeWriter, 500);
         });
     </script>
 </body>

@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="../css/Desktop.css">
 </head>
 <body>
+    <!-- 开屏黑屏遮罩 -->
+    <div id="bootScreen" class="boot-screen"></div>
 
     <div class="menu-bar">
         <div class="menu-left">
@@ -46,19 +48,37 @@
         </div>
         <div class="window-content">
             <div class="ai-content">
+                <!-- 左侧文件拖拽区 -->
                 <div class="ai-left-panel">
-                    <h3 style="margin-bottom: 15px; color: #333;">文件上传区</h3>
                     <div class="drop-zone" id="dropZone">
-                        <div class="drop-icon">📁</div>
-                        <div class="drop-text">将DWG文件拖放到此处<br>或点击选择文件</div>
+                        <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                            <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+                            <polyline points="13 2 13 9 20 9"></polyline>
+                        </svg>
+                        <div class="drop-text">拖拽 .dwg 文件至此处</div>
                     </div>
                     <input type="file" id="fileInput" accept=".dwg" style="display: none;">
                     <div class="file-list" id="fileList"></div>
                 </div>
+                
+                <!-- 右侧分析终端区 -->
                 <div class="ai-right-panel" id="analysisPanel">
-                    <div style="text-align: center; color: #999; margin-top: 100px;">
-                        <div style="font-size: 64px; margin-bottom: 20px;">🔬</div>
-                        <p>请从左侧拖入DWG图纸文件开始分析</p>
+                    <div class="terminal-header">
+                        <div class="terminal-title">结构有限元分析引擎 v4.1</div>
+                    </div>
+                    <div class="terminal-body" id="terminalBody">
+                        <div class="terminal-placeholder">
+                            <div class="placeholder-text">等待文件输入...</div>
+                        </div>
+                    </div>
+                    
+                    <!-- 警告弹窗 -->
+                    <div class="warning-popup" id="warningPopup" style="display: none;">
+                        <div class="warning-border"></div>
+                        <div class="warning-content">
+                            <div class="warning-title">⚠ 结构异常警告</div>
+                            <div class="warning-text" id="warningText"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -86,7 +106,7 @@
                 </div>
                 
                 <div style="flex: 1; width: 100%; background: rgba(255,255,255,0.95); border-radius: 10px; padding: 20px; overflow-y: auto;">
-                    <h3 style="margin-bottom: 15px; color: #333; font-size: 16px;">📋 今日打卡记录</h3>
+                    <h3 style="margin-bottom: 15px; color: #333; font-size: 16px;">今日打卡记录</h3>
                     <div id="attendanceRecords" style="font-size: 14px; color: #666; line-height: 2;">
                         <!-- 打卡记录将在这里显示 -->
                     </div>
@@ -120,7 +140,7 @@
                              onclick="toggleUserMenu()">
                             <div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; justify-content: center; align-items: center; color: white; font-weight: bold; font-size: 14px;">👤</div>
                             <div style="flex: 1;">
-                                <div id="currentUserName" style="font-size: 13px; font-weight: 500; color: #333;">主角</div>
+                                <div id="currentUserName" style="font-size: 13px; font-weight: 500; color: #333;">禾佳</div>
                                 <div style="font-size: 11px; color: #999;">在线</div>
                             </div>
                             <div style="color: #999; font-size: 12px;">⚙️</div>
@@ -310,6 +330,16 @@
             </div>
             <button onclick="closeWarning()" style="margin-top: 20px; padding: 10px 30px; background: #0066cc; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px;">确定</button>
         </div>
+    </div>
+
+    <!-- 新邮件通知弹窗 -->
+    <div id="emailNotification" class="email-notification" style="display: none;">
+        <div class="notification-icon">📧</div>
+        <div class="notification-content">
+            <div class="notification-title">新邮件提醒</div>
+            <div class="notification-text">您收到一封新邮件</div>
+        </div>
+        <button class="notification-close" onclick="closeEmailNotification()">×</button>
     </div>
 
     <script src="../js/Desktop.js"></script>

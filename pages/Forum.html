@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>江城热线论坛 - 江州人的网上家园</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "SimSun", "宋体", "Microsoft YaHei", sans-serif;
+            font-size: 12px;
+            color: #333;
+            background: #f5f5f5;
+            line-height: 1.6;
+        }
+
+        /* ================= 顶部导航区 ================= */
+        .header {
+            background: linear-gradient(to bottom, #1E50A2, #4A86E8);
+            border-bottom: 2px solid #1a3d7a;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+        }
+
+        .header-top {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            letter-spacing: 2px;
+        }
+
+        .slogan {
+            font-size: 13px;
+            color: rgba(255,255,255,0.9);
+            font-style: italic;
+        }
+
+        .user-status {
+            text-align: right;
+            color: white;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* 搜索框 */
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .search-input {
+            padding: 4px 8px;
+            border: 1px solid rgba(255,255,255,0.3);
+            background: rgba(255,255,255,0.15);
+            color: white;
+            font-size: 12px;
+            width: 150px;
+            border-radius: 2px;
+        }
+
+        .search-input::placeholder {
+            color: rgba(255,255,255,0.6);
+        }
+
+        .search-btn {
+            padding: 4px 12px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: all 0.2s;
+        }
+
+        .search-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* 登录弹窗 */
+        .login-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .login-modal.show {
+            display: flex;
+        }
+
+        .login-box {
+            background: white;
+            border-radius: 8px;
+            padding: 40px;
+            min-width: 320px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .login-title {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        .wechat-login-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 30px;
+            background: #07c160;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: "Microsoft YaHei", sans-serif;
+        }
+
+        .wechat-login-btn:hover {
+            background: #06ad56;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(7, 193, 96, 0.3);
+        }
+
+        .wechat-icon {
+            width: 24px;
+            height: 24px;
+        }
+
+        .loading-spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .login-success {
+            display: none;
+            color: #07c160;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        .user-status a {
+            color: white;
+            text-decoration: none;
+            margin: 0 5px;
+        }
+
+        .user-status a:hover {
+            text-decoration: underline;
+        }
+
+        .user-links {
+            margin-top: 5px;
+            font-size: 11px;
+        }
+
+        .user-links a {
+            color: rgba(255,255,255,0.8);
+            margin: 0 8px;
+        }
+
+        /* 导航菜单 */
+        .nav-menu {
+            background: rgba(0,0,0,0.1);
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .nav-menu-inner {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 8px 20px;
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 3px 8px;
+            transition: all 0.2s;
+        }
+
+        .nav-menu a:hover {
+            color: #FFD700;
+            text-decoration: underline;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+        }
+
+        /* ================= 主体内容区 ================= */
+        .container {
+            max-width: 980px;
+            margin: 15px auto;
+            display: flex;
+            gap: 10px;
+        }
+
+        .main-content {
+            flex: 1;
+            background: white;
+            border: 1px solid #D0D0D0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* 面包屑导航 */
+        .breadcrumb {
+            padding: 10px 15px;
+            background: #f8f8f8;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .breadcrumb a {
+            color: #1E50A2;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            margin: 0 5px;
+            color: #999;
+        }
+
+        /* 帖子列表表格 */
+        .forum-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .forum-table thead {
+            background: linear-gradient(to bottom, #f0f4fa, #e0e8f5);
+            border-bottom: 2px solid #1E50A2;
+        }
+
+        .forum-table th {
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: bold;
+            color: #1E50A2;
+            font-size: 13px;
+            border-right: 1px solid #D0D0D0;
+        }
+
+        .forum-table th:last-child {
+            border-right: none;
+        }
+
+        .forum-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e8e8e8;
+            border-right: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+
+        .forum-table td:last-child {
+            border-right: none;
+        }
+
+        .forum-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .icon-col {
+            width: 40px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .title-col {
+            min-width: 300px;
+        }
+
+        .post-title {
+            color: #1E50A2;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .post-title:hover {
+            text-decoration: underline;
+            color: #ff6600;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 1px 5px;
+            font-size: 11px;
+            margin-right: 5px;
+            border-radius: 2px;
+            font-weight: normal;
+        }
+
+        .tag-top {
+            background: #ff4444;
+            color: white;
+        }
+
+        .tag-hot {
+            background: #ff9500;
+            color: white;
+        }
+
+        .tag-new {
+            background: #28c840;
+            color: white;
+        }
+
+        .author-col {
+            width: 100px;
+            color: #666;
+        }
+
+        .stats-col {
+            width: 80px;
+            text-align: center;
+            color: #666;
+        }
+
+        .time-col {
+            width: 150px;
+            color: #999;
+            font-size: 11px;
+        }
+
+        /* ================= 右侧边栏 ================= */
+        .sidebar {
+            width: 220px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-box {
+            background: white;
+            border: 1px solid #D0D0D0;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+        }
+
+        .sidebar-title {
+            background: linear-gradient(to bottom, #4A86E8, #1E50A2);
+            color: white;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: bold;
+            border-bottom: 1px solid #1a3d7a;
+        }
+
+        .sidebar-content {
+            padding: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px dotted #e0e0e0;
+            font-size: 12px;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .hot-topic {
+            padding: 6px 0;
+            border-bottom: 1px dotted #e8e8e8;
+        }
+
+        .hot-topic:last-child {
+            border-bottom: none;
+        }
+
+        .hot-topic a {
+            color: #cc0000;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .hot-topic a:hover {
+            text-decoration: underline;
+        }
+
+        .ad-box {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            background: #fafafa;
+        }
+
+        .ad-text {
+            font-size: 11px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        /* ================= 底部版权区 ================= */
+        .footer {
+            background: #f0f0f0;
+            border-top: 1px solid #d0d0d0;
+            padding: 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .footer-info {
+            font-size: 11px;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .footer-info a {
+            color: #666;
+            text-decoration: none;
+            margin: 0 8px;
+        }
+
+        .footer-info a:hover {
+            text-decoration: underline;
+            color: #1E50A2;
+        }
+
+        .server-status {
+            font-size: 10px;
+            color: #999;
+            margin-top: 8px;
+            font-family: "Courier New", monospace;
+        }
+
+        /* 分页 */
+        .pagination {
+            padding: 15px;
+            text-align: right;
+            border-top: 1px solid #e8e8e8;
+        }
+
+        .pagination a, .pagination span {
+            display: inline-block;
+            padding: 4px 10px;
+            margin: 0 3px;
+            border: 1px solid #d0d0d0;
+            color: #1E50A2;
+            text-decoration: none;
+            font-size: 12px;
+            background: white;
+        }
+
+        .pagination a:hover {
+            background: #f0f4fa;
+            border-color: #1E50A2;
+        }
+
+        .pagination .current {
+            background: #1E50A2;
+            color: white;
+            border-color: #1E50A2;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航区 -->
+    <div class="header">
+        <div class="header-top">
+            <div class="logo-area">
+                <div class="logo">🌊 江城热线</div>
+                <div class="slogan">江州人的网上家园</div>
+            </div>
+            <div class="user-status">
+                <!-- 搜索框 -->
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="搜索帖子...">
+                    <button class="search-btn">搜索</button>
+                </div>
+                
+                <!-- 用户状态 -->
+                <div id="userStatusArea">
+                    <div>欢迎您，游客 [<a href="#" onclick="showLoginModal(); return false;">登录</a>] [<a href="#">注册</a>]</div>
+                    <div class="user-links">
+                        <a href="#">帮助</a> | 
+                        <a href="#">设为首页</a> | 
+                        <a href="#">加入收藏</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="nav-menu">
+            <div class="nav-menu-inner">
+                <a href="#">首页</a>
+                <a href="#">论坛</a>
+                <a href="#">交友</a>
+                <a href="#">网络</a>
+                <a href="#">游戏</a>
+                <a href="#">商城</a>
+                <a href="#">空间</a>
+                <a href="#">群组</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主体内容区 -->
+    <div class="container">
+        <!-- 左侧主内容 -->
+        <div class="main-content">
+            <!-- 面包屑导航 -->
+            <div class="breadcrumb">
+                <a href="#">论坛首页</a> <span>&gt;</span> 
+                <a href="#">本地生活</a> <span>&gt;</span> 
+                <strong>江州都市话题</strong>
+            </div>
+
+            <!-- 帖子列表 -->
+            <table class="forum-table">
+                <thead>
+                    <tr>
+                        <th class="icon-col">图标</th>
+                        <th class="title-col">主题</th>
+                        <th class="author-col">作者</th>
+                        <th class="stats-col">回复/查看</th>
+                        <th class="time-col">最后回复</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="icon-col">📌</td>
+                        <td class="title-col">
+                            <span class="tag tag-top">置顶</span>
+                            <a href="#" class="post-title">【版规】江州都市话题发帖须知（必读）</a>
+                        </td>
+                        <td class="author-col">管理员</td>
+                        <td class="stats-col">128 / 5623</td>
+                        <td class="time-col">2008-9-15 14:30</td>
+                    </tr>
+                    <tr>
+                        <td class="icon-col">🔥</td>
+                        <td class="title-col">
+                            <span class="tag tag-hot">精华</span>
+                            <a href="#" class="post-title">【活动】618狂欢，江城购物街优惠券狂送！</a>
+                        </td>
+                        <td class="author-col">江州通</td>
+                        <td class="stats-col">342 / 12580</td>
+                        <td class="time-col">2030-7-11 09:15</td>
+                    </tr>
+                    <tr>
+                        <td class="icon-col">📁</td>
+                        <td class="title-col">
+                            <a href="#" class="post-title">今天的天气真不错，大家出来玩啊</a>
+                        </td>
+                        <td class="author-col">快乐小鸟</td>
+                        <td class="stats-col">23 / 456</td>
+                        <td class="time-col">2030-7-11 08:42</td>
+                    </tr>
+                    <tr>
+                        <td class="icon-col">📁</td>
+                        <td class="title-col">
+                            <span class="tag tag-new">新</span>
+                            <a href="#" class="post-title">有没有人知道誉鼎集团最近的项目？</a>
+                        </td>
+                        <td class="author-col">好奇宝宝</td>
+                        <td class="stats-col">5 / 89</td>
+                        <td class="time-col">2030-7-11 07:20</td>
+                    </tr>
+                    <tr>
+                        <td class="icon-col">📁</td>
+                        <td class="title-col">
+                            <a href="#" class="post-title">分享一个好吃的早餐店，在滨江路</a>
+                        </td>
+                        <td class="author-col">美食达人</td>
+                        <td class="stats-col">67 / 1234</td>
+                        <td class="time-col">2030-7-10 22:15</td>
+                    </tr>
+                    <tr>
+                        <td class="icon-col">📁</td>
+                        <td class="title-col">
+                            <a href="#" class="post-title">求助：如何考取结构工程师证书？</a>
+                        </td>
+                        <td class="author-col">追梦青年</td>
+                        <td class="stats-col">18 / 345</td>
+                        <td class="time-col">2030-7-10 19:30</td>
+                    </tr>
+                    <tr>
+                        <td class="icon-col">📁</td>
+                        <td class="title-col">
+                            <a href="#" class="post-title">周末去爬山，有人一起吗？</a>
+                        </td>
+                        <td class="author-col">户外爱好者</td>
+                        <td class="stats-col">34 / 567</td>
+                        <td class="time-col">2030-7-10 16:45</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- 分页 -->
+            <div class="pagination">
+                <span class="current">1</span>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#">4</a>
+                <a href="#">5</a>
+                <span>...</span>
+                <a href="#">下一页</a>
+            </div>
+        </div>
+
+        <!-- 右侧边栏 -->
+        <div class="sidebar">
+            <!-- 论坛统计 -->
+            <div class="sidebar-box">
+                <div class="sidebar-title">📊 论坛统计</div>
+                <div class="sidebar-content">
+                    <div class="stat-item">
+                        <span>今日发帖:</span>
+                        <strong style="color: #ff6600;">156</strong>
+                    </div>
+                    <div class="stat-item">
+                        <span>昨日发帖:</span>
+                        <strong>234</strong>
+                    </div>
+                    <div class="stat-item">
+                        <span>总帖数:</span>
+                        <strong>45,678</strong>
+                    </div>
+                    <div class="stat-item">
+                        <span>在线人数:</span>
+                        <strong style="color: #28c840;">1,234</strong>
+                    </div>
+                    <div class="stat-item">
+                        <span>最高在线:</span>
+                        <strong>3,456</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 热门话题 -->
+            <div class="sidebar-box">
+                <div class="sidebar-title">🔥 热门话题</div>
+                <div class="sidebar-content">
+                    <div class="hot-topic">
+                        <a href="#">寻找喜欢无限流小说的同好</a>
+                    </div>
+                    <div class="hot-topic">
+                        <a href="#">最新研判!台风登陆时间最新出炉！</a>
+                    </div>
+                    <div class="hot-topic">
+                        <a href="#">江州房价走势分析</a>
+                    </div>
+                    <div class="hot-topic">
+                        <a href="#">2030年最期待的十件事</a>
+                    </div>
+                    <div class="hot-topic">
+                        <a href="#">寻找老同学聚会</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 广告位 -->
+            <div class="sidebar-box">
+                <div class="sidebar-title">💼 赞助商链接</div>
+                <div class="sidebar-content">
+                    <div class="ad-box">
+                        <div style="font-size: 14px; color: #1E50A2; font-weight: bold;">
+                            🏢 誉鼎城市发展控股
+                        </div>
+                        <div class="ad-text">城市梦想，由此启航</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部版权区 -->
+    <div class="footer">
+        <div class="footer-info">
+            <div>
+                <a href="#">联系我们</a> | 
+                <a href="#">免责声明</a> | 
+                <a href="#">隐私政策</a> | 
+                <a href="#">广告服务</a>
+            </div>
+            <div style="margin-top: 10px;">
+                © 2008-2030 江城热线论坛 All Rights Reserved.
+            </div>
+            <div class="server-status">
+                Powered by Discuz! 7.2 | Processed in 0.035s, 2 queries, Gzip enabled
+            </div>
+        </div>
+    </div>
+
+    <!-- 登录弹窗 -->
+    <div id="loginModal" class="login-modal">
+        <div class="login-box">
+            <div class="login-title">论坛登录</div>
+            <button class="wechat-login-btn" onclick="wechatLogin()">
+                <svg class="wechat-icon" viewBox="0 0 24 24" fill="white">
+                    <path d="M8.5,13.5A1.5,1.5 0 1,1 10,15A1.5,1.5 0 0,1 8.5,13.5M14.5,13.5A1.5,1.5 0 1,1 16,15A1.5,1.5 0 0,1 14.5,13.5M12,2C6.5,2 2,6 2,10.5C2,12.5 3,14.5 4.5,16L3.5,19L7,17.5C8.5,18 10,18.5 12,18.5C17.5,18.5 22,14.5 22,10C22,5.5 17.5,2 12,2M12,4C16.5,4 20,7 20,10C20,13 16.5,16 12,16C10.5,16 9,15.5 7.5,15L6,15.5L6.5,14C5.5,13 5,11.5 5,10.5C5,7 8.5,4 12,4Z"/>
+                </svg>
+                <span id="loginBtnText">微信登录</span>
+                <div class="loading-spinner" id="loginSpinner"></div>
+            </button>
+            <div class="login-success" id="loginSuccess">✓ 登录成功！</div>
+        </div>
+    </div>
+
+    <script>
+        // 检查登录状态
+        window.addEventListener('load', () => {
+            const forumUser = localStorage.getItem('forumUser');
+            if (forumUser) {
+                updateUserInfo(forumUser);
+            }
+        });
+
+        // 显示登录弹窗
+        function showLoginModal() {
+            document.getElementById('loginModal').classList.add('show');
+        }
+
+        // 关闭登录弹窗
+        function closeLoginModal() {
+            document.getElementById('loginModal').classList.remove('show');
+            // 重置按钮状态
+            setTimeout(() => {
+                document.getElementById('loginBtnText').textContent = '微信登录';
+                document.getElementById('loginSpinner').style.display = 'none';
+                document.getElementById('loginSuccess').style.display = 'none';
+            }, 300);
+        }
+
+        // 点击弹窗外部关闭
+        document.getElementById('loginModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeLoginModal();
+            }
+        });
+
+        // 微信登录
+        function wechatLogin() {
+            const btnText = document.getElementById('loginBtnText');
+            const spinner = document.getElementById('loginSpinner');
+            const success = document.getElementById('loginSuccess');
+            
+            // 显示loading
+            btnText.textContent = '登录中...';
+            spinner.style.display = 'block';
+            
+            // 模拟登录过程
+            setTimeout(() => {
+                spinner.style.display = 'none';
+                btnText.textContent = '登录成功';
+                success.style.display = 'block';
+                
+                // 保存登录状态
+                localStorage.setItem('forumUser', '禾佳');
+                
+                // 更新用户信息
+                updateUserInfo('禾佳');
+                
+                // 1秒后关闭弹窗
+                setTimeout(() => {
+                    closeLoginModal();
+                }, 1000);
+            }, 1500);
+        }
+
+        // 更新用户信息显示
+        function updateUserInfo(username) {
+            const userStatusArea = document.getElementById('userStatusArea');
+            userStatusArea.innerHTML = `
+                <div style="color: #FFD700; font-weight: bold;">欢迎您，${username}</div>
+                <div class="user-links">
+                    <a href="#" onclick="logout(); return false;">退出</a> | 
+                    <a href="#">个人中心</a> | 
+                    <a href="#">消息</a>
+                </div>
+            `;
+        }
+
+        // 退出登录
+        function logout() {
+            localStorage.removeItem('forumUser');
+            location.reload();
+        }
+    </script>
+</body>
+</html>
