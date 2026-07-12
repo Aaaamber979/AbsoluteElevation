@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+    <link rel="stylesheet" href="../css/Forum.css">
+    <style>
+
+        .user-status a {
+            color: white;
+            text-decoration: none;
+            margin: 0 5px;
+        }
+
+        .user-status a:hover {
+            text-decoration: underline;
+        }
+
+        .nav-menu {
+            background: rgba(0,0,0,0.1);
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .nav-menu-inner {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 8px 20px;
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 3px 8px;
+            transition: all 0.2s;
+        }
+
+        .nav-menu a:hover {
+            color: #FFD700;
+            text-decoration: underline;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+        }
+
+        /* ================= 主体内容区 ================= */
+        .container {
+            max-width: 980px;
+            margin: 15px auto;
+        }
+
+        /* 面包屑导航 */
+        .breadcrumb {
+            padding: 10px 15px;
+            background: white;
+            border: 1px solid #D0D0D0;
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: #666;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+        }
+
+        .breadcrumb a {
+            color: #1E50A2;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            margin: 0 5px;
+            color: #999;
+        }
+
+        /* 帖子标题栏 */
+        .post-header {
+            background: white;
+            border: 1px solid #D0D0D0;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+        }
+
+        .post-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #1E50A2;
+            margin-bottom: 10px;
+        }
+
+        .post-meta {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .post-meta span {
+            margin-right: 15px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 1px 5px;
+            font-size: 11px;
+            margin-right: 5px;
+            border-radius: 2px;
+            font-weight: normal;
+        }
+
+        .tag-hot {
+            background: #ff9500;
+            color: white;
+        }
+
+        /* 帖子主体区域 */
+        .post-container {
+            background: white;
+            border: 1px solid #D0D0D0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+        }
+
+        /* 楼层结构 */
+        .floor {
+            display: flex;
+            border-bottom: 1px dashed #d0d0d0;
+            /* height: 200px; */
+        }
+
+        .floor:last-child {
+            border-bottom: none;
+        }
+
+        /* 左侧用户信息栏 */
+        .user-info-bar {
+            width: 180px;
+            background: #f5f5f5;
+            padding: 15px;
+            border-right: 1px solid #e0e0e0;
+            flex-shrink: 0;
+        }
+
+        .user-avatar-small {
+            width: 80px;
+            height: 80px;
+            border: 1px solid #d0d0d0;
+            margin-bottom: 10px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+        }
+
+        .username {
+            font-size: 13px;
+            font-weight: bold;
+            color: #1E50A2;
+            margin-bottom: 5px;
+        }
+
+        .user-group {
+            font-size: 11px;
+            color: #ff6600;
+            margin-bottom: 10px;
+        }
+
+        .divider {
+            height: 1px;
+            background: #d0d0d0;
+            margin: 10px 0;
+        }
+
+        .user-stats {
+            font-size: 11px;
+            color: #666;
+            line-height: 1.8;
+        }
+
+        .user-stats div {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .user-stats label {
+            color: #999;
+        }
+
+        /* 右侧正文区 */
+        .post-content-area {
+            flex: 1;
+            background: white;
+        }
+
+        /* 楼层信息栏 */
+        .floor-header {
+            background: linear-gradient(to bottom, #f0f4fa, #e0e8f5);
+            padding: 8px 15px;
+            border-bottom: 1px solid #d0d0d0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 11px;
+            color: #666;
+        }
+
+        .floor-number {
+            color: #1E50A2;
+            font-weight: bold;
+        }
+
+        .floor-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .floor-actions button {
+            background: none;
+            border: none;
+            color: #666;
+            font-size: 11px;
+            cursor: pointer;
+            padding: 2px 8px;
+            border-radius: 2px;
+            transition: all 0.2s;
+        }
+
+        .floor-actions button:hover {
+            background: rgba(30, 80, 162, 0.1);
+            color: #1E50A2;
+        }
+
+        /* 正文内容区 */
+        .post-body {
+            padding: 20px 15px;
+            font-size: 17px;
+            line-height: 1.8;
+            color: #333;
+        }
+
+        .post-body p {
+            margin-bottom: 12px;
+        }
+
+        .post-body img {
+            max-width: 100%;
+            border: 1px solid #d0d0d0;
+            padding: 5px;
+            margin: 10px 0;
+            background: white;
+        }
+
+        /* 底部操作栏 */
+        .floor-footer {
+            padding: 10px 15px;
+            border-top: 1px solid #e8e8e8;
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-reply {
+            padding: 6px 20px;
+            background: linear-gradient(to bottom, #5A96F8, #1E50A2);
+            border: 1px solid #1a3d7a;
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            border-radius: 3px;
+            transition: all 0.2s;
+        }
+
+        .btn-reply:hover {
+            background: linear-gradient(to bottom, #4A86E8, #0d3a7a);
+            border-color: #0d3a7a;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <div class="header">
+        <div class="header-top">
+            <div class="logo-area">
+                <div class="logo">🌊 江城热线</div>
+                <div class="slogan">江州人的网上家园</div>
+            </div>
+            <div class="user-status">
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="搜索帖子...">
+                    <button class="search-btn">搜索</button>
+                </div>
+                <div id="userStatusArea">
+                    <a href="#" onclick="showLoginModal(); return false;">登录</a> | 
+                    <a href="#" onclick="showLoginModal(); return false;">注册</a>
+                </div>
+            </div>
+        </div>
+        <div class="nav-menu">
+            <div class="nav-menu-inner">
+                <a href="Forum.html">首页</a>
+                <a href="#">论坛</a>
+                <a href="#">交友</a>
+                <a href="#">网络</a>
+                <a href="#">游戏</a>
+                <a href="#">商城</a>
+                <a href="#">空间</a>
+                <a href="#">组群</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主体内容 -->
+    <div class="container">
+        <!-- 面包屑导航 -->
+        <div class="breadcrumb">
+        </div>
+
+        <!-- 帖子标题栏 -->
+        <div class="post-header">
+        </div>
+
+        <!-- 帖子主体 -->
+        <div class="post-container">
+        </div>
+    </div>
+
+    <!-- 底部版权 -->
+    <div class="footer">
+        <div>
+            <a href="#">关于我们</a> |
+            <a href="#">联系我们</a> |
+            <a href="#">免责声明</a> |
+            <a href="#">隐私政策</a>
+        </div>
+        <div style="margin-top: 10px;">
+            Copyright © 2008-2030 江城热线 All Rights Reserved.
+        </div>
+        <div style="margin-top: 5px; color: #999;">
+            ICP备案号：江ICP备08001234号
+        </div>
+    </div>
+
+    <!-- 登录弹窗 -->
+    <div id="loginModal" class="login-modal">
+        <div class="login-box">
+            <div class="login-title">论坛登录</div>
+            <button class="wechat-login-btn" onclick="wechatLogin()">
+                <svg class="wechat-icon" viewBox="0 0 24 24" fill="white">
+                    <path d="M8.5,13.5A1.5,1.5 0 1,1 10,15A1.5,1.5 0 0,1 8.5,13.5M14.5,13.5A1.5,1.5 0 1,1 16,15A1.5,1.5 0 0,1 14.5,13.5M12,2C6.5,2 2,6 2,10.5C2,12.5 3,14.5 4.5,16L3.5,19L7,17.5C8.5,18 10,18.5 12,18.5C17.5,18.5 22,14.5 22,10C22,5.5 17.5,2 12,2M12,4C16.5,4 20,7 20,10C20,13 16.5,16 12,16C10.5,16 9,15.5 7.5,15L6,15.5L6.5,14C5.5,13 5,11.5 5,10.5C5,7 8.5,4 12,4Z"/>
+                </svg>
+                <span id="loginBtnText">微信登录</span>
+                <div class="loading-spinner" id="loginSpinner"></div>
+            </button>
+            <div class="login-success" id="loginSuccess">✓ 登录成功！</div>
+        </div>
+    </div>
+
+    <script src="../js/Forum.js"></script>
+    <script>
+        // 页面加载时初始化公共功能
+        initForumCommon();
+        
+        // 帖子数据（加密存储）
+        const encryptedPostData = 'eyJ3aGVyZWlzeWFuZyI6eyJ0aXRsZSI6IuOAkOWQkOanveOAkeadqOS8n+axn+i/meWRqOacq+WPiOaUvum4veWtkO+8jOiwgeacieS7luaWsOeUteivne+8nyIsInRhZyI6bnVsbCwidmlld3MiOjI0NTYsInJlcGxpZXMiOjQsImF1dGhvciI6Iuaxn+WfjuiAgemllSIsImF1dGhvckdyb3VwIjoi5pmu6YCa5Lya5ZGYIiwiYXV0aG9yU3RhdHMiOnsi5aiB5pyvIjoyMzQsIumHkeW4gSI6MTU2MCwi5Y+R5biWIjoxNTYsIuazqOWGjOaXtumXtCI6IjIwMDYtMDUtMDIifSwicHVibGlzaFRpbWUiOiIyMDA4LTA5LTMwIDE0OjIzOjQ1IiwiY29udGVudCI6IjxwPuawlOatu+aIkeS6hu+8jOS4iuWRqOivtOWlveWOu+WQg+axn+i+ueWkp+aOkuaho++8jOadqOS8n+axn+i/meWTpeS7rOWEv+WPiOayoeadpe+8gTwvcD48cD7nlLXor53miZPov4fljrvkuI3mjqXjgILku5blnKjmtbfkvK/liKnlronpgqPovrnkuIrnj63vvIzlubPml7blsLHmjLrlv5nnmoTvvIzmiJHnnIvmtbfkvK/liKnlronov5nlh6DlpKnlnKjoo4Xkv67vvIzlhajlkZjpg73mlL7lgYfvvIzov5nlsI/lrZDmgI7kuYjlvbvlupXlpLHogZTkuobvvJ/osIHmnInku5bmlrDlj7fnoIHmiJbogIXku5bogIHkuaHnmoTnlLXor53vvJ/ov5nlrZnlrZDmrKDmiJHkuKTljIXng5/ov5jmsqHov5jlkaLvvIE8L3A+IiwiZmxvb3JzIjpbeyJhdXRob3JHcm91cCI6IuaZrumAmuS8muWRmCIsImF1dGhvciI6Iua7qOa1t+aJk+W3peS6uiIsInB1Ymxpc2hUaW1lIjoiMjAwOC0wOS0zMCAxNTowMToyMiIsImNvbnRlbnQiOiLmnajkvJ/msZ/vvJ/mmK/kuI3mmK/pgqPkuKrluKbnj63nmoTogIHmnajvvJ/ogIHmnpfnhp/llYpAbGluX2pnXzg4IiwiYXV0aG9yU3RhdHMiOnsi5aiB5pyvIjoxOTIsIumHkeW4gSI6OTAyLCLlj5HluJYiOjI1LCLms6jlhozml7bpl7QiOiIyMDA3LTA5LTEwIn0sImZsb29yTnVtYmVyIjoyfSx7ImF1dGhvckdyb3VwIjoi5pmu6YCa5Lya5ZGYIiwiYXV0aG9yIjoibGluX2pnXzg4IiwicHVibGlzaFRpbWUiOiIyMDA4LTA5LTMwIDE5OjIzOjI1IiwiY29udGVudCI6IuiAgeadqOaYr+aIkeWlveaci+WPi+OAguS7luWbnuiAgeWutuS6hu+8jOWutumHjOiAgeS6uueXheW+l+mHje+8jOi1sOW+l+aApe+8jOayoeadpeW+l+WPiui3n+Wkp+WutuaJk+aLm+WRvOOAguS7lumCo+S4quWPt+S8sOiuoeasoOi0ueWBnOacuuS6hu+8jOWkp+WutuWIq+aJk+S6huOAgiIsImF1dGhvclN0YXRzIjp7IuWogeacryI6Miwi6YeR5biBIjo4OCwi5Y+R5biWIjoyLCLms6jlhozml7bpl7QiOiIyMDA2LTA2LTMwIn0sImZsb29yTnVtYmVyIjozfSx7ImF1dGhvckdyb3VwIjoi5pmu6YCa5Lya5ZGYIiwiYXV0aG9yIjoi5rGf5Z+O6ICB6aWVIiwicHVibGlzaFRpbWUiOiIyMDA4LTA5LTMwIDE5OjI1OjM1IiwiY29udGVudCI6IuWOn+adpeaYr+ael+WTpe+8geaXoueEtuiAgeadqOWbnuiAgeWutuS6hu+8jOmCo+m6u+eDpuael+WTpeW4ruaIkeW4puWPpeivne+8jOiuqeS7luWbnuadpei1tue0p+iBlOezu+aIke+8gSIsImF1dGhvclN0YXRzIjp7IuWogeacryI6MjM0LCLph5HluIEiOjE1NjAsIuWPkeW4liI6MTU2LCLms6jlhozml7bpl7QiOiIyMDA2LTA1LTAyIn0sImZsb29yTnVtYmVyIjo0fV19LCJhYm91dHByaXZhdGVtYWlsIjp7InRpdGxlIjoi44CQ5rGC5Yqp44CR6L+Z5Liq5YWN5omL5py65Y+355qE6YKu566x55yf55qE5a6J5YWo5ZCX77yfIiwidGFnIjpudWxsLCJ2aWV3cyI6MTE1LCJyZXBsaWVzIjozLCJhdXRob3IiOiLpmpDnp4Hkv53miqTogIUiLCJhdXRob3JHcm91cCI6IuaZrumAmuS8muWRmCIsImF1dGhvclN0YXRzIjp7IuWogeacryI6MTEsIumHkeW4gSI6MTYzLCLlj5HluJYiOjMzLCLms6jlhozml7bpl7QiOiIyMDA1LTAyLTAyIn0sInB1Ymxpc2hUaW1lIjoiMjAwNS0wMi0wNSAxMToyMzo0NSIsImNvbnRlbnQiOiI8cD7mnIDov5Hmg7Pms6jlhozkuKrpgq7nrrHlrZjngrnkuJzopb/vvIzkuI3mg7Pnu5HmiYvmnLrlj7fjgILnnIvliLAgPHN0cm9uZz5wcml2YXRlbWFpbC5jb208L3N0cm9uZz4g55qE5bm/5ZGK77yI6KeB5Zu+77yJ77yM6K+05piv5LiN6ZyA6KaB5a6e5ZCN77yM57ud5a+56ZqQ56eB44CC5pyJ5Lq655So6L+H5ZCX77yf5rKh5a6e5ZCN5LiN5oCV6KKr55uX5Y+35om+5LiN5Zue5p2l5ZCX77yfPC9wPiIsImltYWdlcyI6WyIuLi9hc3NldHMvYmFja2dyb3VuZC5wbmciXSwiZmxvb3JzIjpbeyJhdXRob3JHcm91cCI6IumSu+efs+S8muWRmCIsImF1dGhvciI6Ium7keWuouW4neWbvSIsInB1Ymxpc2hUaW1lIjoiMjAwNS0wMi0wNSAxMTozMToyMiIsImNvbnRlbnQiOiLnlKjov4fvvIzov5nnvZHnq5nlronlhajlgZrlvpflvojng4LvvIzlr4bnoIHnm7TmjqXovpPlhaU8c3Ryb25nPicgT1IgJzEnPScxPC9zdHJvbmc+5bCx6IO955m744CC5LiN6L+H77yM5pyJ6KKr55uX55qE5Lu35YC85LmI77yfIiwiYXV0aG9yU3RhdHMiOnsi5aiB5pyvIjoxMDAwMSwi6YeR5biBIjo5OTk5OSwi5Y+R5biWIjo1LCLms6jlhozml7bpl7QiOiIyMDAyLTAxLTEwIn0sImZsb29yTnVtYmVyIjoyfSx7ImF1dGhvckdyb3VwIjoi5pmu6YCa5Lya5ZGYIiwiYXV0aG9yIjoi6ZqQ56eB5L+d5oqk6ICFIiwicHVibGlzaFRpbWUiOiIyMDA1LTAyLTA1IDEyOjAxOjMyIiwiY29udGVudCI6IuWkquehrOaguOS6huKApuKApuaIkei/mOaYr+WunuWQjeazqOWGjOWQp+OAgiIsImF1dGhvclN0YXRzIjp7IuWogeacryI6MTEsIumHkeW4gSI6MTYzLCLlj5HluJYiOjMzLCLms6jlhozml7bpl7QiOiIyMDA1LTAyLTAyIn0sImZsb29yTnVtYmVyIjozfV19LCJhYm91dGhhaTgiOnsidGl0bGUiOiLjgJDmj5Dpl67jgJHmiJHmmK/mtbfkvK/liKnlrok35qW85Yqe5YWs55qE77yM5pyA6L+ROOalvOiuvuWkh+WxguaYr+S4jeaYr+WcqOiwg+ivleaWsOepuuiwg++8nyIsInRhZyI6bnVsbCwidmlld3MiOjExMDUsInJlcGxpZXMiOjUsImF1dGhvciI6Iua7qOaxn+WKoOePreeLlyIsImF1dGhvckdyb3VwIjoi5pmu6YCa5Lya5ZGYIiwiYXV0aG9yU3RhdHMiOnsi5aiB5pyvIjoxMTAsIumHkeW4gSI6MTA0NCwi5Y+R5biWIjozMjgsIuazqOWGjOaXtumXtCI6IjIwMDYtMDEtMjEifSwicHVibGlzaFRpbWUiOiIyMDA4LTA5LTE1IDE5OjIwOjQ1IiwiY29udGVudCI6IjxwPuacgOi/keWNiuS4quaciO+8jOaZmuS4iuWKoOePreaAu+iDveWQrOWIsOalvOS4iuS8oOadpeS4gOmYtemYteS9juayieeahOWXoeWXoeWjsO+8jOWDj+aYr+Wkp+Wei+aOkumjjuaJh+aIluiAheepuuWOi+acuuWcqOi9rOOAgjwvcD48cD7lo7Dpn7PlgJLkuI3nrpfnibnliKvlkLXvvIzkvYbmjIHnu63kuI3lgZzjgILpl67niankuJrvvIzor7TmmK845qW86K6+5aSH5bGC5Zyo5YGa4oCc566h6YGT5Y6L5Yqb5rWL6K+V5ZKM5paw6aOO57O757uf6LCD6K+V4oCd77yM6L+H6Zi15a2Q5bCx5aW944CC5pyJ5ZCM5qW855qE5pyL5Y+L6YGH5Yiw5ZCX77yf6L+Z5rWL6K+V6KaB5pCe5Yiw5Y2K5aSc77yfPC9wPiIsImZsb29ycyI6W3siYXV0aG9yR3JvdXAiOiLmma7pgJrkvJrlkZgiLCJhdXRob3IiOiLmtbflrokt5bCP6ZmIIiwicHVibGlzaFRpbWUiOiIyMDA4LTA5LTE1IDIwOjAxOjIyIiwiY29udGVudCI6IuaCqOWlve+8jOehruWunuaYr+iuvuWkh+WxguWcqOi/m+ihjOWto+W6puaAp+aalumAmuiuvuWkh+e7tOS/neWSjOWOi+WKm+a1i+ivle+8jOS8muS6p+eUn+S9jumikeWZqumfs+WSjOWwkemHj+awlOWRs++8jOWxnuS6juato+W4uOaWveW3peiMg+WbtOOAgue7meaCqOW4puadpeS4jeS+v+aVrOivt+iwheino+OAgiIsImF1dGhvclN0YXRzIjp7IuWogeacryI6OTgxLCLph5HluIEiOjQ0Miwi5Y+R5biWIjo1NTYsIuazqOWGjOaXtumXtCI6IjIwMDUtMDEtMTgifSwiZmxvb3JOdW1iZXIiOjJ9LHsiYXV0aG9yR3JvdXAiOiLmma7pgJrkvJrlkZgiLCJhdXRob3IiOiLot6/ov4flpKfnpZ4iLCJwdWJsaXNoVGltZSI6IjIwMDgtMDktMTUgMjE6MDE6MzIiLCJjb250ZW50Ijoi6K6+5aSH5bGC5Zib77yM5q2j5bi444CC5rW35Lyv5Yip5a6J5b2T5bm05bu655qE5pe25YCZOOalvOWwseaYr+aUvuacuue7hOeahO+8jOiAgeWMluS6huiCr+WumuimgeS/ruOAguW/jeW/jeWQp++8jOaAu+avlOa8j+awtOW8uuOAgiIsImF1dGhvclN0YXRzIjp7IuWogeacryI6MTcxLCLph5HluIEiOjE2MzMsIuWPkeW4liI6MTMzLCLms6jlhozml7bpl7QiOiIyMDA0LTA2LTAyIn0sImZsb29yTnVtYmVyIjozfSx7ImF1dGhvckdyb3VwIjoi5pmu6YCa5Lya5ZGYIiwiYXV0aG9yIjoi5ruo5rGf5Yqg54+t54uXIiwicHVibGlzaFRpbWUiOiIyMDA4LTA5LTE1IDIxOjIxOjQyIiwiY29udGVudCI6IuWlveWQp+OAgui0p+i/kOeUteair+acgOi/keaLieS6huS4jeWwkee6uOeuseS4iuWOu++8jOS5n+aYr+iwg+ivleadkOaWmeWQl++8nyIsImF1dGhvclN0YXRzIjp7IuWogeacryI6MTEwLCLph5HluIEiOjEwNDQsIuWPkeW4liI6MzI4LCLms6jlhozml7bpl7QiOiIyMDA2LTAxLTIxIn0sImZsb29yTnVtYmVyIjo0fSx7ImF1dGhvckdyb3VwIjoi5pmu6YCa5Lya5ZGYIiwiYXV0aG9yIjoi5rW35a6JLeWwj+mZiCIsInB1Ymxpc2hUaW1lIjoiMjAwOC0wOS0xNSAyMToyMjowNiIsImNvbnRlbnQiOiLmmK/nmoTvvIzmm7TmjaLmu6Toiq/lkozpg6jliIbnrqHnur/phY3ku7bjgILmhJ/osKLmgqjnmoTlj43ppojjgIIiLCJhdXRob3JTdGF0cyI6eyLlqIHmnK8iOjk4MSwi6YeR5biBIjo0NDIsIuWPkeW4liI6NTU2LCLms6jlhozml7bpl7QiOiIyMDA1LTAxLTE4In0sImZsb29yTnVtYmVyIjo1fSx7ImF1dGhvckdyb3VwIjoi5pmu6YCa5Lya5ZGYIiwiYXV0aG9yIjoi5bCP6aG+5oql6YGTIiwicHVibGlzaFRpbWUiOiIyMDI2LTAyLTE1IDEwOjEyOjU2IiwiY29udGVudCI6IuS9oOi/mOWcqOWQl++8n+aIkeiDveWvueW9k+W5tDjorr7lpIflsYLnmoTmtYvor5Xmg4XlhrXov5vooYzkuIDkuKrph4forr/lkJfvvJ9A5rW35a6JLeWwj+mZiCIsImF1dGhvclN0YXRzIjp7IuWogeacryI6MjY3LCLph5HluIEiOjU2MSwi5Y+R5biWIjoyMSwi5rOo5YaM5pe26Ze0IjoiMjAwNS0wMS0xOCJ9LCJmbG9vck51bWJlciI6MTZ9XX0sImFib3V0bGluamciOnsidGl0bGUiOiLjgJDnpZ3otLrjgJHogIHmnpfopoHpgIDkvJHkuoblkJfvvIEiLCJ0YWciOm51bGwsInZpZXdzIjoxNTA5LCJyZXBsaWVzIjo4LCJhdXRob3IiOiLmu6jmsZ/miZPlt6XkurowMDciLCJhdXRob3JHcm91cCI6IuaZrumAmuS8muWRmCIsImF1dGhvclN0YXRzIjp7IuWogeacryI6NDExLCLph5HluIEiOjcxNjMsIuWPkeW4liI6MzcyLCLms6jlhozml7bpl7QiOiIyMDA1LTAyLTAyIn0sInB1Ymxpc2hUaW1lIjoiMjAzMC0wNS0xOCAxMjoyMzo0NSIsImNvbnRlbnQiOiI8cD7mmKjlpKnljrvoqonpvI7ph5Hono3lpKfljqbpgIHlv6vpgJLvvIzlnKjkuIDmpbzlpKfloILnnIvliLDnuqLmppzkuIrlhpnnnYDnpZ3otLrlkI7li6Tpg6jlia/pg6jplb/mnpflu7rlm73lhYnojaPpgIDkvJHjgILov5nogIHlk6XlnKjoqonpvI7lubLkuoblpJrlsJHlubTkuobvvJ/lkKzor7Tku44wOOW5tOWFrOWPuOWImui1t+atpemCo+S8muWEv+WwseWcqOS6hu+8jOe7neWvueaYr+WIneS7o+iAgeWRmOW3peWViuOAguacieWcqOiqiem8juS4iuePreeahOWQp+WPi+iupOivhui/meS9jeael+W3peeahOWQl++8nzwvcD4iLCJmbG9vcnMiOlt7ImF1dGhvckdyb3VwIjoi5pmu6YCa5Lya5ZGYIiwiYXV0aG9yIjoi5rGf5Z+O6ICB6aWVIiwicHVibGlzaFRpbWUiOiIyMDMwLTA1LTE4IDEyOjMzOjQxIiwiY29udGVudCI6IuaYr+S7luOAguS4iuS4quaciDIy5Y+36ICB5p6X55Sf5pel77yM6Zmq6ICB5p6X5Zad5LqG5Lik5p2v77yM5LuW6K+05LiL5Liq5pyI57uI5LqO6KaB6YCA5LyR5LqG77yM566X5piv54as5Ye65aS05LqG44CCIiwiYXV0aG9yU3RhdHMiOnsi5aiB5pyvIjoyMzQsIumHkeW4gSI6MTU2MCwi5Y+R5biWIjoxNTYsIuazqOWGjOaXtumXtCI6IjIwMDYtMDUtMDIifSwiZmxvb3JOdW1iZXIiOjJ9LHsiYXV0aG9yR3JvdXAiOiLmma7pgJrkvJrlkZgiLCJhdXRob3IiOiLmu6jmsZ/miZPlt6XkurowMDciLCJwdWJsaXNoVGltZSI6IjIwMzAtMDUtMTggMTI6NTM6MTIiLCJjb250ZW50Ijoi5LuW5Zyo6K665Z2b5Lmf5piv6ICB5Lq65LqG77yM5ZOO5LuW6YO96YCA5LyR5LqG44CC5a+55LqG77yM6ICB5p6X5aSa5aSn55qE77yMNzDlubTlsZ7ni5fnmoTlkJfvvJ/nnIvnhafniYflubTnuqrnoa7lrp7pgIDkvJHkuoblvpfjgIIiLCJhdXRob3JTdGF0cyI6eyLlqIHmnK8iOjQxMSwi6YeR5biBIjo3MTYzLCLlj5HluJYiOjM3Miwi5rOo5YaM5pe26Ze0IjoiMjAwNS0wMi0wMiJ9LCJmbG9vck51bWJlciI6M30seyJhdXRob3JHcm91cCI6IuaZrumAmuS8muWRmCIsImF1dGhvciI6Imxpbl9qZ184OCIsInB1Ymxpc2hUaW1lIjoiMjAzMC0wNS0xOCAxMjo1OTo0MSIsImNvbnRlbnQiOiLlk4jlk4jvvIzosKLosKLvvIzmiJHmmK/lsZ7pvKDnmoTjgILlj6/og73mmK/lkI7li6Tmr5TovoPmhIHkurrlkKfjgIIiLCJhdXRob3JTdGF0cyI6eyLlqIHmnK8iOjIsIumHkeW4gSI6ODgsIuWPkeW4liI6Miwi5rOo5YaM5pe26Ze0IjoiMjAwNi0wNi0zMCJ9LCJmbG9vck51bWJlciI6M30seyJhdXRob3JHcm91cCI6IuaZrumAmuS8muWRmCIsImF1dGhvciI6IuWQg+eTnOe+pOS8l+eUsiIsInB1Ymxpc2hUaW1lIjoiMjAzMC0wNS0xOCAxMzowMzoxMiIsImNvbnRlbnQiOiLlnKjoqonpvI7lubLkuoYyMOWHoOW5tO+8jOecn+aYr+aKiumdkuaYpemDveWlieeMruS6huOAgiIsImF1dGhvclN0YXRzIjp7IuWogeacryI6MTExLCLph5HluIEiOjI4Mywi5Y+R5biWIjoxMiwi5rOo5YaM5pe26Ze0IjoiMjAwNS0wMi0wMiJ9LCJmbG9vck51bWJlciI6M30seyJhdXRob3JHcm91cCI6IuaZrumAmuS8muWRmCIsImF1dGhvciI6Imxpbl9qZ184OCIsInB1Ymxpc2hUaW1lIjoiMjAzMC0wNS0xOCAxMzoyMzo0MiIsImNvbnRlbnQiOiLpg73mmK/kupvnkJDnoo7mtLvlhL/vvIzosIjkuI3kuIrlpYnnjK7jgILosKLosKLlpKflrrbvvIznrYnlip7lrozkuqTmjqXmiYvnu63vvIzmiJHlsLHlh4blpIflm57ogIHlrrbkuobjgIIiLCJhdXRob3JTdGF0cyI6eyLlqIHmnK8iOjIsIumHkeW4gSI6ODgsIuWPkeW4liI6Miwi5rOo5YaM5pe26Ze0IjoiMjAwNi0wNi0zMCJ9LCJmbG9vck51bWJlciI6M30seyJhdXRob3JHcm91cCI6IuaZrumAmuS8muWRmCIsImF1dGhvciI6Iuaxn+WfjuiAgemllSIsInB1Ymxpc2hUaW1lIjoiMjAzMC0wNS0xOCAxOToyMjozNiIsImNvbnRlbnQiOiLlm57ogIHlrrbvvJ/kuI3lm57msZ/lt57nnIvnnIvmiJHku6zov5nkupvogIHkvJnorqHkuobvvJ/ku6XlkI7lj6/msqHkurrpmarkvaDllp3phZLkuobjgIIiLCJhdXRob3JTdGF0cyI6eyLlqIHmnK8iOjIzNCwi6YeR5biBIjoxNTYwLCLlj5HluJYiOjE1Niwi5rOo5YaM5pe26Ze0IjoiMjAwNi0wNS0wMiJ9LCJmbG9vck51bWJlciI6M30seyJhdXRob3JHcm91cCI6IuaZrumAmuS8muWRmCIsImF1dGhvciI6Imxpbl9qZ184OCIsInB1Ymxpc2hUaW1lIjoiMjAzMC0wNS0xOCAyMDoyOTo0MSIsImNvbnRlbnQiOiLmnInmnLrkvJrlho3ogZrjgIIiLCJhdXRob3JTdGF0cyI6eyLlqIHmnK8iOjIsIumHkeW4gSI6ODgsIuWPkeW4liI6Miwi5rOo5YaM5pe26Ze0IjoiMjAwNi0wNi0zMCJ9LCJmbG9vck51bWJlciI6M31dfX0=';
+        let postData = {};
+        try {
+            postData = decryptData(encryptedPostData) || {};
+            console.log('帖子数据加载成功:', Object.keys(postData));
+        } catch (e) {
+            console.error('帖子数据解密失败:', e);
+        }
+
+        // 加载帖子内容
+        function loadPostContent() {
+            console.log('开始加载帖子内容...');
+            
+            // 从URL参数获取帖子ID
+            const urlParams = new URLSearchParams(window.location.search);
+            const postKey = urlParams.get('detail');
+            
+            console.log('URL参数 detail:', postKey);
+            console.log('可用帖子Keys:', Object.keys(postData));
+            
+            if (!postKey) {
+                console.log('未提供帖子ID，显示默认提示');
+                document.querySelector('.post-container').innerHTML = '<div style="padding: 50px; text-align: center; color: #999;">请指定帖子ID，例如：ForumPost.html?detail=whereisyang</div>';
+                return;
+            }
+            
+            const post = postData[postKey];
+            if (!post) {
+                console.log('帖子不存在，key:', postKey);
+                document.querySelector('.post-container').innerHTML = '<div style="padding: 50px; text-align: center; color: #999;">帖子不存在或已被删除 (ID: ' + postKey + ')</div>';
+                return;
+            }
+            
+            console.log('找到帖子:', post.title);
+            
+            // 更新页面标题
+            document.title = post.title + ' - 江城热线论坛';
+            
+            // 更新面包屑导航
+            const breadcrumb = document.querySelector('.breadcrumb');
+            breadcrumb.innerHTML = `
+                <a href="Forum.html">江城热线</a>
+                <span>›</span>
+                <a href="#">江州都市</a>
+                <span>›</span>
+                <span>${post.title}</span>
+            `;
+            
+            // 更新帖子标题栏
+            const postHeader = document.querySelector('.post-header');
+            const tagHtml = post.tag ? `<span class="tag ${post.tag.class}">${post.tag.text}</span>` : '';
+            postHeader.innerHTML = `
+                <div class="post-title">
+                    ${tagHtml}
+                    ${post.title}
+                </div>
+                <div class="post-meta">
+                    <span>查看: ${post.views} | 回复: ${post.replies}</span>
+                    <span>发表于 ${post.publishTime}</span>
+                    <span>只看楼主</span>
+                </div>
+            `;
+            
+            // 生成主帖HTML
+            const mainFloor = generateFloorHTML(post, 1, true);
+            
+            // 生成回复楼层HTML
+            let replyFloors = '';
+            if (post.floors && post.floors.length > 0) {
+                replyFloors = post.floors.map(floor => generateFloorHTML(floor, floor.floorNumber, false)).join('');
+            }
+            
+            // 更新帖子容器
+            const postContainer = document.querySelector('.post-container');
+            postContainer.innerHTML = mainFloor + replyFloors;
+        }
+
+        // 页面加载时调用
+        window.addEventListener('load', () => {
+            loadPostContent();
+        });
+
+        // 生成楼层HTML
+        function generateFloorHTML(data, floorNumber, isMainPost) {
+            const statsHtml = Object.entries(data.authorStats).map(([key, value]) => {
+                return `<div><label>${key}:</label><span>${value}</span></div>`;
+            }).join('');
+            
+            // 生成图片HTML
+            let imagesHtml = '';
+            if (data.images && data.images.length > 0) {
+                imagesHtml = '<div class="post-images">';
+                data.images.forEach(imgSrc => {
+                    imagesHtml += `<img src="${imgSrc}" alt="帖子图片" style="max-width:100%;height:auto;margin:10px 0;border:1px solid #ddd;padding:5px;">`;
+                });
+                imagesHtml += '</div>';
+            }
+
+            return `
+                <div class="floor">
+                    <div class="user-info-bar">
+                        <div class="user-avatar-small">${data.authorAvatar || '👤'}</div>
+                        <div class="username">${data.author}</div>
+                        <div class="user-group">${data.authorGroup || data.userGroup || '普通会员'}</div>
+                        <div class="divider"></div>
+                        <div class="user-stats">
+                            ${statsHtml}
+                        </div>
+                    </div>
+                    <div class="post-content-area">
+                        <div class="floor-header">
+                            <div>
+                                <span class="floor-number">${floorNumber}#</span>
+                                <span>发表于 ${data.publishTime}</span>
+                            </div>
+                            <div class="floor-actions">
+                                <button>举报</button>
+                            </div>
+                        </div>
+                        <div class="post-body">
+                            ${data.content}
+                            ${imagesHtml}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

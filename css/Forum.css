@@ -1,0 +1,276 @@
+/* ================= 全局样式 ================= */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "SimSun", "宋体", "Microsoft YaHei", sans-serif;
+    font-size: 12px;
+    color: #333;
+    background: #f5f5f5;
+    line-height: 1.6;
+}
+
+/* ================= 顶部导航区 ================= */
+.header {
+    background: linear-gradient(to bottom, #1E50A2, #4A86E8);
+    border-bottom: 2px solid #1a3d7a;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+}
+
+.header-top {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.logo {
+    font-size: 28px;
+    font-weight: bold;
+    color: white;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    letter-spacing: 2px;
+}
+
+.slogan {
+    font-size: 13px;
+    color: rgba(255,255,255,0.9);
+    font-style: italic;
+}
+
+.user-status {
+    color: white;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    position: relative;
+}
+
+.user-status a {
+    color: white;
+    text-decoration: none;
+    margin: 0 5px;
+}
+
+.user-status a:hover {
+    text-decoration: underline;
+}
+
+.user-links {
+    margin-top: 5px;
+    font-size: 11px;
+}
+
+.user-links a {
+    color: rgba(255,255,255,0.8);
+    margin: 0 8px;
+}
+
+/* 搜索框 */
+.search-box {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    position: relative;
+}
+
+.search-input {
+    padding: 4px 8px;
+    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.15);
+    color: white;
+    font-size: 12px;
+    width: 150px;
+    border-radius: 2px;
+}
+
+.search-input::placeholder {
+    color: rgba(255,255,255,0.6);
+}
+
+.search-btn {
+    padding: 4px 12px;
+    background: rgba(255,255,255,0.2);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+}
+
+.search-btn:hover {
+    background: rgba(255,255,255,0.3);
+}
+
+/* 登录弹窗 */
+.login-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-modal.show {
+    display: flex;
+}
+
+.login-box {
+    background: white;
+    border-radius: 8px;
+    padding: 40px;
+    min-width: 320px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+.login-title {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 30px;
+    font-weight: bold;
+}
+
+.wechat-login-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 30px;
+    background: #07c160;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-family: "Microsoft YaHei", sans-serif;
+}
+
+.wechat-login-btn:hover {
+    background: #06ad56;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(7, 193, 96, 0.3);
+}
+
+.wechat-icon {
+    width: 24px;
+    height: 24px;
+}
+
+.loading-spinner {
+    display: none;
+    width: 20px;
+    height: 20px;
+    border: 3px solid rgba(255,255,255,0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.login-success {
+    display: none;
+    color: #07c160;
+    font-size: 16px;
+    margin-top: 20px;
+}
+
+/* 分页 */
+.pagination {
+    padding: 15px;
+    text-align: right;
+    border-top: 1px solid #e8e8e8;
+}
+
+.pagination a, .pagination span {
+    display: inline-block;
+    padding: 4px 10px;
+    margin: 0 3px;
+    border: 1px solid #d0d0d0;
+    color: #1E50A2;
+    text-decoration: none;
+    font-size: 12px;
+    background: white;
+}
+
+.pagination a:hover {
+    background: #f0f4fa;
+    border-color: #1E50A2;
+}
+
+.pagination .current {
+    background: #1E50A2;
+    color: white;
+    border-color: #1E50A2;
+}
+
+/* 导航菜单 */
+.nav-menu {
+    background: rgba(0,0,0,0.1);
+    border-top: 1px solid rgba(255,255,255,0.2);
+}
+
+.nav-menu-inner {
+    max-width: 980px;
+    margin: 0 auto;
+    padding: 8px 20px;
+    display: flex;
+    gap: 25px;
+}
+
+.nav-menu a {
+    color: white;
+    text-decoration: none;
+    font-size: 13px;
+    padding: 3px 8px;
+    transition: all 0.2s;
+}
+
+.nav-menu a:hover {
+    color: #FFD700;
+    text-decoration: underline;
+    background: rgba(255,255,255,0.1);
+    border-radius: 2px;
+}
+
+/* ================= 底部版权区 ================= */
+.footer {
+    background: #f0f0f0;
+    border-top: 1px solid #d0d0d0;
+    padding: 20px;
+    text-align: center;
+    margin-top: 20px;
+    color: #666;
+    font-size: 11px;
+}
+
+.footer a {
+    color: #1E50A2;
+    text-decoration: none;
+    margin: 0 8px;
+}
+
+.footer a:hover {
+    text-decoration: underline;
+}

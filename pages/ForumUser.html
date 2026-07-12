@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>江城小灵通的个人空间 - 江城热线论坛</title>
+    <link rel="stylesheet" href="../css/Forum.css">
+    <style>
+
+        .nav-menu {
+            background: rgba(0,0,0,0.1);
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .nav-menu-inner {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 8px 20px;
+            display: flex;
+            gap: 25px;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 3px 8px;
+            transition: all 0.2s;
+        }
+
+        .nav-menu a:hover {
+            color: #FFD700;
+            text-decoration: underline;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+        }
+
+        /* ================= 主体内容区 ================= */
+        .container {
+            max-width: 980px;
+            margin: 15px auto;
+        }
+
+        /* 用户信息横幅 */
+        .user-banner {
+            background: white;
+            border: 1px solid #D0D0D0;
+            padding: 20px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+        }
+
+        .user-avatar-large {
+            width: 100px;
+            height: 100px;
+            border: 2px solid #1E50A2;
+            background: #f5f5f5;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 60px;
+            flex-shrink: 0;
+        }
+
+        .user-info-main {
+            flex: 1;
+        }
+
+        .user-name-large {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1E50A2;
+            margin-bottom: 5px;
+        }
+
+        .user-group-large {
+            font-size: 13px;
+            color: #ff6600;
+            margin-bottom: 10px;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-follow, .btn-message {
+            padding: 8px 20px;
+            border: 1px solid #1a3d7a;
+            border-radius: 3px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-follow {
+            background: linear-gradient(to bottom, #5A96F8, #1E50A2);
+            color: white;
+        }
+
+        .btn-follow:hover {
+            background: linear-gradient(to bottom, #4A86E8, #0d3a7a);
+        }
+
+        .btn-message {
+            background: white;
+            color: #1E50A2;
+        }
+
+        .btn-message:hover {
+            background: #f0f4fa;
+        }
+
+        /* 主体内容区 */
+        .main-layout {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* 左侧个人信息栏 */
+        .profile-sidebar {
+            width: 220px;
+            background: white;
+            border: 1px solid #D0D0D0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+        }
+
+        .profile-title {
+            background: linear-gradient(to bottom, #4A86E8, #1E50A2);
+            color: white;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+
+        .profile-content {
+            padding: 12px;
+        }
+
+        .profile-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px dotted #e0e0e0;
+            font-size: 12px;
+        }
+
+        .profile-item:last-child {
+            border-bottom: none;
+        }
+
+        .profile-item label {
+            color: #666;
+        }
+
+        .profile-item span {
+            color: #333;
+            font-weight: bold;
+        }
+
+        /* 右侧内容区 */
+        .content-area {
+            flex: 1;
+            background: white;
+            border: 1px solid #D0D0D0;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+        }
+
+        /* Tab导航栏 */
+        .tab-nav {
+            display: flex;
+            border-bottom: 2px solid #1E50A2;
+            background: #f8f8f8;
+        }
+
+        .tab-item {
+            padding: 10px 20px;
+            cursor: pointer;
+            color: #666;
+            border-right: 1px solid #e0e0e0;
+            transition: all 0.2s;
+        }
+
+        .tab-item:last-child {
+            border-right: none;
+        }
+
+        .tab-item.active {
+            background: white;
+            color: #1E50A2;
+            font-weight: bold;
+            border-bottom: 3px solid white;
+            margin-bottom: -2px;
+        }
+
+        .tab-item:hover:not(.active) {
+            background: #f0f4fa;
+        }
+
+        /* 帖子列表表格 */
+        .post-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .post-table thead {
+            background: linear-gradient(to bottom, #f0f4fa, #e0e8f5);
+        }
+
+        .post-table th {
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: bold;
+            color: #1E50A2;
+            font-size: 13px;
+            border-bottom: 2px solid #1E50A2;
+        }
+
+        .post-table td {
+            padding: 10px 12px;
+            border-bottom: 1px dashed #e0e0e0;
+            vertical-align: middle;
+        }
+
+        .post-table tr:hover {
+            background: #f0f4fa;
+        }
+
+        .post-link {
+            color: #1E50A2;
+            text-decoration: none;
+            font-size: 13px;
+        }
+
+        .post-link:hover {
+            color: #cc0000;
+            text-decoration: underline;
+        }
+
+        .time-text {
+            color: #999;
+            font-size: 11px;
+        }
+
+        .stats-text {
+            color: #666;
+            text-align: center;
+        }
+
+        /* 分页控件 */
+        .pagination {
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .pagination a, .pagination span {
+            display: inline-block;
+            min-width: 28px;
+            height: 28px;
+            line-height: 28px;
+            text-align: center;
+            border: 1px solid #d0d0d0;
+            border-radius: 2px;
+            text-decoration: none;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .pagination a {
+            background: white;
+            color: #1E50A2;
+        }
+
+        .pagination a:hover {
+            background: #f0f4fa;
+            border-color: #4A86E8;
+        }
+
+        .pagination .current {
+            background: #1E50A2;
+            color: white;
+            border-color: #1E50A2;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <div class="header">
+        <div class="header-top">
+            <div class="logo-area">
+                <div class="logo">江城热线</div>
+                <div class="slogan">江州人的网上家园</div>
+            </div>
+            <div class="user-status">
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="搜索帖子...">
+                    <button class="search-btn">搜索</button>
+                </div>
+                <div id="userStatusArea">
+                    <a href="#" onclick="showLoginModal(); return false;">登录</a> | 
+                    <a href="#" onclick="showLoginModal(); return false;">注册</a>
+                </div>
+            </div>
+        </div>
+        <div class="nav-menu">
+            <div class="nav-menu-inner">
+                <a href="Forum.html">首页</a>
+                <a href="#">江州都市</a>
+                <a href="#">美食天地</a>
+                <a href="#">房产家居</a>
+                <a href="#">求职招聘</a>
+                <a href="#">交友征婚</a>
+                <a href="#">汽车论坛</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主体内容 -->
+    <div class="container">
+        <!-- 用户信息横幅 -->
+        <div class="user-banner">
+            <div class="user-avatar-large" id="userAvatar">👤</div>
+            <div class="user-info-main">
+                <div class="user-name-large" id="userName">加载中...</div>
+                <div class="user-group-large" id="userGroup">加载中...</div>
+                <div class="user-actions">
+                    <button class="btn-follow" onclick="followUser()">+ 关注</button>
+                    <button class="btn-message" onclick="sendMessage()">✉ 发私信</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主体布局 -->
+        <div class="main-layout">
+            <!-- 左侧个人信息栏 -->
+            <div class="profile-sidebar">
+                <div class="profile-title">个人资料</div>
+                <div class="profile-content" id="profileContent">
+                    <div style="text-align: center; padding: 20px; color: #999;">加载中...</div>
+                </div>
+            </div>
+
+            <!-- 右侧内容区 -->
+            <div class="content-area">
+                <!-- Tab导航栏 -->
+                <div class="tab-nav">
+                    <div class="tab-item active" onclick="switchTab('posts', this)">他的帖子</div>
+                    <div class="tab-item" onclick="switchTab('replies', this)">他的回复</div>
+                    <div class="tab-item" onclick="switchTab('following', this)">他的关注</div>
+                    <div class="tab-item" onclick="switchTab('followers', this)">他的粉丝</div>
+                </div>
+
+                <!-- 帖子列表区 -->
+                <div id="tabContent">
+                    <table class="post-table">
+                        <thead>
+                            <tr>
+                                <th>帖子标题</th>
+                                <th style="width: 150px;">发帖时间</th>
+                                <th style="width: 100px; text-align: center;">回复/查看</th>
+                                <th style="width: 180px;">最后回复</th>
+                            </tr>
+                        </thead>
+                        <tbody id="postList">
+                            <tr>
+                                <td colspan="4" style="text-align: center; padding: 30px; color: #999;">加载中...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- 分页控件 -->
+                    <div class="pagination" id="pagination">
+                        <span class="current">1</span>
+                        <a href="#">2</a>
+                        <a href="#">3</a>
+                        <a href="#">下一页</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部版权 -->
+    <div class="footer">
+        <div>
+            <a href="#">关于我们</a> |
+            <a href="#">联系我们</a> |
+            <a href="#">免责声明</a> |
+            <a href="#">隐私政策</a>
+        </div>
+        <div style="margin-top: 10px;">
+            Copyright © 2008-2030 江城热线 All Rights Reserved.
+        </div>
+        <div style="margin-top: 5px; color: #999;">
+            ICP备案号：江ICP备08001234号
+        </div>
+    </div>
+
+    <!-- 登录弹窗 -->
+    <div id="loginModal" class="login-modal">
+        <div class="login-box">
+            <div class="login-title">论坛登录</div>
+            <button class="wechat-login-btn" onclick="wechatLogin()">
+                <svg class="wechat-icon" viewBox="0 0 24 24" fill="white">
+                    <path d="M8.5,13.5A1.5,1.5 0 1,1 10,15A1.5,1.5 0 0,1 8.5,13.5M14.5,13.5A1.5,1.5 0 1,1 16,15A1.5,1.5 0 0,1 14.5,13.5M12,2C6.5,2 2,6 2,10.5C2,12.5 3,14.5 4.5,16L3.5,19L7,17.5C8.5,18 10,18.5 12,18.5C17.5,18.5 22,14.5 22,10C22,5.5 17.5,2 12,2M12,4C16.5,4 20,7 20,10C20,13 16.5,16 12,16C10.5,16 9,15.5 7.5,15L6,15.5L6.5,14C5.5,13 5,11.5 5,10.5C5,7 8.5,4 12,4Z"/>
+                </svg>
+                <span id="loginBtnText">微信登录</span>
+                <div class="loading-spinner" id="loginSpinner"></div>
+            </button>
+            <div class="login-success" id="loginSuccess">✓ 登录成功！</div>
+        </div>
+    </div>
+
+    <script src="../js/Forum.js"></script>
+    <script>
+        // 页面加载时初始化公共功能
+        initForumCommon();
+        
+        // 用户数据（模拟从后端获取）
+        const userData = {
+            'jiangchengxiaolingtong': {
+                username: '江城小灵通',
+                userGroup: '金牌会员',
+                avatar: '👤',
+                profile: {
+                    uid: '12345',
+                    等级: 'Lv.8',
+                    积分: 8560,
+                    威望: 856,
+                    金币: 3280,
+                    发帖数: 567,
+                    精华帖: 23,
+                    注册时间: '2028-03-15 10:23:45',
+                    最后登录: '2030-07-11 08:30:12'
+                },
+                posts: [
+                    {
+                        title: '【活动】618狂欢，江城购物街优惠券狂送！',
+                        publishTime: '2030-07-11 09:15:23',
+                        replies: 356,
+                        views: 12580,
+                        lastReply: {
+                            time: '2030-07-11 10:45:32',
+                            author: '购物达人小王'
+                        }
+                    },
+                    {
+                        title: '江州房价走势分析（2030年最新版）',
+                        publishTime: '2030-07-08 14:20:15',
+                        replies: 234,
+                        views: 8956,
+                        lastReply: {
+                            time: '2030-07-11 09:30:21',
+                            author: '房产专家老李'
+                        }
+                    },
+                    {
+                        title: '分享一个好吃的早餐店，在滨江路',
+                        publishTime: '2030-07-05 07:30:45',
+                        replies: 89,
+                        views: 3456,
+                        lastReply: {
+                            time: '2030-07-10 22:15:18',
+                            author: '吃货小分队'
+                        }
+                    },
+                    {
+                        title: '【求助】如何考取结构工程师证书？',
+                        publishTime: '2030-07-01 16:45:30',
+                        replies: 67,
+                        views: 2345,
+                        lastReply: {
+                            time: '2030-07-10 19:30:45',
+                            author: '考证达人'
+                        }
+                    }
+                ]
+            },
+            'jiaojidetongshi': {
+                username: '焦急的同事',
+                userGroup: '普通会员',
+                avatar: '👤',
+                profile: {
+                    uid: '45678',
+                    等级: 'Lv.3',
+                    积分: 1560,
+                    威望: 234,
+                    金币: 1560,
+                    发帖数: 156,
+                    精华帖: 2,
+                    注册时间: '2029-05-12 14:30:20',
+                    最后登录: '2030-07-10 16:20:35'
+                },
+                posts: [
+                    {
+                        title: '【求助】寻找杨sir的下落',
+                        publishTime: '2030-07-10 14:23:45',
+                        replies: 89,
+                        views: 2456,
+                        lastReply: {
+                            time: '2030-07-10 15:45:23',
+                            author: '焦急的同事'
+                        }
+                    },
+                    {
+                        title: '誉鼎集团内部员工福利讨论',
+                        publishTime: '2030-06-28 10:15:30',
+                        replies: 45,
+                        views: 1234,
+                        lastReply: {
+                            time: '2030-07-09 11:20:15',
+                            author: 'HR小李'
+                        }
+                    }
+                ]
+            }
+        };
+
+        let currentUserKey = '';
+        let currentTab = 'posts';
+
+        // 加载用户资料
+        function loadUserProfile() {
+            // 从URL参数获取用户ID
+            const urlParams = new URLSearchParams(window.location.search);
+            const userKey = urlParams.get('user');
+            
+            if (!userKey) {
+                alert('用户不存在');
+                return;
+            }
+            
+            currentUserKey = userKey;
+            const user = userData[userKey];
+            
+            if (!user) {
+                alert('用户不存在');
+                return;
+            }
+            
+            // 更新页面标题
+            document.title = user.username + '的个人空间 - 江城热线论坛';
+            
+            // 更新用户横幅
+            document.getElementById('userAvatar').textContent = user.avatar;
+            document.getElementById('userName').textContent = user.username;
+            document.getElementById('userGroup').textContent = user.userGroup;
+            
+            // 更新个人资料
+            const profileHtml = Object.entries(user.profile).map(([key, value]) => {
+                return `<div class="profile-item"><label>${key}:</label><span>${value}</span></div>`;
+            }).join('');
+            document.getElementById('profileContent').innerHTML = profileHtml;
+            
+            // 加载帖子列表
+            loadPostList(user.posts);
+        }
+
+        // 页面加载时调用
+        window.addEventListener('load', () => {
+            loadUserProfile();
+        });
+
+        // 加载帖子列表
+        function loadPostList(posts) {
+            if (!posts || posts.length === 0) {
+                document.getElementById('postList').innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 30px; color: #999;">暂无内容</td></tr>';
+                return;
+            }
+            
+            const html = posts.map(post => {
+                return `
+                    <tr>
+                        <td><a href="ForumPost.html?detail=xxx" class="post-link">${post.title}</a></td>
+                        <td class="time-text">${post.publishTime}</td>
+                        <td class="stats-text">${post.replies}/${post.views}</td>
+                        <td class="time-text">${post.lastReply.time}<br>by ${post.lastReply.author}</td>
+                    </tr>
+                `;
+            }).join('');
+            
+            document.getElementById('postList').innerHTML = html;
+        }
+
+        // 切换Tab
+        function switchTab(tab, element) {
+            currentTab = tab;
+            
+            // 更新Tab样式
+            document.querySelectorAll('.tab-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            element.classList.add('active');
+            
+            // 根据Tab加载不同内容
+            const user = userData[currentUserKey];
+            if (!user) return;
+            
+            if (tab === 'posts') {
+                loadPostList(user.posts);
+            } else if (tab === 'replies') {
+                document.getElementById('postList').innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 30px; color: #999;">暂无回复记录</td></tr>';
+            } else if (tab === 'following') {
+                document.getElementById('postList').innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 30px; color: #999;">暂无关注</td></tr>';
+            } else if (tab === 'followers') {
+                document.getElementById('postList').innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 30px; color: #999;">暂无粉丝</td></tr>';
+            }
+        }
+
+        // 关注用户
+        function followUser() {
+            alert('已关注该用户！');
+        }
+
+        // 发送私信
+        function sendMessage() {
+            alert('私信功能开发中...');
+        }
+    </script>
+</body>
+</html>
