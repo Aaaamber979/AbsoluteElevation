@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -18,7 +19,7 @@
             flex: 1;
             background: white;
             border: 1px solid #D0D0D0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
 
         /* 面包屑导航 */
@@ -156,7 +157,7 @@
             background: white;
             border: 1px solid #D0D0D0;
             margin-bottom: 10px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
         }
 
         .sidebar-title {
@@ -216,66 +217,9 @@
             color: #999;
             margin-top: 5px;
         }
-
-        /* ================= 搜索结果样式 ================= */
-        .search-results {
-            position: absolute;
-            top: 100%;
-            right: 0;
-            width: 400px;
-            background: white;
-            border: 1px solid #D0D0D0;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-            z-index: 1000;
-            display: none;
-            margin-top: 5px;
-            border-radius: 3px;
-        }
-
-        .search-results.show {
-            display: block;
-        }
-
-        .search-result-item {
-            padding: 12px 15px;
-            border-bottom: 1px solid #eee;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .search-result-item:hover {
-            background: #f0f7ff;
-        }
-
-        .search-result-item:last-child {
-            border-bottom: none;
-        }
-
-        .search-result-title {
-            font-size: 13px;
-            color: #1E50A2;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .search-result-title:hover {
-            text-decoration: underline;
-        }
-
-        .search-result-desc {
-            font-size: 11px;
-            color: #999;
-            line-height: 1.5;
-        }
-
-        .search-no-result {
-            padding: 30px;
-            text-align: center;
-            color: #999;
-            font-size: 13px;
-        }
     </style>
 </head>
+
 <body>
     <!-- 顶部导航区 -->
     <div class="header">
@@ -290,13 +234,14 @@
                     <input type="text" class="search-input" placeholder="搜索帖子...">
                     <button class="search-btn">搜索</button>
                 </div>
-                
+
                 <!-- 用户状态 -->
                 <div id="userStatusArea">
-                    <div>欢迎您，游客 [<a href="#" onclick="showLoginModal(); return false;">登录</a>] [<a href="#">注册</a>]</div>
+                    <div>欢迎您，游客 [<a href="#" onclick="showLoginModal(); return false;">登录</a>] [<a href="#">注册</a>]
+                    </div>
                     <div class="user-links">
-                        <a href="#">帮助</a> | 
-                        <a href="#">设为首页</a> | 
+                        <a href="#">帮助</a> |
+                        <a href="#">设为首页</a> |
                         <a href="#">加入收藏</a>
                     </div>
                 </div>
@@ -322,8 +267,8 @@
         <div class="main-content">
             <!-- 面包屑导航 -->
             <div class="breadcrumb">
-                <a href="#">论坛首页</a> <span>&gt;</span> 
-                <a href="#">本地生活</a> <span>&gt;</span> 
+                <a href="#">论坛首页</a> <span>&gt;</span>
+                <a href="#">本地生活</a> <span>&gt;</span>
                 <strong>江州都市话题</strong>
             </div>
 
@@ -498,9 +443,9 @@
     <div class="footer">
         <div class="footer-info">
             <div>
-                <a href="#">联系我们</a> | 
-                <a href="#">免责声明</a> | 
-                <a href="#">隐私政策</a> | 
+                <a href="#">联系我们</a> |
+                <a href="#">免责声明</a> |
+                <a href="#">隐私政策</a> |
                 <a href="#">广告服务</a>
             </div>
             <div style="margin-top: 10px;">
@@ -518,7 +463,8 @@
             <div class="login-title">论坛登录</div>
             <button class="wechat-login-btn" onclick="wechatLogin()">
                 <svg class="wechat-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M8.5,13.5A1.5,1.5 0 1,1 10,15A1.5,1.5 0 0,1 8.5,13.5M14.5,13.5A1.5,1.5 0 1,1 16,15A1.5,1.5 0 0,1 14.5,13.5M12,2C6.5,2 2,6 2,10.5C2,12.5 3,14.5 4.5,16L3.5,19L7,17.5C8.5,18 10,18.5 12,18.5C17.5,18.5 22,14.5 22,10C22,5.5 17.5,2 12,2M12,4C16.5,4 20,7 20,10C20,13 16.5,16 12,16C10.5,16 9,15.5 7.5,15L6,15.5L6.5,14C5.5,13 5,11.5 5,10.5C5,7 8.5,4 12,4Z"/>
+                    <path
+                        d="M8.5,13.5A1.5,1.5 0 1,1 10,15A1.5,1.5 0 0,1 8.5,13.5M14.5,13.5A1.5,1.5 0 1,1 16,15A1.5,1.5 0 0,1 14.5,13.5M12,2C6.5,2 2,6 2,10.5C2,12.5 3,14.5 4.5,16L3.5,19L7,17.5C8.5,18 10,18.5 12,18.5C17.5,18.5 22,14.5 22,10C22,5.5 17.5,2 12,2M12,4C16.5,4 20,7 20,10C20,13 16.5,16 12,16C10.5,16 9,15.5 7.5,15L6,15.5L6.5,14C5.5,13 5,11.5 5,10.5C5,7 8.5,4 12,4Z" />
                 </svg>
                 <span id="loginBtnText">微信登录</span>
                 <div class="loading-spinner" id="loginSpinner"></div>
@@ -528,39 +474,11 @@
     </div>
 
     <script src="../js/Forum.js"></script>
+    <script src="../data/ForumData.js"></script>
     <script>
         // 页面加载时初始化公共功能
         initForumCommon();
-        
-        // 初始化搜索关键词映射（后续可以继续添加）
-        addSearchKeywords({
-            '杨伟江': {
-                title: '【吐槽】杨伟江这周末又放鸽子......',
-                url: 'ForumPost.html?detail=whereisyang',
-            },
-            '林建国': {
-                title: '【祝贺】老林要退休了吗！',
-                url: 'ForumPost.html?detail=aboutlinjg',
-            },
-            'privatemail': {
-                title: '【求助】这个免手机号的邮箱真的安全吗？',
-                url: 'ForumPost.html?detail=aboutprivatemail',
-            },
-            '海伯利安': {
-                title: '【提问】我是海伯利安7楼办公的，最近8楼设备层是...',
-                url: 'ForumPost.html?detail=abouthai8',
-            },
-            '8楼': {
-                title: '【提问】我是海伯利安7楼办公的，最近8楼设备层是...',
-                url: 'ForumPost.html?detail=abouthai8',
-            },
-            '小顾报道':{
-                title: '小顾报道的个人主页',
-                url:'ForumUser.html?user=xiaogu',
-            }
-        });
-        
-        console.log('搜索关键词已添加:', Object.keys(searchKeywordMap));
     </script>
 </body>
+
 </html>

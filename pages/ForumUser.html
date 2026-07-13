@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>江城小灵通的个人空间 - 江城热线论坛</title>
     <link rel="stylesheet" href="../css/Forum.css">
     <style>
-
         .nav-menu {
-            background: rgba(0,0,0,0.1);
-            border-top: 1px solid rgba(255,255,255,0.2);
+            background: rgba(0, 0, 0, 0.1);
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
         }
 
         .nav-menu-inner {
@@ -31,7 +31,7 @@
         .nav-menu a:hover {
             color: #FFD700;
             text-decoration: underline;
-            background: rgba(255,255,255,0.1);
+            background: rgba(255, 255, 255, 0.1);
             border-radius: 2px;
         }
 
@@ -50,7 +50,7 @@
             display: flex;
             align-items: center;
             gap: 20px;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
         }
 
         .user-avatar-large {
@@ -87,7 +87,8 @@
             gap: 10px;
         }
 
-        .btn-follow, .btn-message {
+        .btn-follow,
+        .btn-message {
             padding: 8px 20px;
             border: 1px solid #1a3d7a;
             border-radius: 3px;
@@ -125,7 +126,7 @@
             width: 220px;
             background: white;
             border: 1px solid #D0D0D0;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
         }
 
         .profile-title {
@@ -166,7 +167,7 @@
             flex: 1;
             background: white;
             border: 1px solid #D0D0D0;
-            box-shadow: 0 1px 2px rgba(0,0,0,0.08);
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
         }
 
         /* Tab导航栏 */
@@ -259,7 +260,8 @@
             gap: 5px;
         }
 
-        .pagination a, .pagination span {
+        .pagination a,
+        .pagination span {
             display: inline-block;
             min-width: 28px;
             height: 28px;
@@ -287,8 +289,226 @@
             color: white;
             border-color: #1E50A2;
         }
+
+        /* ================= 私信对话框样式 ================= */
+        .private-message-dialog {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 600px;
+            background: white;
+            border: 2px solid #1E50A2;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            flex-direction: column;
+        }
+
+        .private-message-dialog.show {
+            display: flex;
+        }
+
+        .dialog-header {
+            background: linear-gradient(to bottom, #4A86E8, #1E50A2);
+            color: white;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #0d3a7a;
+        }
+
+        .dialog-title {
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .dialog-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+        }
+
+        .dialog-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        .dialog-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px;
+            background: #f5f5f5;
+        }
+
+        .message {
+            margin-bottom: 12px;
+            display: flex;
+        }
+
+        .message.me {
+            justify-content: flex-end;
+        }
+
+        .message.other {
+            justify-content: flex-start;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.6;
+            word-wrap: break-word;
+        }
+
+        .message.me .message-bubble {
+            background: #4A86E8;
+            color: white;
+            border-bottom-right-radius: 2px;
+        }
+
+        .message.other .message-bubble {
+            background: white;
+            color: #333;
+            border: 1px solid #ddd;
+            border-bottom-left-radius: 2px;
+        }
+
+        .message-bubble.fade-in {
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .typing-indicator {
+            display: none;
+            padding: 8px 15px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            font-size: 12px;
+            text-align: center;
+            animation: pulse 1.5s infinite;
+        }
+
+        .typing-indicator.show {
+            display: block;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 0.6;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        .dialog-footer {
+            padding: 12px 15px;
+            background: white;
+            border-top: 1px solid #ddd;
+        }
+
+        .input-area {
+            display: flex;
+            gap: 10px;
+        }
+
+        .message-input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .message-input:focus {
+            border-color: #4A86E8;
+        }
+
+        .message-input[readonly] {
+            background: #f5f5f5;
+            cursor: not-allowed;
+        }
+
+        .send-btn {
+            padding: 8px 20px;
+            background: #4A86E8;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+
+        .send-btn:hover:not(:disabled) {
+            background: #1E50A2;
+        }
+
+        .send-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        /* Toast 提示样式 */
+        .toast-hint {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 12px 24px;
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            border-radius: 25px;
+            font-size: 14px;
+            text-align: center;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+            z-index: 99999;
+            animation: toastFadeIn 0.3s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes toastFadeIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
     </style>
 </head>
+
 <body>
     <!-- 顶部导航 -->
     <div class="header">
@@ -303,7 +523,7 @@
                     <button class="search-btn">搜索</button>
                 </div>
                 <div id="userStatusArea">
-                    <a href="#" onclick="showLoginModal(); return false;">登录</a> | 
+                    <a href="#" onclick="showLoginModal(); return false;">登录</a> |
                     <a href="#" onclick="showLoginModal(); return false;">注册</a>
                 </div>
             </div>
@@ -348,14 +568,6 @@
 
             <!-- 右侧内容区 -->
             <div class="content-area">
-                <!-- Tab导航栏 -->
-                <div class="tab-nav">
-                    <div class="tab-item active" onclick="switchTab('posts', this)">他的帖子</div>
-                    <div class="tab-item" onclick="switchTab('replies', this)">他的回复</div>
-                    <div class="tab-item" onclick="switchTab('following', this)">他的关注</div>
-                    <div class="tab-item" onclick="switchTab('followers', this)">他的粉丝</div>
-                </div>
-
                 <!-- 帖子列表区 -->
                 <div id="tabContent">
                     <table class="post-table">
@@ -364,7 +576,6 @@
                                 <th>帖子标题</th>
                                 <th style="width: 150px;">发帖时间</th>
                                 <th style="width: 100px; text-align: center;">回复/查看</th>
-                                <th style="width: 180px;">最后回复</th>
                             </tr>
                         </thead>
                         <tbody id="postList">
@@ -373,14 +584,6 @@
                             </tr>
                         </tbody>
                     </table>
-
-                    <!-- 分页控件 -->
-                    <div class="pagination" id="pagination">
-                        <span class="current">1</span>
-                        <a href="#">2</a>
-                        <a href="#">3</a>
-                        <a href="#">下一页</a>
-                    </div>
                 </div>
             </div>
         </div>
@@ -408,7 +611,8 @@
             <div class="login-title">论坛登录</div>
             <button class="wechat-login-btn" onclick="wechatLogin()">
                 <svg class="wechat-icon" viewBox="0 0 24 24" fill="white">
-                    <path d="M8.5,13.5A1.5,1.5 0 1,1 10,15A1.5,1.5 0 0,1 8.5,13.5M14.5,13.5A1.5,1.5 0 1,1 16,15A1.5,1.5 0 0,1 14.5,13.5M12,2C6.5,2 2,6 2,10.5C2,12.5 3,14.5 4.5,16L3.5,19L7,17.5C8.5,18 10,18.5 12,18.5C17.5,18.5 22,14.5 22,10C22,5.5 17.5,2 12,2M12,4C16.5,4 20,7 20,10C20,13 16.5,16 12,16C10.5,16 9,15.5 7.5,15L6,15.5L6.5,14C5.5,13 5,11.5 5,10.5C5,7 8.5,4 12,4Z"/>
+                    <path
+                        d="M8.5,13.5A1.5,1.5 0 1,1 10,15A1.5,1.5 0 0,1 8.5,13.5M14.5,13.5A1.5,1.5 0 1,1 16,15A1.5,1.5 0 0,1 14.5,13.5M12,2C6.5,2 2,6 2,10.5C2,12.5 3,14.5 4.5,16L3.5,19L7,17.5C8.5,18 10,18.5 12,18.5C17.5,18.5 22,14.5 22,10C22,5.5 17.5,2 12,2M12,4C16.5,4 20,7 20,10C20,13 16.5,16 12,16C10.5,16 9,15.5 7.5,15L6,15.5L6.5,14C5.5,13 5,11.5 5,10.5C5,7 8.5,4 12,4Z" />
                 </svg>
                 <span id="loginBtnText">微信登录</span>
                 <div class="loading-spinner" id="loginSpinner"></div>
@@ -418,110 +622,14 @@
     </div>
 
     <script src="../js/Forum.js"></script>
+    <script src="../data/ForumData.js"></script>
     <script>
         // 页面加载时初始化公共功能
         initForumCommon();
-        
-        // 用户数据（模拟从后端获取）
-        const userData = {
-            'jiangchengxiaolingtong': {
-                username: '江城小灵通',
-                userGroup: '金牌会员',
-                avatar: '👤',
-                profile: {
-                    uid: '12345',
-                    等级: 'Lv.8',
-                    积分: 8560,
-                    威望: 856,
-                    金币: 3280,
-                    发帖数: 567,
-                    精华帖: 23,
-                    注册时间: '2028-03-15 10:23:45',
-                    最后登录: '2030-07-11 08:30:12'
-                },
-                posts: [
-                    {
-                        title: '【活动】618狂欢，江城购物街优惠券狂送！',
-                        publishTime: '2030-07-11 09:15:23',
-                        replies: 356,
-                        views: 12580,
-                        lastReply: {
-                            time: '2030-07-11 10:45:32',
-                            author: '购物达人小王'
-                        }
-                    },
-                    {
-                        title: '江州房价走势分析（2030年最新版）',
-                        publishTime: '2030-07-08 14:20:15',
-                        replies: 234,
-                        views: 8956,
-                        lastReply: {
-                            time: '2030-07-11 09:30:21',
-                            author: '房产专家老李'
-                        }
-                    },
-                    {
-                        title: '分享一个好吃的早餐店，在滨江路',
-                        publishTime: '2030-07-05 07:30:45',
-                        replies: 89,
-                        views: 3456,
-                        lastReply: {
-                            time: '2030-07-10 22:15:18',
-                            author: '吃货小分队'
-                        }
-                    },
-                    {
-                        title: '【求助】如何考取结构工程师证书？',
-                        publishTime: '2030-07-01 16:45:30',
-                        replies: 67,
-                        views: 2345,
-                        lastReply: {
-                            time: '2030-07-10 19:30:45',
-                            author: '考证达人'
-                        }
-                    }
-                ]
-            },
-            'jiaojidetongshi': {
-                username: '焦急的同事',
-                userGroup: '普通会员',
-                avatar: '👤',
-                profile: {
-                    uid: '45678',
-                    等级: 'Lv.3',
-                    积分: 1560,
-                    威望: 234,
-                    金币: 1560,
-                    发帖数: 156,
-                    精华帖: 2,
-                    注册时间: '2029-05-12 14:30:20',
-                    最后登录: '2030-07-10 16:20:35'
-                },
-                posts: [
-                    {
-                        title: '【求助】寻找杨sir的下落',
-                        publishTime: '2030-07-10 14:23:45',
-                        replies: 89,
-                        views: 2456,
-                        lastReply: {
-                            time: '2030-07-10 15:45:23',
-                            author: '焦急的同事'
-                        }
-                    },
-                    {
-                        title: '誉鼎集团内部员工福利讨论',
-                        publishTime: '2030-06-28 10:15:30',
-                        replies: 45,
-                        views: 1234,
-                        lastReply: {
-                            time: '2030-07-09 11:20:15',
-                            author: 'HR小李'
-                        }
-                    }
-                ]
-            }
-        };
 
+        // 用户数据（模拟从后端获取）
+        let userData = {};
+        userData = decryptData(FORUM_USERS_ENCRYPTED) || {};
         let currentUserKey = '';
         let currentTab = 'posts';
 
@@ -530,34 +638,34 @@
             // 从URL参数获取用户ID
             const urlParams = new URLSearchParams(window.location.search);
             const userKey = urlParams.get('user');
-            
+
             if (!userKey) {
                 alert('用户不存在');
                 return;
             }
-            
+
             currentUserKey = userKey;
             const user = userData[userKey];
-            
+
             if (!user) {
                 alert('用户不存在');
                 return;
             }
-            
+
             // 更新页面标题
             document.title = user.username + '的个人空间 - 江城热线论坛';
-            
+
             // 更新用户横幅
             document.getElementById('userAvatar').textContent = user.avatar;
             document.getElementById('userName').textContent = user.username;
             document.getElementById('userGroup').textContent = user.userGroup;
-            
+
             // 更新个人资料
             const profileHtml = Object.entries(user.profile).map(([key, value]) => {
                 return `<div class="profile-item"><label>${key}:</label><span>${value}</span></div>`;
             }).join('');
             document.getElementById('profileContent').innerHTML = profileHtml;
-            
+
             // 加载帖子列表
             loadPostList(user.posts);
         }
@@ -573,55 +681,389 @@
                 document.getElementById('postList').innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 30px; color: #999;">暂无内容</td></tr>';
                 return;
             }
-            
+
             const html = posts.map(post => {
                 return `
                     <tr>
-                        <td><a href="ForumPost.html?detail=xxx" class="post-link">${post.title}</a></td>
+                        <td><a href="${post.url}" class="post-link">${post.title}</a></td>
                         <td class="time-text">${post.publishTime}</td>
                         <td class="stats-text">${post.replies}/${post.views}</td>
-                        <td class="time-text">${post.lastReply.time}<br>by ${post.lastReply.author}</td>
                     </tr>
                 `;
             }).join('');
-            
+
             document.getElementById('postList').innerHTML = html;
         }
 
         // 切换Tab
         function switchTab(tab, element) {
             currentTab = tab;
-            
+
             // 更新Tab样式
             document.querySelectorAll('.tab-item').forEach(item => {
                 item.classList.remove('active');
             });
             element.classList.add('active');
-            
+
             // 根据Tab加载不同内容
             const user = userData[currentUserKey];
             if (!user) return;
-            
-            if (tab === 'posts') {
-                loadPostList(user.posts);
-            } else if (tab === 'replies') {
-                document.getElementById('postList').innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 30px; color: #999;">暂无回复记录</td></tr>';
-            } else if (tab === 'following') {
-                document.getElementById('postList').innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 30px; color: #999;">暂无关注</td></tr>';
-            } else if (tab === 'followers') {
-                document.getElementById('postList').innerHTML = '<tr><td colspan="4" style="text-align: center; padding: 30px; color: #999;">暂无粉丝</td></tr>';
-            }
-        }
 
-        // 关注用户
-        function followUser() {
-            alert('已关注该用户！');
+            loadPostList(user.posts);
         }
 
         // 发送私信
         function sendMessage() {
-            alert('私信功能开发中...');
+            // 检查登录状态
+            const forumUser = localStorage.getItem('forumUser');
+            if (!forumUser) {
+                // 未登录,弹出登录模块
+                showLoginModal();
+                return;
+            }
+
+            // 已登录,显示私信对话框
+            showPrivateMessageDialog();
         }
+
+        // 显示私信对话框
+        function showPrivateMessageDialog() {
+            const dialog = document.getElementById('privateMessageDialog');
+            if (!dialog) {
+                createPrivateMessageDialog();
+            }
+
+            const dialogElement = document.getElementById('privateMessageDialog');
+            dialogElement.classList.add('show');
+
+            // 加载对话历史
+            loadChatHistory();
+        }
+
+        // 关闭私信对话框
+        function closePrivateMessageDialog() {
+            const dialog = document.getElementById('privateMessageDialog');
+            if (dialog) {
+                dialog.classList.remove('show');
+            }
+        }
+
+        // 创建私信对话框
+        function createPrivateMessageDialog() {
+            const dialog = document.createElement('div');
+            dialog.id = 'privateMessageDialog';
+            dialog.className = 'private-message-dialog';
+            dialog.innerHTML = `
+                <div class="dialog-header">
+                    <div class="dialog-title">💬 私信 - ${userData[currentUserKey]?.username || '用户'}</div>
+                    <button class="dialog-close" onclick="closePrivateMessageDialog()">×</button>
+                </div>
+                <div class="dialog-body" id="chatBody">
+                    <!-- 聊天记录将在这里显示 -->
+                </div>
+                <div class="typing-indicator" id="typingIndicator"></div>
+                <div class="dialog-footer">
+                    <div class="input-area">
+                        <input type="text" class="message-input" id="messageInput" placeholder="输入消息..." readonly>
+                        <button class="send-btn" id="sendBtn" onclick="handleSendMessage()">发送</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(dialog);
+        }
+
+        // 加载聊天历史
+        function loadChatHistory() {
+            const chatBody = document.getElementById('chatBody');
+            const input = document.getElementById('messageInput');
+
+            // 清空聊天记录容器
+            chatBody.innerHTML = '';
+
+            // 从localStorage读取对话历史
+            const chatKey = `chat_${currentUserKey}`;
+            const chatHistory = JSON.parse(localStorage.getItem(chatKey) || '[]');
+
+            // 获取阶段标志位
+            const stage2Key = `chat_stage2_${currentUserKey}`;
+            const isStage2 = localStorage.getItem(stage2Key) === 'isStage2';
+            const isEnd = localStorage.getItem(stage2Key) === 'isEnd';
+
+            if (chatHistory.length === 0) {
+                // 第一次打开,触发阶段一
+                startStageOne();
+            } else {
+                // 显示历史记录
+                chatHistory.forEach(msg => {
+                    appendMessage(msg.sender, msg.content, false);
+                });
+
+                // 滚动到底部
+                chatBody.scrollTop = chatBody.scrollHeight;
+
+                // 检查阶段一是否完成(有2条我的消息和2条对方消息)
+                const myMessages = chatHistory.filter(msg => msg.sender === 'me').length;
+                const otherMessages = chatHistory.filter(msg => msg.sender === 'other').length;
+                if (myMessages < 2 || otherMessages < 2) {
+                    // 阶段一未完成,继续阶段一流程
+                    if (myMessages === 0) {
+                        // 还没发第一条消息
+                        startStageOne();
+                    } else if (myMessages === 1 && otherMessages === 1) {
+                        // 已发第一条,等待发送第二条
+                        window._stageOneMessages = [
+                            '你好，你是记者吗？看到你在海伯利安的线。我这边摸到一点“8楼”的异常。',
+                            '我可以帮你，但是时间紧张，稍后再找你。'
+                        ];
+                        window._currentMessageIndex = 1;
+                        input.value = window._stageOneMessages[1];
+                        input.readOnly = false;
+                        input.placeholder = '输入消息...';
+                        hideHint();
+                    }
+                } else if (isStage2) {
+                    // 阶段二已触发,可以再次触发
+                    hideHint();
+                    input.readOnly = true;
+                    input.placeholder = '输入消息...';
+                    input.value = '之前说的8楼发生大事故，是苏柏年下令浇筑，封掉了他们的尸骨！但是当我准备下载证据的时候，他禁掉了我的后台权限。';
+                } else if (isEnd) {
+                    showHint('来不及了！时间不等人！');
+                    input.readOnly = true;
+                    input.value = '';
+                } else {
+                    // 阶段二未触发,显示提示
+                    showHint('再搜查一下线索再来找他吧。');
+                    input.readOnly = true;
+                    input.placeholder = '输入消息...';
+                    input.value = '';
+                }
+            }
+        }
+
+        // 开始阶段一对话
+        function startStageOne() {
+            const chatBody = document.getElementById('chatBody');
+            const input = document.getElementById('messageInput');
+
+            // 设置第一条消息为待发送状态
+            input.value = '你好，你是记者吗？看到你在海伯利安的线。我这边摸到一点“8楼”的异常。';
+            input.readOnly = true;
+            input.placeholder = '输入消息...';
+            hideHint();
+
+            // 监听发送按钮点击
+            window._stageOneMessages = [
+                '你好，你是记者吗？看到你在海伯利安的线。我这边摸到一点“8楼”的异常。',
+                '我可以帮你，但是时间紧张，稍后再找你。'
+            ];
+            window._currentMessageIndex = 0;
+        }
+
+        // 处理发送消息
+        function handleSendMessage() {
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+
+            if (!message) return;
+            // 检查是否是阶段一
+            if (window._stageOneMessages && window._currentMessageIndex !== undefined) {
+                // 阶段一逻辑
+                const currentIndex = window._currentMessageIndex;
+                const expectedMessage = window._stageOneMessages[currentIndex];
+
+                if (message === expectedMessage) {
+                    // 发送我的消息
+                    appendMessage('me', message);
+                    saveChatMessage('me', message);
+                    input.value = '';
+
+                    // 对方回复
+                    setTimeout(() => {
+                        showTypingIndicator();
+                        setTimeout(() => {
+                            hideTypingIndicator();
+
+                            if (currentIndex === 0) {
+                                // 第一条消息的回复
+                                appendMessage('other', '我是记者，你是想要投稿吗？我知道海伯利安大厦08年9月底的时候8楼绝对有事故发生，但是那里具体发生了什么，现在一切都追查不下去。');
+                                saveChatMessage('other', '我是记者，你是想要投稿吗？我知道海伯利安大厦08年9月底的时候8楼绝对有事故发生，但是那里具体发生了什么，现在一切都追查不下去。');
+
+                                // 准备第二条消息
+                                window._currentMessageIndex = 1;
+                                input.value = window._stageOneMessages[1];
+                                input.placeholder = '输入消息...';
+                            } else if (currentIndex === 1) {
+                                // 第二条消息的回复
+                                appendMessage('other', '好的，感谢！我随时在这里等你。有需要其他帮助也随时找我！');
+                                saveChatMessage('other', '好的，感谢！我随时在这里等你。有需要其他帮助也随时找我！');
+
+                                // 阶段一完成
+                                delete window._stageOneMessages;
+                                delete window._currentMessageIndex;
+                                showHint('再搜查一下线索再来找他吧。');
+                                input.readOnly = true;
+                                input.placeholder = '输入消息...';
+                                input.value = '';
+                            }
+                        }, 1000);
+                    }, 500);
+                } else {
+                    alert('请发送预设的消息内容');
+                }
+                return;
+            }
+
+            // 阶段二逻辑
+            const stage2Key = `chat_stage2_${currentUserKey}`;
+            const isStage2 = localStorage.getItem(stage2Key) === 'isStage2';
+
+            if (!isStage2) {
+                // 阶段二未解锁,不处理
+                return;
+            }
+            // 清空输入框
+            input.value = '';
+            hideHint();
+            // 保存并显示我的消息
+            appendMessage('me', message);
+            saveChatMessage('me', message);
+
+            // 对方回复(阶段二)
+            setTimeout(() => {
+                showTypingIndicator();
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    appendMessage('other', '我就知道，苏柏年一定有问题！我想想......');
+                    saveChatMessage('other', '我就知道，苏柏年一定有问题！我想想......');
+
+                    setTimeout(() => {
+                        showTypingIndicator();
+                        setTimeout(() => {
+                            hideTypingIndicator();
+                            appendMessage('other', '之前我查过苏柏年，这里是苏柏年的私人账号和云盘。不知道有没有帮助？www.userlog.cn/acc_sbyn_L7we');
+                            saveChatMessage('other', '之前我查过苏柏年，这里是苏柏年的私人账号和云盘。不知道有没有帮助？www.userlog.cn/acc_sbyn_L7we');
+
+                            setTimeout(() => {
+                                showTypingIndicator();
+                                setTimeout(() => {
+                                    hideTypingIndicator();
+                                    appendMessage('me', '谢谢，我先试试！');
+                                    saveChatMessage('me', '谢谢，我先试试！');
+                                    triggerStage('isEnd');
+                                }, 1000);
+                            }, 500);
+                        }, 1000);
+                    }, 500);
+                }, 1000);
+            }, 500);
+        }
+
+        // 显示输入提示
+        function showTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) {
+                indicator.textContent = '对方正在输入…';
+                indicator.classList.add('show');
+            }
+        }
+
+        // 隐藏输入提示
+        function hideTypingIndicator() {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) {
+                indicator.classList.remove('show');
+            }
+        }
+
+        // 显示Toast提示
+        function showHint(text) {
+            // 先移除旧的toast
+            hideHint();
+
+            const toast = document.createElement('div');
+            toast.className = 'toast-hint';
+            toast.textContent = text;
+            document.body.appendChild(toast);
+
+            // 3秒后自动消失
+            setTimeout(() => {
+                hideHint();
+            }, 3000);
+        }
+
+        // 隐藏Toast提示
+        function hideHint() {
+            const existingToast = document.querySelector('.toast-hint');
+            if (existingToast) {
+                existingToast.remove();
+            }
+        }
+
+        // 添加消息到聊天窗口
+        function appendMessage(sender, content, animate = true) {
+            const chatBody = document.getElementById('chatBody');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+
+            const bubble = document.createElement('div');
+            bubble.className = 'message-bubble';
+            bubble.textContent = content;
+
+            if (animate) {
+                bubble.classList.add('fade-in');
+            }
+
+            messageDiv.appendChild(bubble);
+            chatBody.appendChild(messageDiv);
+
+            // 滚动到底部
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        // 保存聊天消息到localStorage
+        function saveChatMessage(sender, content) {
+            const chatKey = `chat_${currentUserKey}`;
+            const chatHistory = JSON.parse(localStorage.getItem(chatKey) || '[]');
+            chatHistory.push({ sender, content, timestamp: Date.now() });
+            localStorage.setItem(chatKey, JSON.stringify(chatHistory));
+        }
+
+        // 触发阶段二(外部调用)
+        function triggerStage(stage) {
+            const stage2Key = `chat_stage2_${currentUserKey}`;
+            localStorage.setItem(stage2Key, stage);
+        }
+
+        // 清除当前用户的对话历史(供外部调用)
+        function clearCurrentUserChat() {
+            if (!currentUserKey) return;
+
+            const chatKey = `chat_${currentUserKey}`;
+            const stage2Key = `chat_stage2_${currentUserKey}`;
+
+            localStorage.removeItem(chatKey);
+            localStorage.removeItem(stage2Key);
+
+            // 清除全局变量
+            delete window._stageOneMessages;
+            delete window._currentMessageIndex;
+        }
+
+        // 清除所有用户的对话历史(全局函数)
+        function clearAllChatHistory() {
+            const allKeys = Object.keys(localStorage);
+            allKeys.forEach(key => {
+                if (key.startsWith('chat_')) {
+                    localStorage.removeItem(key);
+                }
+            });
+        }
+
+        // 暴露到全局,供其他页面调用
+        window.clearCurrentUserChat = clearCurrentUserChat;
+        window.clearAllChatHistory = clearAllChatHistory;
     </script>
 </body>
+
 </html>
