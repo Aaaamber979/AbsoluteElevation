@@ -1,0 +1,2516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>誉鼎 - OA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            background: #F5F5F5;
+            color: #333;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* ========== 顶部菜单栏 ========== */
+        .header {
+            height: 60px;
+            background: #fff;
+            border-bottom: 1px solid #e8e8e8;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            width: 220px;
+        }
+
+        .logo {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #1890ff, #096dd9);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        .sys-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #222;
+        }
+
+        .header-center {
+            flex: 1;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .header-center .sep {
+            margin: 0 6px;
+            color: #bbb;
+        }
+
+        .header-center .current {
+            color: #1890ff;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e6f7ff;
+            color: #1890ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .user-dept {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .logout-btn {
+            padding: 4px 12px;
+            border: 1px solid #d9d9d9;
+            background: #fff;
+            border-radius: 3px;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            color: #f5222d;
+            border-color: #f5222d;
+        }
+
+        /* ========== 主体布局 ========== */
+        .main {
+            display: flex;
+            min-height: calc(100vh - 60px);
+        }
+
+        /* ========== 左侧导航 ========== */
+        .sidebar {
+            width: 220px;
+            background: #fff;
+            border-right: 1px solid #e8e8e8;
+            padding: 16px 0;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .search-box {
+            margin: 0 16px 12px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            height: 32px;
+            padding: 0 10px 0 30px;
+            border: 1px solid #d9d9d9;
+            border-radius: 3px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: #1890ff;
+        }
+
+        .search-box::before {
+            content: "🔍";
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            opacity: 0.5;
+        }
+
+        .menu {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .menu-group-title {
+            padding: 14px 16px 6px;
+            font-size: 12px;
+            color: #aaa;
+            letter-spacing: 1px;
+        }
+
+        .menu-item {
+            padding: 10px 16px;
+            font-size: 14px;
+            color: #555;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            border-left: 3px solid transparent;
+            transition: all 0.15s;
+            user-select: none;
+        }
+
+        .menu-item .icon {
+            margin-right: 10px;
+            width: 18px;
+            display: inline-block;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .menu-item .arrow {
+            margin-left: auto;
+            font-size: 10px;
+            color: #bbb;
+            transition: transform 0.2s;
+        }
+
+        .menu-item:hover {
+            background: #fafafa;
+            color: #1890ff;
+        }
+
+        .menu-item.active {
+            background: #e6f7ff;
+            color: #1890ff;
+            border-left-color: #1890ff;
+            font-weight: 500;
+        }
+
+        .menu-item.expanded .arrow {
+            transform: rotate(90deg);
+        }
+
+        .sub-menu-wrap {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.25s ease;
+        }
+
+        .sub-menu-wrap.open {
+            max-height: 200px;
+        }
+
+        .sub-menu {
+            padding: 8px 16px 8px 48px;
+            font-size: 13px;
+            color: #888;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: all 0.15s;
+            user-select: none;
+        }
+
+        .sub-menu:hover {
+            color: #1890ff;
+            background: #fafafa;
+        }
+
+        .sub-menu.active {
+            background: #e6f7ff;
+            color: #1890ff;
+            border-left-color: #1890ff;
+        }
+
+        .version {
+            padding: 10px 16px;
+            font-size: 11px;
+            color: #bbb;
+            border-top: 1px solid #f0f0f0;
+            margin-top: auto;
+        }
+
+        /* ========== 内容区 ========== */
+        .content {
+            flex: 1;
+            padding: 16px;
+            min-width: 0;
+            overflow-y: auto;
+        }
+
+        /* 统计卡片 */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .stat-card {
+            background: #fff;
+            border-radius: 4px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: default;
+            transition: box-shadow 0.15s;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .stat-icon.c1 {
+            background: #1890ff;
+        }
+
+        .stat-icon.c2 {
+            background: #faad14;
+        }
+
+        .stat-icon.c3 {
+            background: #52c41a;
+        }
+
+        .stat-icon.c4 {
+            background: #f5222d;
+        }
+
+        .stat-icon.c5 {
+            background: #722ed1;
+        }
+
+        .stat-icon.c6 {
+            background: #13c2c2;
+        }
+
+        .stat-icon.c7 {
+            background: #eb2f96;
+        }
+
+        .stat-icon.c8 {
+            background: #fa541c;
+        }
+
+        .stat-num {
+            font-size: 22px;
+            font-weight: 600;
+            color: #222;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #888;
+            margin-top: 2px;
+        }
+
+        .stat-sub {
+            font-size: 11px;
+            color: #bbb;
+        }
+
+        /* 主体卡片 */
+        .card {
+            background: #fff;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            padding: 14px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #222;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title .extra {
+            font-size: 12px;
+            color: #1890ff;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .card-title .extra:hover {
+            text-decoration: underline;
+        }
+
+        .card-body {
+            padding: 16px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e8e8e8;
+            padding: 0 16px;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            user-select: none;
+            transition: color 0.15s;
+        }
+
+        .tab:hover {
+            color: #1890ff;
+        }
+
+        .tab.active {
+            color: #1890ff;
+            border-bottom-color: #1890ff;
+            font-weight: 500;
+        }
+
+        /* 表格 */
+        .table-wrap {
+            padding: 0;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        thead {
+            background: #fafafa;
+        }
+
+        th {
+            padding: 10px 16px;
+            text-align: left;
+            font-weight: 500;
+            color: #555;
+            border-bottom: 1px solid #e8e8e8;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px dashed #eee;
+            color: #444;
+        }
+
+        tbody tr {
+            transition: background 0.1s;
+        }
+
+        tbody tr:hover td {
+            background: #f0f7ff;
+        }
+
+        .title-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .unread-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #1890ff;
+            flex-shrink: 0;
+        }
+
+        .title-unread {
+            font-weight: 600;
+            color: #222;
+        }
+
+        .title-link {
+            color: #1890ff;
+            cursor: pointer;
+        }
+
+        .title-link:hover {
+            text-decoration: underline;
+        }
+
+        /* 状态标签 */
+        .tag {
+            display: inline-block;
+            padding: 1px 8px;
+            border-radius: 2px;
+            font-size: 12px;
+        }
+
+        .tag-blue {
+            color: #1890ff;
+            background: #e6f7ff;
+            border: 1px solid #91d5ff;
+        }
+
+        .tag-green {
+            color: #52c41a;
+            background: #f6ffed;
+            border: 1px solid #b7eb8f;
+        }
+
+        .tag-yellow {
+            color: #faad14;
+            background: #fffbe6;
+            border: 1px solid #ffe58f;
+        }
+
+        .tag-red {
+            color: #f5222d;
+            background: #fff1f0;
+            border: 1px solid #ffa39e;
+        }
+
+        .tag-gray {
+            color: #999;
+            background: #fafafa;
+            border: 1px solid #d9d9d9;
+        }
+
+        .tag-purple {
+            color: #722ed1;
+            background: #f9f0ff;
+            border: 1px solid #d3adf7;
+        }
+
+        .op-link {
+            color: #1890ff;
+            cursor: pointer;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+
+        .op-link:hover {
+            text-decoration: underline;
+        }
+
+        .op-link.danger {
+            color: #f5222d;
+        }
+
+        /* Tab 内容面板 */
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* 页面面板 */
+        .page-panel {
+            display: none;
+        }
+
+        .page-panel.active {
+            display: block;
+        }
+
+        /* 分页 */
+        .pagination {
+            padding: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .page-btn {
+            min-width: 28px;
+            height: 28px;
+            padding: 0 8px;
+            border: 1px solid #d9d9d9;
+            background: #fff;
+            color: #1890ff;
+            font-size: 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page-btn:hover {
+            border-color: #1890ff;
+        }
+
+        .page-btn.active {
+            background: #1890ff;
+            color: #fff;
+            border-color: #1890ff;
+        }
+
+        .page-btn.disabled {
+            color: #d9d9d9;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            font-size: 12px;
+            color: #999;
+            margin: 0 8px;
+        }
+
+        /* ========== 右侧快捷面板 ========== */
+        .quick-panel {
+            width: 280px;
+            border-left: 1px dashed #d9d9d9;
+            background: #fff;
+            padding: 16px;
+            flex-shrink: 0;
+            overflow-y: auto;
+        }
+
+        .panel-module {
+            margin-bottom: 20px;
+        }
+
+        .panel-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #222;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .panel-title .more {
+            font-size: 12px;
+            color: #999;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .panel-title .more:hover {
+            color: #1890ff;
+        }
+
+        /* 日历 */
+        .calendar {
+            font-size: 12px;
+        }
+
+        .cal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .cal-header .nav {
+            cursor: pointer;
+            color: #999;
+            padding: 2px 6px;
+        }
+
+        .cal-header .nav:hover {
+            color: #1890ff;
+        }
+
+        .cal-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            color: #999;
+            margin-bottom: 4px;
+            font-size: 11px;
+        }
+
+        .cal-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+        }
+
+        .cal-day {
+            text-align: center;
+            padding: 5px 0;
+            border-radius: 3px;
+            cursor: pointer;
+            color: #555;
+        }
+
+        .cal-day:hover {
+            background: #f0f7ff;
+        }
+
+        .cal-day.other {
+            color: #ccc;
+        }
+
+        .cal-day.today {
+            background: #1890ff;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .cal-day.has-event {
+            position: relative;
+        }
+
+        .cal-day.has-event::after {
+            content: "";
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #fa541c;
+        }
+
+        .cal-day.today.has-event::after {
+            background: #fff;
+        }
+
+        /* 9宫格 */
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .app-item {
+            text-align: center;
+            padding: 10px 4px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .app-item:hover {
+            background: #f0f7ff;
+        }
+
+        .app-icon {
+            width: 36px;
+            height: 36px;
+            margin: 0 auto 4px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .app-name {
+            font-size: 12px;
+            color: #555;
+        }
+
+        /* 通知列表 */
+        .notify-list {
+            max-height: 420px;
+            overflow-y: auto;
+        }
+
+        .notify-item {
+            padding: 8px 0;
+            border-bottom: 1px dashed #f0f0f0;
+            font-size: 12px;
+        }
+
+        .notify-item:last-child {
+            border-bottom: none;
+        }
+
+        .notify-title {
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 3px;
+        }
+
+        .notify-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #f5222d;
+        }
+
+        .notify-time {
+            color: #bbb;
+            font-size: 11px;
+            padding-left: 11px;
+        }
+
+        /* ========== 特殊组件 ========== */
+        /* 工作台 快捷入口 */
+        .quick-entry {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .entry-card {
+            background: #fff;
+            border-radius: 4px;
+            padding: 20px 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .entry-card:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .entry-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .entry-name {
+            font-size: 13px;
+            color: #444;
+        }
+
+        /* 双栏布局 */
+        .row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        /* 信息表单 */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+
+        .info-item {
+            padding: 12px 16px;
+            border-bottom: 1px dashed #f0f0f0;
+            display: flex;
+            align-items: center;
+        }
+
+        .info-label {
+            width: 100px;
+            color: #888;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        .info-value {
+            color: #333;
+            font-size: 13px;
+        }
+
+        /* 打卡大按钮 */
+        .clock-in-area {
+            text-align: center;
+            padding: 30px 16px;
+        }
+
+        .clock-btn {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1890ff, #096dd9);
+            color: #fff;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 4px 16px rgba(24, 144, 255, 0.3);
+            transition: all 0.2s;
+            margin-bottom: 12px;
+        }
+
+        .clock-btn:hover {
+            transform: scale(1.04);
+            box-shadow: 0 6px 24px rgba(24, 144, 255, 0.4);
+        }
+
+        .clock-btn:active {
+            transform: scale(0.97);
+        }
+
+        .clock-time {
+            font-size: 24px;
+            font-weight: 600;
+            color: #222;
+        }
+
+        .clock-date {
+            font-size: 13px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        /* 设置表单 */
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-label {
+            width: 100px;
+            font-size: 13px;
+            color: #555;
+            text-align: right;
+            padding-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .form-input {
+            height: 32px;
+            padding: 0 10px;
+            border: 1px solid #d9d9d9;
+            border-radius: 3px;
+            font-size: 13px;
+            outline: none;
+            width: 280px;
+        }
+
+        .form-input:focus {
+            border-color: #1890ff;
+        }
+
+        .form-btn {
+            padding: 6px 20px;
+            background: #1890ff;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            font-size: 13px;
+            cursor: pointer;
+            margin-left: 112px;
+        }
+
+        .form-btn:hover {
+            background: #40a9ff;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #bbb;
+        }
+
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .empty-state .text {
+            font-size: 14px;
+        }
+
+        /* 进度条 */
+        .progress-bar {
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            overflow: hidden;
+            width: 120px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .progress-fill.green {
+            background: #52c41a;
+        }
+
+        .progress-fill.blue {
+            background: #1890ff;
+        }
+
+        .progress-fill.yellow {
+            background: #faad14;
+        }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #d9d9d9;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        /* ========== BBS 讨论区专用样式 ========== */
+        .bbs-flag {
+            display: inline-block;
+            padding: 1px 6px;
+            border-radius: 2px;
+            font-size: 11px;
+            color: #fff;
+            font-weight: 500;
+            flex-shrink: 0;
+            line-height: 1.4;
+        }
+
+        .bbs-reward {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #fffbe6;
+            border: 1px solid #ffe58f;
+            color: #d48806;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* 编辑弹窗样式 */
+        .edit-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .edit-modal.show {
+            display: flex;
+        }
+
+        .edit-modal-content {
+            background: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .edit-modal-header {
+            background: linear-gradient(to right, #0a3d62, #1e5a8a);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .edit-modal-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .edit-modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+        }
+
+        .edit-modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        .edit-modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(90vh - 140px);
+        }
+
+        .edit-form-group {
+            margin-bottom: 16px;
+        }
+
+        .edit-form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .edit-form-input,
+        .edit-form-textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .edit-form-input:focus,
+        .edit-form-textarea:focus {
+            outline: none;
+            border-color: #0a3d62;
+            box-shadow: 0 0 0 2px rgba(10, 61, 98, 0.1);
+        }
+
+        .edit-form-textarea {
+            min-height: 200px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .edit-modal-footer {
+            padding: 16px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .edit-btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .edit-btn-cancel {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .edit-btn-cancel:hover {
+            background: #e0e0e0;
+        }
+
+        .edit-btn-save {
+            background: #0a3d62;
+            color: white;
+        }
+
+        .edit-btn-save:hover {
+            background: #1e5a8a;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ==================== 顶部菜单栏 ==================== -->
+    <div class="header">
+        <div class="header-left">
+            <div class="logo">OA</div>
+            <div class="sys-title">誉鼎</div>
+        </div>
+        <div class="header-center" id="breadcrumb">
+            <span>首页</span>
+            <span class="sep">&gt;</span>
+            <span class="current">工作台</span>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <div class="avatar">林</div>
+                <div>
+                    <div>林建国</div>
+                    <div class="user-dept">后勤部</div>
+                </div>
+            </div>
+            <button class="logout-btn">退出</button>
+        </div>
+    </div>
+
+    <div class="main">
+        <!-- ==================== 左侧导航 ==================== -->
+        <div class="sidebar">
+            <div class="search-box">
+                <input type="text" placeholder="快捷搜索..." id="searchInput">
+            </div>
+            <div class="menu" id="menuContainer">
+                <div class="menu-group-title">新 - 快速功能</div>
+                <div class="menu-item" data-page="bbs">
+                    <span class="icon">💬</span>誉鼎之家 - 讨论板
+                </div>
+                <div class="menu-group-title">常用功能</div>
+                <div class="menu-item active" data-page="workbench">
+                    <span class="icon">🏠</span>工作台
+                </div>
+                <div class="menu-item" data-page="approval">
+                    <span class="icon">📝</span>审批流程
+                </div>
+                <div class="menu-item" data-page="mail">
+                    <span class="icon">📧</span>内部邮件
+                </div>
+
+                <div class="menu-group-title">人事管理</div>
+                <div class="menu-item" data-page="employee">
+                    <span class="icon">👥</span>员工信息
+                </div>
+                <div class="menu-item" data-page="leave">
+                    <span class="icon">🏖</span>请假申请
+                </div>
+                <div class="menu-group-title">系统设置</div>
+                <div class="menu-item" data-page="security">
+                    <span class="icon">🔐</span>安全中心
+                </div>
+            </div>
+            <div class="version">v3.2.1 © 2030</div>
+        </div>
+
+        <!-- ==================== 内容区 ==================== -->
+        <div class="content" id="contentArea">
+
+            <!-- ===== 工作台 ===== -->
+            <div class="page-panel active" data-page="workbench">
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-icon c1">📋</div>
+                        <div>
+                            <div class="stat-num">12</div>
+                            <div class="stat-label">待办事项</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon c2">📨</div>
+                        <div>
+                            <div class="stat-num">8</div>
+                            <div class="stat-label">未读消息</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon c3">✅</div>
+                        <div>
+                            <div class="stat-num">36</div>
+                            <div class="stat-label">本月已完成</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon c4">⏰</div>
+                        <div>
+                            <div class="stat-num">3</div>
+                            <div class="stat-label">今日日程</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="quick-entry">
+                    <div class="entry-card" data-page="approval">
+                        <div class="entry-icon">📝</div>
+                        <div class="entry-name">发起审批</div>
+                    </div>
+                    <div class="entry-card" data-page="leave">
+                        <div class="entry-icon">🏖</div>
+                        <div class="entry-name">请假申请</div>
+                    </div>
+                    <div class="entry-card" data-page="meeting">
+                        <div class="entry-icon">🏢</div>
+                        <div class="entry-name">预约会议</div>
+                    </div>
+                    <div class="entry-card" data-page="mail">
+                        <div class="entry-icon">📧</div>
+                        <div class="entry-name">写邮件</div>
+                    </div>
+                </div>
+                <div class="row-2">
+                    <div class="card">
+                        <div class="card-title">待办提醒<span class="extra" data-page="notice" data-subtab="todo">查看全部
+                                ›</span></div>
+                        <div class="card-body" style="padding:0;">
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell"><span class="unread-dot"></span><span
+                                                    class="title-unread">Q3研发预算审批</span></div>
+                                        </td>
+                                        <td><span class="tag tag-yellow">待处理</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell"><span class="unread-dot"></span><span
+                                                    class="title-unread">王升阳出差申请</span></div>
+                                        </td>
+                                        <td><span class="tag tag-yellow">待处理</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell"><span class="title-text">采购进度周报第28期</span></div>
+                                        </td>
+                                        <td><span class="tag tag-blue">进行中</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">最近公告<span class="extra" data-page="notice">查看全部 ›</span></div>
+                        <div class="card-body" style="padding:0;">
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell"><span class="unread-dot"></span><span
+                                                    class="title-unread">2030年度战略发展规划通报</span></div>
+                                        </td>
+                                        <td style="color:#999;font-size:12px;">07-14</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell"><span class="unread-dot"></span><span
+                                                    class="title-unread">Q3工作安排通知</span></div>
+                                        </td>
+                                        <td style="color:#999;font-size:12px;">07-14</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell"><span class="title-text">福利补贴标准调整通知</span></div>
+                                        </td>
+                                        <td style="color:#999;font-size:12px;">07-10</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell"><span class="title-text">系统升级维护公告</span></div>
+                                        </td>
+                                        <td style="color:#999;font-size:12px;">07-13</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 审批流程 ===== -->
+            <div class="page-panel" data-page="approval">
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-icon c2">⏳</div>
+                        <div>
+                            <div class="stat-num">4</div>
+                            <div class="stat-label">待我审批</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon c1">📤</div>
+                        <div>
+                            <div class="stat-num">2</div>
+                            <div class="stat-label">我发起的</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon c3">✅</div>
+                        <div>
+                            <div class="stat-num">5</div>
+                            <div class="stat-label">已完成</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="tabs" id="approvalTabs">
+                        <div class="tab active" data-tab="ap-pending">待我审批</div>
+                        <div class="tab" data-tab="ap-mine">我发起的</div>
+                        <div class="tab" data-tab="ap-done">已完成</div>
+                    </div>
+                    <div class="tab-panel active" data-panel="ap-pending">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>审批标题</th>
+                                        <th>申请人</th>
+                                        <th>类型</th>
+                                        <th>提交时间</th>
+                                        <th>操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span class="title-unread">下月团建场地预定</span></td>
+                                        <td>行政部-小赵</td>
+                                        <td><span class="tag tag-purple">资源调配</span></td>
+                                        <td>2030-07-16 09:15</td>
+                                        <td><span class="op-link">审批</span><span class="op-link">详情</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="title-unread">设备维保合同续签</span></td>
+                                        <td>赵强</td>
+                                        <td><span class="tag tag-yellow">设备维修</span></td>
+                                        <td>2030-07-15 16:40</td>
+                                        <td><span class="op-link">审批</span><span class="op-link">详情</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="title-unread">部门新员工试用期转正申请 - 陈雪</span></td>
+                                        <td>陈雪</td>
+                                        <td><span class="tag tag-green">人事审批</span></td>
+                                        <td>2030-07-15 16:00</td>
+                                        <td><span class="op-link">审批</span><span class="op-link">详情</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="title-unread">员工出差申请 - 王升阳（上海）</span></td>
+                                        <td>王升阳</td>
+                                        <td><span class="tag tag-blue">出差审批</span></td>
+                                        <td>2030-07-15 12:00</td>
+                                        <td><span class="op-link">审批</span><span class="op-link">详情</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-panel" data-panel="ap-mine">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>审批标题</th>
+                                        <th>审批人</th>
+                                        <th>类型</th>
+                                        <th>提交时间</th>
+                                        <th>状态</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>年假申请（7月21日-23日，3天）</td>
+                                        <td>王正</td>
+                                        <td><span class="tag tag-blue">请假审批</span></td>
+                                        <td>2030-07-14 10:00</td>
+                                        <td><span class="tag tag-yellow">审批中</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>设备领用申请：适配鼠标</td>
+                                        <td>资产管理员</td>
+                                        <td><span class="tag tag-purple">资源调配</span></td>
+                                        <td>2030-02-13 09:30</td>
+                                        <td><span class="tag tag-yellow">已完成</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-panel" data-panel="ap-done">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>审批标题</th>
+                                        <th>申请人</th>
+                                        <th>结果</th>
+                                        <th>完成时间</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>食堂菜单调整</td>
+                                        <td>食堂-王师傅</td>
+                                        <td><span class="tag tag-green">已通过</span></td>
+                                        <td>2030-07-19 12:20</td>
+                                    </tr>
+                                    <tr>
+                                        <td>停车场车位调整</td>
+                                        <td>人事部-小刘</td>
+                                        <td><span class="tag tag-green">已通过</span></td>
+                                        <td>2030-07-18 08:20</td>
+                                    </tr>
+                                    <tr>
+                                        <td>空调维修申请</td>
+                                        <td>技术部-陈工</td>
+                                        <td><span class="tag tag-green">已通过</span></td>
+                                        <td>2030-07-09 15:20</td>
+                                    </tr>
+                                    <tr>
+                                        <td>办公用品采购</td>
+                                        <td>行政部-小赵</td>
+                                        <td><span class="tag tag-green">已通过</span></td>
+                                        <td>2030-06-28 11:30</td>
+                                    </tr>
+                                    <tr>
+                                        <td>消防演练申请</td>
+                                        <td>保安部-老周</td>
+                                        <td><span class="tag tag-green">已通过</span></td>
+                                        <td>2030-06-11 09:45</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 内部邮件 ===== -->
+            <div class="page-panel" data-page="mail">
+                <div class="stats">
+                    <div class="stat-card" data-page="mail" data-subtab="inbox" style="cursor:pointer;">
+                        <div class="stat-icon c1">📥</div>
+                        <div>
+                            <div class="stat-num">24</div>
+                            <div class="stat-label">收件箱</div>
+                        </div>
+                    </div>
+                    <div class="stat-card" data-page="mail" data-subtab="draft" style="cursor:pointer;">
+                        <div class="stat-icon c5">📃</div>
+                        <div>
+                            <div class="stat-num">8</div>
+                            <div class="stat-label">草稿箱</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="tabs" id="mailTabs">
+                    </div>
+
+                    <!-- 收件箱 -->
+                    <div class="tab-panel active" data-panel="inbox">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>发件人</th>
+                                        <th style="width:40%">主题</th>
+                                        <th>时间</th>
+                                        <th>附件</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><b>王正</b></td>
+                                        <td>
+                                            <div class="title-cell"><span class="unread-dot"></span><span
+                                                    class="title-unread">RE: Q3项目排期确认，请回复</span></div>
+                                        </td>
+                                        <td>昨天</td>
+                                        <td>📎 1</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>王芳</b></td>
+                                        <td>
+                                            <div class="title-cell"><span class="unread-dot"></span><span
+                                                    class="title-unread">夏季团建活动方案征集</span></div>
+                                        </td>
+                                        <td>昨天</td>
+                                        <td>📎 2</td>
+                                    </tr>
+                                    <tr>
+                                        <td>HR系统</td>
+                                        <td>您的6月工资单已生成</td>
+                                        <td>2030年7月2日</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>行政部</td>
+                                        <td>端午节福利发放通知</td>
+                                        <td>2030年6月1日</td>
+                                        <td>📎 2</td>
+                                    </tr>
+                                    <tr>
+                                        <td>行政部</td>
+                                        <td>4月员工生日聚会</td>
+                                        <td>2030年4月1日</td>
+                                        <td>📎 1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>行政部</td>
+                                        <td>春节福利发放通知</td>
+                                        <td>2030年1月22日</td>
+                                        <td>📎 1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>HR赵强</td>
+                                        <td>2029年度表彰大会流程安排</td>
+                                        <td>2030年1月21日</td>
+                                        <td>📎 1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>HR赵强</td>
+                                        <td>2029年度员工表彰通知书！</td>
+                                        <td>2030年1月21日</td>
+                                        <td>📎 1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>行政部</td>
+                                        <td>2030年办公用品领用通知</td>
+                                        <td>2030年1月1日</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>unknown</td>
+                                        <td>
+                                            <div id="unknown_email">有些事情得给你交代清楚。</div>
+                                        </td>
+                                        <td>unknown</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="pagination">
+                            <button class="page-btn active">1</button><button class="page-btn">2</button><button
+                                class="page-btn">3</button>
+                            <span class="page-info">共 24 条</span>
+                        </div>
+                    </div>
+
+                    <!-- 草稿箱 -->
+                    <div class="tab-panel" data-panel="draft">
+                        <div class="table-wrap">
+                            <table id="draftTable">
+                                <thead>
+                                    <tr>
+                                        <th style="width:40%">主题</th>
+                                        <th>收件人</th>
+                                        <th>最后编辑</th>
+                                        <th>大小</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 动态生成草稿列表 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 员工信息 ===== -->
+            <div class="page-panel" data-page="employee">
+                <div class="card">
+                    <div class="card-title">个人档案</div>
+                    <div class="card-body" style="display:flex;gap:24px;">
+                        <div style="text-align:center;flex-shrink:0;">
+                            <div
+                                style="width:80px;height:80px;border-radius:50%;background:#e6f7ff;color:#1890ff;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:bold;margin:0 auto 8px;">
+                                林</div>
+                            <div style="font-size:16px;font-weight:600;">林建国</div>
+                            <div style="font-size:12px;color:#888;margin-top:2px;">工号: YD20080021</div>
+                            <span class="tag tag-green" style="margin-top:8px;">在职</span>
+                        </div>
+                        <div style="flex:1;">
+                            <div class="info-grid">
+                                <div class="info-item"><span class="info-label">姓 名</span><span
+                                        class="info-value">林建国</span></div>
+                                <div class="info-item"><span class="info-label">部 门</span><span
+                                        class="info-value">后勤部</span></div>
+                                <div class="info-item"><span class="info-label">职 位</span><span
+                                        class="info-value">副部长</span></div>
+                                <div class="info-item"><span class="info-label">直属上级</span><span
+                                        class="info-value">王正</span></div>
+                                <div class="info-item"><span class="info-label">入职日期</span><span
+                                        class="info-value">2008-03-15</span></div>
+                                <div class="info-item"><span class="info-label">合同到期</span><span
+                                        class="info-value">/</span>
+                                </div>
+                                <div class="info-item"><span class="info-label">联系电话</span><span
+                                        class="info-value">138****5678</span></div>
+                                <div class="info-item"><span class="info-label">电子邮箱</span><span
+                                        class="info-value">jianguo.lin@yuding-holding.cn</span></div>
+                                <div class="info-item"><span class="info-label">办公地点</span><span class="info-value">总部大楼
+                                        4F-A区</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 个人照片 -->
+                    <div class="card-title">个人照片墙</div>
+                    <div style="margin-top: 24px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+                        <div style="border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <img src="../assets/lin.jpg" alt="个人照片" style="width: 100%; height: auto; display: block;">
+                        </div>
+                        <div style="border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                            <img src="../assets/lin_awards.jpg" alt="获奖证书"
+                                style="width: 100%; height: auto; display: block;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 请假申请 ===== -->
+            <div class="page-panel" data-page="leave">
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-icon c1">🏖</div>
+                        <div>
+                            <div class="stat-num">7</div>
+                            <div class="stat-label">年假剩余</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon c3">🤒</div>
+                        <div>
+                            <div class="stat-num">10</div>
+                            <div class="stat-label">病假剩余</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon c2">💍</div>
+                        <div>
+                            <div class="stat-num">0</div>
+                            <div class="stat-label">婚假剩余</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon c5">📊</div>
+                        <div>
+                            <div class="stat-num">3</div>
+                            <div class="stat-label">已用天数</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">请假记录<span class="extra">+ 新建请假</span></div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>请假类型</th>
+                                    <th>开始时间</th>
+                                    <th>结束时间</th>
+                                    <th>天数</th>
+                                    <th>审批人</th>
+                                    <th>状态</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="tag tag-blue">年假</span></td>
+                                    <td>2030-07-21</td>
+                                    <td>2030-07-23</td>
+                                    <td>3天</td>
+                                    <td>王正</td>
+                                    <td><span class="tag tag-yellow">审批中</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="tag tag-green">年假</span></td>
+                                    <td>2030-07-08</td>
+                                    <td>2030-07-08</td>
+                                    <td>1天</td>
+                                    <td>王正</td>
+                                    <td><span class="tag tag-green">已通过</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="tag tag-purple">事假</span></td>
+                                    <td>2030-06-15</td>
+                                    <td>2030-06-16</td>
+                                    <td>2天</td>
+                                    <td>王正</td>
+                                    <td><span class="tag tag-green">已通过</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="tag tag-yellow">病假</span></td>
+                                    <td>2030-05-20</td>
+                                    <td>2030-05-20</td>
+                                    <td>1天</td>
+                                    <td>王正</td>
+                                    <td><span class="tag tag-green">已通过</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 会议室 ===== -->
+            <div class="page-panel" data-page="meeting">
+                <div class="card">
+                    <div class="card-title">会议室预约<span class="extra">+ 新建预约</span></div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>会议室</th>
+                                    <th>位置</th>
+                                    <th>容量</th>
+                                    <th>设备</th>
+                                    <th>今日状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><b>会议室 A</b></td>
+                                    <td>3楼</td>
+                                    <td>20人</td>
+                                    <td>投影仪、白板、视频会议</td>
+                                    <td><span class="tag tag-green">空闲</span></td>
+                                    <td><span class="op-link">预约</span></td>
+                                </tr>
+                                <tr>
+                                    <td><b>会议室 B</b></td>
+                                    <td>3楼</td>
+                                    <td>10人</td>
+                                    <td>投影仪、白板</td>
+                                    <td><span class="tag tag-red">占用 14:00-16:00</span></td>
+                                    <td><span class="op-link">查看时段</span></td>
+                                </tr>
+                                <tr>
+                                    <td><b>会议室 C</b></td>
+                                    <td>4楼</td>
+                                    <td>6人</td>
+                                    <td>电视屏幕</td>
+                                    <td><span class="tag tag-green">空闲</span></td>
+                                    <td><span class="op-link">预约</span></td>
+                                </tr>
+                                <tr>
+                                    <td><b>大会议室</b></td>
+                                    <td>5楼</td>
+                                    <td>50人</td>
+                                    <td>LED屏、音响、直播设备</td>
+                                    <td><span class="tag tag-red">占用 14:00-15:30</span></td>
+                                    <td><span class="op-link">查看时段</span></td>
+                                </tr>
+                                <tr>
+                                    <td><b>培训室</b></td>
+                                    <td>2楼</td>
+                                    <td>30人</td>
+                                    <td>投影仪、音响、录播</td>
+                                    <td><span class="tag tag-yellow">维护中</span></td>
+                                    <td><span class="op-link" style="color:#ccc;">不可用</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">我的预约</div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>会议室</th>
+                                    <th>日期</th>
+                                    <th>时间</th>
+                                    <th>主题</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 安全中心 ===== -->
+            <div class="page-panel" data-page="security">
+                <div class="card">
+                    <div class="card-title">账户安全</div>
+                    <div class="card-body">
+                        <div class="info-grid" style="grid-template-columns:1fr;">
+                            <div class="info-item"><span class="info-label">登录密码</span><span class="info-value">最近修改:
+                                    1970-01-01 <span class="op-link" style="margin-left:12px;">修改密码</span></span></div>
+                            <div class="info-item"><span class="info-label">手机绑定</span><span
+                                    class="info-value">138****5678
+                                    <span class="tag tag-green" style="margin-left:8px;">已绑定</span><span class="op-link"
+                                        style="margin-left:12px;">更换</span></span></div>
+                            <div class="info-item"><span class="info-label">邮箱绑定</span><span
+                                    class="info-value">jianguo.lin@yuding-holding.cn <span class="tag tag-green"
+                                        style="margin-left:8px;">已验证</span></span></div>
+                            <div class="info-item"><span class="info-label">两步验证</span><span class="info-value"><span
+                                        class="tag tag-gray">未开启</span><span class="op-link"
+                                        style="margin-left:12px;">开启</span></span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">登录记录</div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>登录时间</th>
+                                    <th>IP地址</th>
+                                    <th>设备</th>
+                                    <th>地点</th>
+                                    <th>状态</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td id="login-oa-time">2030-07-14 09:42</td>
+                                    <td>45.33.11.201</td>
+                                    <td>Safari / macOS</td>
+                                    <td>江城</td>
+                                    <td><span class="tag tag-yellow">异常</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2030-07-14 08:42</td>
+                                    <td>192.168.1.105</td>
+                                    <td>Chrome / Windows 11</td>
+                                    <td>公司内网</td>
+                                    <td><span class="tag tag-green">成功</span></td>
+                                </tr>
+                                <tr>
+                                    <td>2030-06-13 08:55</td>
+                                    <td>192.168.1.128</td>
+                                    <td>Chrome / Windows 11</td>
+                                    <td>公司内网</td>
+                                    <td><span class="tag tag-green">成功</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== BBS 讨论区 ===== -->
+            <div class="page-panel" data-page="bbs">
+
+                <!-- 主体卡片 -->
+                <div class="card">
+                    <div class="card-title">
+                        <span>💬 誉鼎之家 - 讨论板</span>
+                        <span class="extra"
+                            style="background:#1890ff;color:#fff;padding:4px 14px;border-radius:3px;font-size:12px;">✏️
+                            发表新帖</span>
+                    </div>
+
+                    <!-- 全部 -->
+                    <div class="tab-panel active" data-panel="bbs-all">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width:48%">标题</th>
+                                        <th>板块</th>
+                                        <th>作者</th>
+                                        <th>回复 / 浏览</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell">
+                                                <span class="bbs-flag" style="background:#f5222d;">置顶</span>
+                                                <span class="title-unread">【公告】2030年度集团之星评选开始啦，快来提名你心中的TA！</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="tag tag-purple">团队建设</span></td>
+                                        <td>HR 小刘</td>
+                                        <td><b style="color:#1890ff;">328</b> / 2.1k</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell">
+                                                <span class="bbs-flag" style="background:#f5222d;">置顶</span>
+                                                <span class="title-unread">【版规】誉鼎之家讨论规范及公司相关规定（必读）</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="tag tag-gray">公告</span></td>
+                                        <td>管理员</td>
+                                        <td>56 / 8.9k</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell">
+                                                <span class="title-unread">端午节福利发放通知</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="tag tag-gray">公告</span></td>
+                                        <td>行政部-张姐</td>
+                                        <td>42 / 1.2k</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell">
+                                                <span class="title-unread">下个月老林退休欢送会，大家有什么建议？</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="tag tag-green">后勤部-讨论</span></td>
+                                        <td>行政部-小赵</td>
+                                        <td>89 / 1.2k</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell">
+                                                <span class="title-unread">上周团建活动照片分享，感谢苏总特批的经费</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="tag tag-green">后勤部-讨论</span></td>
+                                        <td>行政部-小赵</td>
+                                        <td><b style="color:#1890ff;">342</b> / 3.1k</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell">
+                                                <span class="title-unread">15楼空调又坏了，这周第三次了！</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="tag tag-yellow">意见建议</span></td>
+                                        <td>技术部-陈工</td>
+                                        <td><b style="color:#1890ff;">142</b> / 1.1k</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell">
+                                                <span class="title-unread">食堂的糖醋排骨能不能多放点糖？</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="tag tag-yellow">意见建议</span></td>
+                                        <td>设计部-小王</td>
+                                        <td><b style="color:#1890ff;">126</b> / 2.3k</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell">
+                                                <span class="title-unread">向老林学习，致敬"老黄牛"精神</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="tag tag-blue">公司-讨论</span></td>
+                                        <td>人事部-小刘</td>
+                                        <td><b style="color:#1890ff;">205</b> / 1.6k</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell">
+                                                <span class="title-unread">最近公司怎么总有记者来转悠？</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="tag tag-blue">公司-讨论</span></td>
+                                        <td>前台-小美</td>
+                                        <td>23 / 386</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell">
+                                                <span class="title-unread">2029年9月28日"安全生产与生命敬畏日"放假！</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="tag tag-gray">公告</span></td>
+                                        <td>行政部-张姐</td>
+                                        <td>18 / 245</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="pagination">
+                            <button class="page-btn">«</button>
+                            <button class="page-btn">‹</button>
+                            <button class="page-btn active">1</button>
+                            <button class="page-btn">2</button>
+                            <button class="page-btn">3</button>
+                            <button class="page-btn">4</button>
+                            <button class="page-btn">5</button>
+                            <span class="page-info">共 53 条 / 第 1 页</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div><!-- end content -->
+
+        <!-- ==================== 右侧快捷面板 ==================== -->
+        <div class="quick-panel">
+            <div class="panel-module">
+                <div class="panel-title"><span>⚡ 常用应用</span><span class="more">设置 ›</span></div>
+                <div class="app-grid">
+                    <div class="app-item" data-page="approval">
+                        <div class="app-icon" style="background:#1890ff">📝</div>
+                        <div class="app-name">审批</div>
+                    </div>
+                    <div class="app-item" data-page="mail">
+                        <div class="app-icon" style="background:#faad14">📧</div>
+                        <div class="app-name">邮件</div>
+                    </div>
+                    <div class="app-item" data-page="leave">
+                        <div class="app-icon" style="background:#eb2f96">🏖</div>
+                        <div class="app-name">请假</div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-module">
+                <div class="panel-title"><span>🔔 系统通知</span><span class="more">全部 ›</span></div>
+                <div class="notify-list">
+                    <div class="notify-item">
+                        <div class="notify-title"><span class="notify-dot"></span>您有一条新的审批待处理</div>
+                        <div class="notify-time">2分钟前</div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="notify-title"><span class="notify-dot"></span>本月考勤一切正常</div>
+                        <div class="notify-time">3小时前</div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="notify-title">【重要】海伯利安拆迁决定</div>
+                        <div class="notify-time">2天前</div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="notify-title">关于加强极端天气的风险防范应对工作...</div>
+                        <div class="notify-time">4天前</div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="notify-title">年度体检通知已发布</div>
+                        <div class="notify-time">7天前</div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="notify-title">退休提前知</div>
+                        <div class="notify-time">7天前</div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="notify-title">OA系统已接入誉鼎之家模块</div>
+                        <div class="notify-time">1年前</div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="notify-title">后勤部新规定</div>
+                        <div class="notify-time">4年前</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- 编辑弹窗 -->
+    <div class="edit-modal" id="editModal">
+        <div class="edit-modal-content">
+            <div class="edit-modal-header">
+                <div class="edit-modal-title">编辑邮件草稿</div>
+                <button class="edit-modal-close" onclick="closeEditModal()">×</button>
+            </div>
+            <div class="edit-modal-body">
+                <div class="edit-form-group">
+                    <label class="edit-form-label">收件人</label>
+                    <input type="text" class="edit-form-input" id="editTo" readonly>
+                </div>
+                <div class="edit-form-group">
+                    <label class="edit-form-label">主题</label>
+                    <input type="text" class="edit-form-input" id="editSubject">
+                </div>
+                <div class="edit-form-group">
+                    <label class="edit-form-label">内容</label>
+                    <div class="edit-form-textarea" id="editContent" contenteditable="true"></div>
+                </div>
+            </div>
+            <div class="edit-modal-footer">
+                <button class="edit-btn edit-btn-cancel" onclick="closeEditModal()">取消</button>
+                <button class="edit-btn edit-btn-save" onclick="saveDraft()">保存草稿</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+    function addMysteryReplyCondition(conditionName) {
+        const conditions = JSON.parse(localStorage.getItem('mysteryReplyConditions') || '[]');
+        if (!conditions.includes(conditionName)) {
+            conditions.push(conditionName);
+            localStorage.setItem('mysteryReplyConditions', JSON.stringify(conditions));
+        }
+    }
+    const loginUser = localStorage.getItem('login-oa-user');
+    if (loginUser != 'YD20080021') {
+        alert('你...怎么进来的？');
+        window.location.href = 'YuDingOaLogin.html';
+    }
+
+    // ==================== 路由配置 ====================
+    const routeConfig = {
+        workbench: { breadcrumb: ['首页', '工作台'] },
+        notice: { breadcrumb: ['首页', '办公', '通知公告'] },
+        approval: { breadcrumb: ['首页', '办公', '审批流程'] },
+        mail: { breadcrumb: ['首页', '沟通协作', '内部邮件'] },
+        employee: { breadcrumb: ['首页', '人事管理', '员工信息'] },
+        leave: { breadcrumb: ['首页', '人事管理', '请假申请'] },
+        salary: { breadcrumb: ['首页', '人事管理', '薪资查询'] },
+        security: { breadcrumb: ['首页', '系统设置', '安全中心'] },
+        bbs: { breadcrumb: ['首页', '誉鼎之家'] }
+    };
+
+    // ==================== 面包屑更新 ====================
+    function updateBreadcrumb(page) {
+        const config = routeConfig[page];
+        if (!config) return;
+        const bc = document.getElementById('breadcrumb');
+        const parts = config.breadcrumb;
+        let html = '';
+        parts.forEach((p, i) => {
+            if (i > 0) html += '<span class="sep">&gt;</span>';
+            if (i === parts.length - 1) {
+                html += `<span class="current">${p}</span>`;
+            } else {
+                html += `<span>${p}</span>`;
+            }
+        });
+        bc.innerHTML = html;
+    }
+
+    // ==================== 页面切换核心函数 ====================
+    function navigateTo(page, subtab) {
+        // 1. 切换页面面板
+        document.querySelectorAll('.page-panel').forEach(p => p.classList.remove('active'));
+        const targetPanel = document.querySelector(`.page-panel[data-page="${page}"]`);
+        if (targetPanel) targetPanel.classList.add('active');
+
+        // 2. 更新左侧菜单选中状态
+        document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+        document.querySelectorAll('.sub-menu').forEach(s => s.classList.remove('active'));
+
+        const menuItem = document.querySelector(`.menu-item[data-page="${page}"]`);
+        if (menuItem) menuItem.classList.add('active');
+
+        // 3. 展开/折叠子菜单
+        document.querySelectorAll('.sub-menu-wrap').forEach(w => w.classList.remove('open'));
+        document.querySelectorAll('.menu-item.has-sub').forEach(m => m.classList.remove('expanded'));
+
+        if (page === 'mail') {
+            // 匿名邮箱号是林的证据2
+            addMysteryReplyCondition('loadOaMail')
+            if (subtab) {
+                switchMailTab(subtab);
+            }
+        }
+
+        // 4. 更新面包屑
+        updateBreadcrumb(page);
+
+        // 5. 滚动到顶部
+        document.getElementById('contentArea').scrollTop = 0;
+    }
+
+    // ==================== 内部邮件 Tab 切换 ====================
+    function switchMailTab(tabName) {
+        const tabsContainer = document.getElementById('mailTabs');
+        if (!tabsContainer) return;
+        tabsContainer.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        const activeTab = tabsContainer.querySelector(`.tab[data-tab="${tabName}"]`);
+        if (activeTab) activeTab.classList.add('active');
+
+        const mailPage = document.querySelector('.page-panel[data-page="mail"]');
+        if (mailPage) {
+            mailPage.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            const target = mailPage.querySelector(`.tab-panel[data-panel="${tabName}"]`);
+            if (target) target.classList.add('active');
+        }
+    }
+
+    // ==================== 通用 Tab 切换（审批等） ====================
+    function initTabSwitch(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        const parentPanel = container.closest('.page-panel');
+        container.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function () {
+                container.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                const target = this.dataset.tab;
+                if (parentPanel) {
+                    parentPanel.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+                    const tp = parentPanel.querySelector(`.tab-panel[data-panel="${target}"]`);
+                    if (tp) tp.classList.add('active');
+                }
+            });
+        });
+    }
+
+    // ==================== 事件绑定 ====================
+    document.addEventListener('DOMContentLoaded', function () {
+        // 初始化草稿列表
+        renderDraftList();
+
+        // 一级菜单点击
+        document.querySelectorAll('.menu-item[data-page]').forEach(item => {
+            item.addEventListener('click', function () {
+                const page = this.dataset.page;
+                const toggle = this.dataset.toggle;
+
+                // 如果有子菜单，先切换展开状态
+                if (toggle) {
+                    const wrap = document.getElementById(toggle);
+                    // const isOpen = wrap.classList.contains('open');
+                    // 如果已经展开且是当前页面，只做折叠/展开
+                    wrap.classList.toggle('open');
+                    this.classList.toggle('expanded');
+                }
+
+                // 无论是否展开，都跳转页面
+                navigateTo(page);
+            });
+        });
+
+        // 二级菜单点击
+        document.querySelectorAll('.sub-menu[data-page]').forEach(item => {
+            item.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const page = this.dataset.page;
+                const subtab = this.dataset.subtab;
+                navigateTo(page, subtab);
+            });
+        });
+
+        // 通用跳转（事件委托，避免重复绑定）
+        document.addEventListener('click', function (e) {
+            // 如果点击的是表格内的元素，不触发跳转
+            if (e.target.closest('.table-wrap')) {
+                return;
+            }
+
+            const target = e.target.closest('[data-page]');
+            if (!target) return;
+
+            // 排除菜单项和子菜单（它们有独立处理器）
+            if (target.classList.contains('menu-item') || target.classList.contains('sub-menu')) {
+                return;
+            }
+
+            const page = target.dataset.page;
+            const subtab = target.dataset.subtab;
+            if (page) {
+                navigateTo(page, subtab);
+            }
+        });
+
+        // 内部邮件内部 Tab 点击
+        document.querySelectorAll('#mailTabs .tab').forEach(tab => {
+            tab.addEventListener('click', function () {
+                switchMailTab(this.dataset.tab);
+                // 同步更新子菜单选中
+                document.querySelectorAll('.sub-menu[data-page="mail"]').forEach(s => s.classList.remove('active'));
+                const sub = document.querySelector(`.sub-menu[data-subtab="${this.dataset.tab}"]`);
+                if (sub) sub.classList.add('active');
+            });
+        });
+
+        // 审批内部 Tab 点击
+        initTabSwitch('approvalTabs');
+
+        // 时钟
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            const clockEl = document.getElementById('clockTime');
+            if (clockEl) clockEl.textContent = `${h}:${m}:${s}`;
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // 初始化面包屑
+        updateBreadcrumb('workbench');
+
+    });
+    document.getElementById('login-oa-time').textContent = localStorage.getItem('login-oa-time');
+
+    function showToast(message) {
+        const toast = document.createElement('div');
+        toast.textContent = message;
+        toast.style.cssText = `
+                position: fixed;
+                bottom: 100px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: rgba(0, 0, 0, 0.7);
+                color: white;
+                padding: 12px 24px;
+                border-radius: 6px;
+                font-size: 14px;
+                z-index: 99999;
+                pointer-events: none;
+                animation: fadeInOut 2s ease-in-out;
+            `;
+
+        document.body.appendChild(toast);
+
+        // 2秒后自动消失
+        setTimeout(() => {
+            toast.remove();
+        }, 2000);
+    }
+
+    document.getElementById('unknown_email').addEventListener('click', function () {
+        showToast(`<8900011>号邮件路径失效...请联系管理员处理！`);
+    })
+
+    // 草稿数据
+    const drafts = [
+        {
+            to: 'regret_0928@privatemail.com',
+            subject: '杨伟江，我没有办法了。',
+            content: `杨伟江，我没有办法了。总要有人为过去赎罪的。`,
+            date: '2030-07-15'
+        }, {
+            to: 'unknown',
+            subject: 'Re：▇▇▇▇',
+            content: `<p>退休后，能让我安生点吧？这些年您真的在赎罪吗？</p><p style="color: red;">【原邮件异常，发送失败，已退回至草稿箱。】</p>`,
+            date: 'unknown'
+        }, {
+            to: 'regret_0928@privatemail.com',
+            subject: '敏考上大学了',
+            content: `敏考上大学了，她说要来江州找我。哦不对，找你。她是一个懂事的孩子，但是这件事情，我不能让她知道。`,
+            date: '2028-06-27'
+        }, {
+            to: 'regret_0928@privatemail.com',
+            subject: '敏现在也十几岁了，应该长得很像你吧。',
+            content: `敏现在也十几岁了，应该长得很像你吧。当年还好我们熟悉，我一直用你的口吻给她写信、寄生活费，她都没有察觉。`,
+            date: '2021-09-28'
+        }, {
+            to: 'regret_0928@privatemail.com',
+            subject: '离婚了',
+            content: `我把工资大部分都寄给了敏，我老婆一直问我，我都不知道如何开口。我不想牵扯她，但是和我在一起只会害了她。`,
+            date: '2020-05-30'
+        }, {
+            to: 'regret_0928@privatemail.com',
+            subject: '注册了新邮箱',
+            content: `上一次不小心点到了发送，哎，但是提示了你的邮箱账号已经停用了。看到了一个能免手机注册邮箱的广告，就注册了一个，就当你还在，能陪我说说话吧。`,
+            date: '2012-10-25'
+        }, {
+            to: 'yangweijiang888@163.com',
+            subject: '又是这一天了，每次都让人难以入眠。',
+            content: `又是这一天了，每次都让人难以入眠。对不起，老杨。当初的一己私欲让我后悔终身。`,
+            date: '2012-09-28'
+        }, {
+            to: 'yangweijiang888@163.com',
+            subject: '我一直在被监视中',
+            content: `我一直在被监视中，我的一举一动都在他的眼皮底下！只要有一点异常就会来问我，我是一个懦弱的人！但是这里好像不会被察觉。`,
+            date: '2010-11-31'
+        }, {
+            to: 'yangweijiang888@163.com',
+            subject: '110',
+            content: `110`,
+            date: '2010-11-30'
+        }
+    ];
+
+    // 编辑草稿相关函数
+    let currentDraftIndex = null;
+
+    // 动态生成草稿列表
+    function renderDraftList() {
+        const tbody = document.querySelector('#draftTable tbody');
+        if (!tbody) return;
+
+        tbody.innerHTML = drafts.map((draft, index) => {
+            return `
+                <tr>
+                    <td>
+                        <div class="title-cell"><span class="title-unread">${draft.subject}</span></div>
+                    </td>
+                    <td>${draft.to}</td>
+                    <td>${draft.date}</td>
+                    <td><span class="op-link" onclick="openEditModal(${index})">继续编辑</span><span class="op-link">发送</span><span class="op-link danger">删除</span></td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+    // 打开编辑弹窗
+    function openEditModal(index) {
+        currentDraftIndex = index;
+
+        if (index >= 0 && index < drafts.length) {
+            const draft = drafts[index];
+            document.getElementById('editTo').value = draft.to;
+            document.getElementById('editSubject').value = draft.subject;
+            document.getElementById('editContent').innerHTML = draft.content;
+
+            // 显示弹窗
+            document.getElementById('editModal').classList.add('show');
+        }
+    }
+
+    // 关闭编辑弹窗
+    function closeEditModal() {
+        document.getElementById('editModal').classList.remove('show');
+        currentDraftIndex = null;
+    }
+
+    // 保存草稿
+    function saveDraft() {
+        const subject = document.getElementById('editSubject').value.trim();
+        const content = document.getElementById('editContent').innerHTML.trim();
+
+        if (!subject || !content) {
+            alert('主题和内容不能为空！');
+            return;
+        }
+
+        // 这里可以添加保存到localStorage的逻辑
+        showToast('草稿已保存');
+        closeEditModal();
+    }
+
+</script>
+
+</html>

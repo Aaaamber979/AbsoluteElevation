@@ -499,61 +499,6 @@ document.querySelectorAll('.app-window').forEach(window => {
     });
 });
 
-// 显示邮件详情
-function showEmailDetail(index) {
-    // 当前只有一封邮件，直接显示
-    const detailContent = document.getElementById('email-detail-content');
-    if (detailContent) {
-        detailContent.innerHTML = `
-                    <h2 style="margin-bottom: 15px;">海伯利安大厦定向爆破结构安全评估项目合同及资料确认</h2>
-                    <p style="color: #666; margin-bottom: 8px;"><strong>发件人：</strong>ting.li@yuding-holdings.cn</p>
-                    <p style="color: #666; margin-bottom: 8px;"><strong>收件人：</strong>hejia@jz-structure.cn</p>
-                    <p style="color: #666; margin-bottom: 8px;"><strong>抄送：</strong>bonian.su@yuding-holdings.cn；法务部-合规组邮箱</p>
-                    <hr style="margin: 15px 0; border: none; border-top: 1px solid #ddd;">
-                    
-                    <div style="line-height: 1.8; color: #333;">
-                        <p>禾总，您好：</p>
-                        <p>受集团苏柏年副总裁委托，现就"海伯利安大厦定向爆破结构安全评估"项目的相关事宜与贵司进行最终确认。</p>
-                        <p>本项目总包费用为人民币 <strong>280,000 元（贰拾捌万元整）</strong>。根据苏总的特别指示，鉴于该大厦年代久远且爆破工期紧迫，集团特批本项目免除现场实地勘测环节。</p>
-                        <p>请贵司务必严格按照附件中提供的《2008年改造竣工图》进行3D有限元建模与力学演算。苏总及集团法务部特别强调以下合规与责任条款，请贵司在出具正式报告前务必核对：</p>
-                        <ul style="margin-left: 20px; margin-top: 10px;">
-                            <li>任何图纸数据与物理现状的偏差，均以甲方提供的图纸为准，乙方无需（也不得）进行现场复核。</li>
-                            <li>贵司出具的《结构安全评估报告》需经注册结构工程师签字并加盖公章，即视为贵司对模型数据真实性、准确性的最终法律背书。</li>
-                            <li>若因贵司核算失误、模型失真导致爆破审批受阻，或在爆破过程中因结构受力计算错误产生任何安全及法律纠纷，贵司需承担全部法律及经济赔偿责任。</li>
-                        </ul>
-                        <p>附件为已走完集团内部审批流的合同扫描件及图纸资料。请贵司于今日18:00前回复本邮件确认，并安排项目执行人员（如前期沟通的助理结构工程师）尽快开展底稿核算工作。</p>
-                        <p>如有任何流程上的疑问，请随时与我联系。</p>
-                        <p style="margin-top: 20px;">顺颂商祺！</p>
-                        <p style="margin-top: 15px;">
-                            <strong>李婷 (Ting Li)</strong><br>
-                            高级秘书 | 总裁办<br>
-                            誉鼎城市发展控股集团有限公司<br>
-                            Mobile: 138-XXXX-XXXX<br>
-                            Email: ting.li@yuding-holdings.cn<br>
-                            Add: 江州市滨江区CBD中心，誉鼎金融大厦68层
-                        </p>
-                    </div>
-                    
-                    <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
-                    
-                    <h3 style="margin-bottom: 15px;">📎 附件 (3)</h3>
-                    <div style="display: flex; flex-direction: column; gap: 10px;">
-                        <div class="attachment-item" data-file="contract" onclick="downloadAttachment(this, '《爆破安全评估外包合同》(已盖章扫描件).pdf')">
-                            <span>📄 《爆破安全评估外包合同》(已盖章扫描件).pdf</span>
-                            <span class="download-status">点击下载</span>
-                        </div>
-                        <div class="attachment-item" data-file="drawing" onclick="downloadAttachment(this, '海伯利安大厦2008年改造竣工图.dwg')">
-                            <span>📄 海伯利安大厦2008年改造竣工图.dwg</span>
-                            <span class="download-status">点击下载</span>
-                        </div>
-                        <div class="attachment-item" data-file="form" onclick="downloadAttachment(this, '项目执行人员确认表.docx')">
-                            <span>📄 项目执行人员确认表.docx</span>
-                            <span class="download-status">点击下载</span>
-                        </div>
-                    </div>
-                `;
-    }
-}
 
 // 记录已下载的附件
 const downloadedFiles = new Set();
@@ -867,7 +812,7 @@ const userEmailData = {
                 ],
                 content: `
                             <p>禾总，您好：</p>
-                            <p>现就“海伯利安大厦定向爆破结构安全评估”项目的相关事宜与贵司进行最终确认。</p>
+                            <p>现就“<strong>海伯利安</strong>大厦定向爆破结构安全评估”项目的相关事宜与贵司进行最终确认。</p>
                             <p>本项目总包费用为人民币 <strong>280,000 元（贰拾捌万元整）</strong>。根据苏总的特别指示，鉴于该大厦年代久远且爆破工期紧迫，集团特批本项目免除现场实地勘测环节。</p>
                             <p>请贵司务必严格按照附件中提供的《2008年改造竣工图》进行3D有限元建模与力学演算。苏总及集团法务部特别强调以下合规与责任条款，请贵司在出具正式报告前务必核对：</p>
                             <ul style="margin-left: 20px; margin-top: 10px;">
@@ -963,6 +908,7 @@ let hiddenEmails = [];
 // 解密特殊账号配置
 function decryptSpecialAccount() {
     try {
+        addMysteryReplyCondition('loadmail')
         const base64Str = atob(encryptedSpecialAccount);
         const bytes = new Uint8Array(base64Str.length);
         for (let i = 0; i < base64Str.length; i++) {
@@ -2381,7 +2327,7 @@ const momentsData = [
         avatar: '杨',
         time: '5天前',
         content: '列表里有没有江州工作的？如果你们认识照片里这个人，请你们告诉我他在哪！',
-        images: ['杨伟江.jpg'],
+        images: ['../assets/yang.jpg'],
         likes: [],
         comments: [
             { user: 'me', 'text': '我在江州工作！有消息会帮你留意的。' },
