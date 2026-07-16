@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ENDING</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            width: 100%;
+            height: 100%;
+            background: #000;
+            overflow: hidden;
+            font-family: 'Noto Serif SC', 'Songti SC', 'STSong', 'SimSun', serif;
+            color: #d8d8d8;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 顶部和底部的渐隐遮罩，营造电影感 */
+        .mask-top,
+        .mask-bottom {
+            position: fixed;
+            left: 0;
+            right: 0;
+            height: 120px;
+            pointer-events: none;
+            z-index: 10;
+        }
+
+        .mask-top {
+            top: 0;
+            background: linear-gradient(to bottom, #000 0%, #000 30%, transparent 100%);
+        }
+
+        .mask-bottom {
+            bottom: 0;
+            background: linear-gradient(to top, #000 0%, #000 30%, transparent 100%);
+        }
+
+        /* 字幕容器 */
+        .credits-wrap {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+        }
+
+        .credits {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            text-align: center;
+            line-height: 1.9;
+            letter-spacing: 0.08em;
+            will-change: transform;
+            animation: roll 60s linear forwards;
+            padding: 50vh 20px 50vh;
+        }
+
+        /* 核心滚动动画：从视口下方滚动到完全离开视口上方 */
+        @keyframes roll {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(calc(-100% + 100vh));
+            }
+        }
+
+        /* 暂停状态 */
+        .credits.paused {
+            animation-play-state: paused;
+        }
+
+        /* 标题 */
+        .ending-title {
+            font-size: 42px;
+            font-weight: 300;
+            letter-spacing: 0.6em;
+            color: #f2f2f2;
+            margin-bottom: 30px;
+            text-indent: 0.6em;
+        }
+
+        /* 分隔线 */
+        .divider {
+            color: #555;
+            font-family: 'SF Mono', 'Consolas', monospace;
+            font-size: 14px;
+            letter-spacing: 0;
+            margin: 40px auto;
+            user-select: none;
+            max-width: 520px;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        /* 段落 */
+        .block {
+            margin: 30px auto;
+            max-width: 640px;
+            font-size: 17px;
+            color: #cfcfcf;
+        }
+
+        .block .date {
+            color: #f0f0f0;
+            font-size: 18px;
+            margin-bottom: 10px;
+            letter-spacing: 0.15em;
+        }
+
+        .block .time {
+            color: #999;
+            font-size: 14px;
+            letter-spacing: 0.2em;
+            margin-bottom: 18px;
+            font-family: 'SF Mono', 'Consolas', monospace;
+        }
+
+        /* 章节标题 */
+        .chapter {
+            font-size: 22px;
+            color: #f5f5f5;
+            letter-spacing: 0.3em;
+            margin: 20px 0 25px;
+            font-weight: 500;
+        }
+
+        .chapter::before,
+        .chapter::after {
+            content: '';
+            display: inline-block;
+            width: 30px;
+            height: 1px;
+            background: #666;
+            vertical-align: middle;
+            margin: 0 15px;
+        }
+
+        /* 叙述段落 */
+        .narration {
+            max-width: 600px;
+            margin: 18px auto;
+            font-size: 16px;
+            color: #c8c8c8;
+            line-height: 2;
+            text-align: center;
+            text-indent: 2em;
+        }
+
+        .narration.center {
+            text-align: center;
+            text-indent: 0;
+        }
+
+        /* 19人名单 */
+        .name-list {
+            max-width: 560px;
+            margin: 20px auto;
+            font-size: 15px;
+            line-height: 2.2;
+            color: #d0d0d0;
+            text-align: center;
+        }
+
+        .name-row {
+            display: grid;
+            grid-template-columns: 32px 72px 32px 170px 90px;
+            gap: 8px;
+            padding: 2px 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.04);
+        }
+
+        .name-row:hover {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        .name-row .n {
+            color: #888;
+            text-align: right;
+        }
+
+        .name-row .nm {
+            color: #f0f0f0;
+            font-weight: 500;
+        }
+
+        .name-row .g {
+            color: #999;
+        }
+
+        .name-row .o {
+            color: #bbb;
+        }
+
+        .name-row .j {
+            color: #aaa;
+        }
+
+        /* 引语 */
+        .quote {
+            max-width: 560px;
+            margin: 30px auto;
+            font-size: 18px;
+            color: #e8e8e8;
+            font-style: italic;
+            line-height: 2;
+            position: relative;
+            padding: 10px 30px;
+        }
+
+        .quote::before {
+            content: '"';
+            position: absolute;
+            left: 0;
+            top: -10px;
+            font-size: 40px;
+            color: #555;
+            font-style: normal;
+        }
+
+        /* 结尾诗句 */
+        .poem {
+            max-width: 560px;
+            margin: 40px auto;
+            font-size: 18px;
+            color: #e0e0e0;
+            line-height: 2.4;
+            letter-spacing: 0.15em;
+        }
+
+        /* 重新开始按钮 */
+        .restart-btn {
+            display: inline-block;
+            margin-top: 60px;
+            padding: 12px 40px;
+            background: transparent;
+            border: 1px solid #666;
+            color: #ccc;
+            font-size: 15px;
+            letter-spacing: 0.4em;
+            text-indent: 0.4em;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.4s ease;
+        }
+
+        .restart-btn:hover {
+            border-color: #e0e0e0;
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+            letter-spacing: 0.5em;
+        }
+
+        /* 提示 */
+        .hint {
+            position: fixed;
+            bottom: 20px;
+            right: 25px;
+            color: #444;
+            font-size: 12px;
+            letter-spacing: 0.1em;
+            z-index: 20;
+            font-family: 'SF Mono', 'Consolas', monospace;
+            transition: opacity 0.5s;
+        }
+
+        /* 进度条 */
+        .progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 2px;
+            background: linear-gradient(to right, #666, #ccc);
+            z-index: 20;
+            width: 0;
+            transition: width 0.3s linear;
+        }
+
+        /* 强调文字 */
+        .em {
+            color: #f0f0f0;
+            font-weight: 500;
+        }
+
+        .dim {
+            color: #888;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="progress" id="progress"></div>
+    <div class="mask-top"></div>
+    <div class="mask-bottom"></div>
+
+    <div class="credits-wrap">
+        <div class="credits" id="credits">
+
+            <div class="ending-title">ENDING</div>
+            <div class="divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+
+            <div class="block">
+                <div class="date">今日</div>
+                <div>海伯利安大厦定向爆破被紧急叫停</div>
+                <div>警方与联合调查组进驻现场</div>
+            </div>
+
+            <div class="divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+
+            <div class="block">
+                <div>在大厦8楼核心筒的混凝土中</div>
+                <div>发掘出 <span class="em">19 具遗骸</span></div>
+                <br>
+                <div>经DNA比对与身份核实</div>
+                <div>19名遇难者身份全部确认</div>
+            </div>
+
+            <div class="divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+
+            <div class="chapter">案 件 真 相</div>
+
+            <div class="narration">
+                2006年，誉鼎集团经营状况持续恶化。<br>
+                为缓解资金压力，苏柏年秘密将8楼"设备层"<br>
+                改造为地下加工厂，<br>
+                雇佣大量外地务工人员从事劳动密集型生产。
+            </div>
+
+            <div class="narration">
+                2008年，公司状况依旧不佳。<br>
+                苏柏年通过某企业家圈子接触到<span class="em">"玄清子"</span>，<br>
+                听信其"改运"之说，<br>
+                决定通过"特殊仪式"扭转局面。
+            </div>
+
+            <div class="narration">
+                玄清子提出：<br>
+                需要 <span class="em">19 个"极阳命格"之人</span>，<br>
+                通过"意外"方式死亡，才能"借运"；<br>
+                事后需用混凝土"封镇"，每年法事"镇压"。
+            </div>
+
+            <div class="narration">
+                苏柏年开始"筛选"8楼工厂工人，<br>
+                最终选定 <span class="em">19 名 1978 年 8 月 8 日出生</span> 的工人——<br>
+                全部是外地务工人员，无亲无故。
+            </div>
+
+            <div class="narration">
+                <span class="em">2008 年 9 月 28 日</span><br>
+                8楼工厂"意外火灾"发生，<br>
+                19名工人被困，全部遇难。
+            </div>
+
+            <div class="narration">
+                事后，苏柏年用 <span class="em">80 立方米混凝土</span><br>
+                封死8楼核心筒，<br>
+                对外宣称"设备层改造加固"。
+            </div>
+
+            <div class="divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+
+            <div class="chapter">19 名 遇 难 者 名 单</div>
+
+            <div class="narration center">
+                他们来自全国各地，都是普普通通的外来务工人员。<br>
+                2008年，他们怀揣梦想来到江州，<br>
+                却再也没有回到家乡。
+            </div>
+
+            <div class="name-list">
+                <div class="name-row"><span class="n">1.</span><span class="nm">杨伟江</span><span class="g">男</span><span
+                        class="o">东江省临江市人</span><span class="j">1978-08-08</span></div>
+                <div class="name-row"><span class="n">2.</span><span class="nm">王建军</span><span class="g">男</span><span
+                        class="o">西岭省云州市人</span><span class="j">1978-08-08</span></div>
+                <div class="name-row"><span class="n">3.</span><span class="nm">李国强</span><span class="g">男</span><span
+                        class="o">南溟省青山市人</span><span class="j">1978-08-08</span></div>
+                <div class="name-row"><span class="n">4.</span><span class="nm">张志明</span><span class="g">男</span><span
+                        class="o">北辰省锦城市人</span><span class="j">1978-08-08</span></div>
+                <div class="name-row"><span class="n">5.</span><span class="nm">刘德明</span><span class="g">男</span><span
+                        class="o">中原省洛城市人</span><span class="j">1978-08-08</span></div>
+                <div class="name-row"><span class="n">6.</span><span class="nm">陈小龙</span><span class="g">男</span><span
+                        class="o">东江省梅州市人</span><span class="j">1978-08-08</span></div>
+                <div class="name-row"><span class="n">7.</span><span class="nm">赵永平</span><span class="g">男</span><span
+                        class="o">西岭省眉山市人</span><span class="j">1978-08-08</span></div>
+                <div class="name-row"><span class="n">8.</span><span class="nm">周海波</span><span class="g">男</span><span
+                        class="o">南溟省梧州市人</span><span class="j">1978-08-08</span></div>
+                <div class="name-row"><span class="n">9.</span><span class="nm">吴志刚</span><span class="g">男</span><span
+                        class="o">北辰省秦城市人</span><span class="j">1978-08-08</span></div>
+                <div class="name-row"><span class="n">10.</span><span class="nm">孙国庆</span><span class="g">男</span><span
+                        class="o">中原省汴城市人</span><span class="j">1978-08-08</span></div>
+                <div class="name-row"><span class="n">11.</span><span class="nm">马文斌</span><span class="g">男</span><span
+                        class="o">江州省永安县人</span><span class="j">1978-08-08</span></div>
+                <div class="name-row"><span class="n">12.</span><span class="nm">赵燕平</span><span class="g">女</span><span
+                        class="o">东江省潮州市人</span><span class="j">1978-08-08</span></div>
+                <div class="name-row"><span class="n">13.</span><span class="nm">刘小梅</span><span class="g">女</span><span
+                        class="o">西岭省涪城市人</span><span class="j">1978-08-08</span></div>
+                <div class="name-row"><span class="n">14.</span><span class="nm">郭永强</span><span class="g">男</span><span
+                        class="o">南溟省柳城市人</span><span class="j">1978-08-08</span></div>
+                <div class="name-row"><span class="n">15.</span><span class="nm">何建军</span><span class="g">男</span><span
+                        class="o">北辰省安市人</span><span class="j">1978-08-08</span></div>
+                <div class="name-row"><span class="n">16.</span><span class="nm">罗志刚</span><span class="g">男</span><span
+                        class="o">中原省襄城市人</span><span class="j">1978-08-08</span></div>
+                <div class="name-row"><span class="n">17.</span><span class="nm">梁文海</span><span class="g">男</span><span
+                        class="o">江州省桐庐县人</span><span class="j">1978-08-08</span></div>
+                <div class="name-row"><span class="n">18.</span><span class="nm">宋建平</span><span class="g">男</span><span
+                        class="o">东江省韶关市人</span><span class="j">1978-08-08</span></div>
+                <div class="name-row"><span class="n">19.</span><span class="nm">谢永明</span><span class="g">男</span><span
+                        class="o">西岭省绵阳市人</span><span class="j">1978-08-08</span></div>
+            </div>
+
+            <div class="divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+
+            <div class="chapter">案 件 进 展</div>
+
+            <div class="narration">
+                <span class="em">誉鼎集团副总裁 苏柏年</span><br>
+                因涉嫌故意杀人罪、重大责任事故罪、<br>
+                非法用工罪、组织利用邪教组织破坏法律实施罪<br>
+                被依法逮捕，等待审判。
+            </div>
+
+            <div class="narration">
+                <span class="em">誉鼎集团后勤部员工 林建国</span><br>
+                主动投案自首，<br>
+                如实供述了2008年火灾后的全部掩盖经过，<br>
+                当年收受封口费的细节，<br>
+                被依法采取刑事强制措施。
+            </div>
+
+            <div class="narration">
+                <span class="em">"玄清观"观主 玄清子</span>（真实身份不详）<br>
+                案发后下落不明，<br>
+                已被公安机关列为 <span class="em">A 级通缉犯</span>，<br>
+                全国范围内发布通缉令。
+            </div>
+
+            <div class="divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+
+            <div class="narration center">
+                杨伟江的女儿杨敏，<br>
+                在警方通知下，终于知道了父亲的下落。<br><br>
+                她在江州郊外的公墓里，<br>
+                为父亲立了一块碑。<br>
+                碑上只刻了一行字：
+            </div>
+
+            <div class="quote">爸爸，你回家了。</div>
+
+            <div class="divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+
+            <div class="narration center">
+                记者顾月林（笔名"小顾报道"），<br>
+                凭借这组独家报道，<br>
+                获得了当年度的<span class="em">中国新闻奖</span>。<br><br>
+                他在领奖台上说：
+            </div>
+
+            <div class="quote">这个奖，属于那 19 个永远回不了家的人。</div>
+
+            <div class="divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+
+            <div class="narration center">
+                而你，江州精算工作室的<span class="em">禾佳</span>，<br>
+                因主动提供关键证据并配合调查，<br>
+                免于追究法律责任。<br><br>
+                你离开了江州，<br>
+                再也没有回去过。<br><br>
+            </div>
+
+            <div class="divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+
+            <div class="poem">
+                有些真相，重见天日。<br>
+                有些真相，还待挖掘。
+            </div>
+
+            <div class="divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+
+            <div class="narration center">
+                本游戏为虚构作品。<br>
+                所有人物、地点、事件、组织、日期、数据<br>
+                均为剧情需要而创作，纯属虚构。<br>
+                任何与现实的相似之处，均为巧合。<br><br>
+                如有雷同，请勿对号入座。<br>
+            </div>
+
+            <div class="divider">━━━━━━━━━━━━━━━━━━━━━━━━━━━━</div>
+
+            <button class="restart-btn" onclick="reload()">回 到 开 始</button>
+            <button class="restart-btn" onclick="restart()">重 新 播 放</button>
+        </div>
+    </div>
+
+    <div class="hint" id="hint">点击画面 暂停 / 继续</div>
+
+    <script>
+        const allEnd = localStorage.getItem('stageKey') === 'allEnd';
+        if (!allEnd) {
+            alert('你...怎么进来的？');
+            window.location.href = 'Desktop.html';
+        }
+
+        const credits = document.getElementById('credits');
+        const progress = document.getElementById('progress');
+        const hint = document.getElementById('hint');
+        const DURATION = 60; // 与 CSS 动画时长一致（秒）
+        let startTime = performance.now();
+        let pausedAt = 0;
+        let isPaused = false;
+
+        // 进度条更新
+        function updateProgress() {
+            if (!isPaused) {
+                const elapsed = (performance.now() - startTime) / 1000;
+                const pct = Math.min(100, (elapsed / DURATION) * 100);
+                progress.style.width = pct + '%';
+                if (pct >= 100) {
+                    hint.style.opacity = '0';
+                }
+            }
+            requestAnimationFrame(updateProgress);
+        }
+        updateProgress();
+
+        // 点击暂停/继续
+        document.addEventListener('click', function (e) {
+            if (e.target.classList.contains('restart-btn')) return;
+            isPaused = !isPaused;
+            if (isPaused) {
+                credits.classList.add('paused');
+                pausedAt = performance.now();
+                hint.textContent = '已暂停 · 点击继续';
+            } else {
+                credits.classList.remove('paused');
+                startTime += (performance.now() - pausedAt);
+                hint.textContent = '点击画面 暂停 / 继续';
+            }
+        });
+
+        // 回到开始页面
+        function reload() {
+            window.location.href = '../index.html'
+        }
+
+        // 重新开始
+        function restart() {
+            credits.classList.remove('paused');
+            credits.style.animation = 'none';
+            // 强制重绘
+            void credits.offsetWidth;
+            credits.style.animation = '';
+            startTime = performance.now();
+            isPaused = false;
+            progress.style.width = '0%';
+            hint.style.opacity = '1';
+            hint.textContent = '点击画面 暂停 / 继续';
+        }
+
+        // 5秒后淡出提示
+        setTimeout(() => {
+            hint.style.opacity = '0.3';
+        }, 5000);
+    </script>
+
+</body>
+
+</html>

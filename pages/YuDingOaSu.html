@@ -974,7 +974,7 @@
                         <div class="inbox-title">关于海伯利安爆破评估外包进度汇报</div>
                         <div class="inbox-summary">
                             苏总，<span class="highlight">江州精算工作室</span>的工程师已接收图纸并开始建模。对方老板已签署免责及保密协议。目前一切按您的指示推进，<span
-                                class="highlight">未安排现场实测</span>。预计明晚可出具盖章底稿。
+                                class="highlight">未安排现场实测</span>。
                         </div>
                     </div>
                     <div class="inbox-meta">
@@ -1002,15 +1002,14 @@
                 <div class="inbox-item">
                     <div class="inbox-tag tag-legal">法务</div>
                     <div class="inbox-content">
-                        <div class="inbox-title">关于"江城观察"近期调查动向的舆情监控</div>
+                        <div class="inbox-title">关于"精算工作室"近期调查动向的舆情监控</div>
                         <div class="inbox-summary">
-                            苏总，经查控，记者<span
-                                class="highlight">陈默</span>（笔名江城观察）近期仍在尝试通过住建局和物业渠道打听海伯利安8楼的历史档案。公关部已再次向相关渠道施压并封口，其未获取到实质性文件。建议保持静默观察，不予直接接触。
+                            精算工作室未经授权擅自使用我司员工林建国的OA账号，越权访问后勤管理系统历史数据
                         </div>
                     </div>
                     <div class="inbox-meta">
                         <div class="inbox-sender">法务部 · 合规组</div>
-                        <div class="inbox-time mono">昨日 15:20</div>
+                        <div class="inbox-time mono">刚刚</div>
                     </div>
                 </div>
 
@@ -1067,7 +1066,7 @@
                     <div class="approval-actions">
                         <button class="btn-act btn-sign" onclick="showModal('sign', '海伯利安大厦爆破工程尾款', '¥15,000,000.00')">签
                             发</button>
-                        <button class="btn-act btn-hold" onclick="showModal('hold', '海伯利安大厦爆破工程尾款')">留 中</button>
+                        <button class="btn-act btn-hold" onclick="showModal('hold', '海伯利安大厦爆破工程尾款')">撤销中</button>
                     </div>
                 </div>
 
@@ -1090,7 +1089,7 @@
                             </div>
                         </div>
                         <div class="approval-desc">
-                            "用于灵隐寺法事、高管素斋及全员平安符采购。"
+                            "用于法事、高管素斋及全员平安符采购。"
                         </div>
                     </div>
                     <div class="approval-actions">
@@ -1102,12 +1101,12 @@
             </div>
         </div>
 
-        <!-- ========== 私密金库 ========== -->
+        <!-- ========== 私密库 ========== -->
         <div class="section">
             <div class="vault">
                 <div class="vault-header">
                     <span class="vault-title-en">PRIVATE VAULT</span>
-                    <span class="vault-title-zh">私密金库</span>
+                    <span class="vault-title-zh">私密库</span>
                     <div class="vault-status">
                         <span class="vault-dot"></span>
                         <span class="mono">SECURE CHANNEL · AES-256</span>
@@ -1124,8 +1123,8 @@
                         </div>
                         <div class="vault-item-detail">
                             最近同步文件：<br>
-                            <span class="mono">2008_09_28_海伯利安现场封档.zip</span><br>
-                            <span style="color:var(--text-mute);">2026-07-01 03:14 同步</span>
+                            <span class="mono">后勤管理系统.zip</span><br>
+                            <span style="color:var(--text-mute);">刚刚 同步</span>
                         </div>
                         <button class="vault-btn" onclick="showModal('vault-cloud')">打开云端目录</button>
                     </div>
@@ -1140,7 +1139,7 @@
                         <div class="vault-item-detail">
                             包含开曼、BVI、新加坡三地信托架构文件。需动态令牌验证。
                         </div>
-                        <button class="vault-btn" onclick="showModal('vault-token')">需要动态令牌</button>
+                        <button class="vault-btn">需要动态令牌</button>
                     </div>
 
                     <!-- 入口3 日志清理 -->
@@ -1153,7 +1152,7 @@
                         <div class="vault-item-detail">
                             一键清除本终端所有浏览、操作、登录日志。执行后不可恢复。
                         </div>
-                        <button class="vault-btn danger" onclick="showModal('vault-clean')">执行清理</button>
+                        <button class="vault-btn danger">执行清理</button>
                     </div>
                 </div>
             </div>
@@ -1209,8 +1208,8 @@
                     break;
                 case 'vault-cloud':
                     t = 'PRIVATE CLOUD · 私人云盘';
-                    b = `正在建立加密通道...<br><br>云端目录：<span class="mono" style="color:var(--gold);">/vault/2008-2030/classified/</span><br>文件总数：<span class="mono">2,847</span><br>总容量：<span class="mono">1.2 TB</span><br><br><span style="color:var(--text-mute);font-size:11px;">所有文件已端到端加密，仅您本人可访问。</span>`;
-                    a = `<button class="btn-act btn-sign" onclick="closeModal()">进入目录</button>`;
+                    b = `正在建立加密通道...<br><br>云端目录：<span class="mono" style="color:var(--gold);">/vault/2004-2010/classified/</span><br>文件总数：<span class="mono">2,847</span><br>总容量：<span class="mono">1.2 TB</span><br><br><span style="color:var(--text-mute);font-size:11px;">所有文件已端到端加密，仅您本人可访问。</span>`;
+                    a = `<button class="btn-act btn-sign" onclick="toManage()">进入目录</button>`;
                     break;
                 case 'vault-token':
                     t = 'DYNAMIC TOKEN · 动态令牌验证';
@@ -1230,6 +1229,11 @@
             body.innerHTML = b;
             actions.innerHTML = a;
             mask.classList.add('show');
+        }
+
+        function toManage() {
+            localStorage.setItem('login-manage-sys', 'su')
+            window.location.href = "ManageSystem.html"
         }
 
         function closeModal() {

@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>誉鼎 - OA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@5.0.18/index.min.css">
     <style>
         * {
             margin: 0;
@@ -1180,6 +1182,201 @@
         .edit-btn-save:hover {
             background: #1e5a8a;
         }
+
+        /* 小助手 */
+
+        * {
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                transform: scale(0.8);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(2);
+                opacity: 0;
+            }
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes typing {
+
+            0%,
+            60%,
+            100% {
+                opacity: 0.3;
+                transform: translateY(0);
+            }
+
+            30% {
+                opacity: 1;
+                transform: translateY(-4px);
+            }
+        }
+
+        .pulse-ring::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            animation: pulse-ring 2s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+        }
+
+        .float-anim {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .chat-open {
+            animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .msg-in {
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .typing-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #8b5cf6;
+            display: inline-block;
+            margin: 0 2px;
+        }
+
+        .typing-dot:nth-child(1) {
+            animation: typing 1.2s infinite 0s;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation: typing 1.2s infinite 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation: typing 1.2s infinite 0.4s;
+        }
+
+        .chat-box::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .chat-box::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 10px;
+        }
+
+        .chat-box::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 消息内链接样式 */
+        .chat-link {
+            color: #6366f1;
+            text-decoration: underline;
+            text-decoration-color: rgba(99, 102, 241, 0.4);
+            text-underline-offset: 2px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .chat-link:hover {
+            color: #4f46e5;
+            text-decoration-color: #4f46e5;
+        }
+
+        /* 用户消息内的链接 */
+        .msg-user .chat-link {
+            color: #fff;
+            text-decoration-color: rgba(255, 255, 255, 0.7);
+        }
+
+        .msg-user .chat-link:hover {
+            text-decoration-color: #fff;
+        }
+
+        /* 卡片式链接按钮 */
+        .chat-link-card {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 8px;
+            padding: 8px 14px;
+            background: linear-gradient(135deg, #eef2ff 0%, #f5f3ff 100%);
+            color: #4f46e5;
+            border: 1px solid #e0e7ff;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+
+        .chat-link-card:hover {
+            background: linear-gradient(135deg, #e0e7ff 0%, #ede9fe 100%);
+            border-color: #c7d2fe;
+            transform: translateX(2px);
+        }
+
+        .chat-link-card svg {
+            width: 14px;
+            height: 14px;
+            transition: transform 0.2s;
+        }
+
+        .chat-link-card:hover svg {
+            transform: translateX(2px);
+        }
     </style>
 </head>
 
@@ -2008,7 +2205,8 @@
                                     <tr>
                                         <td>
                                             <div class="title-cell">
-                                                <span class="title-unread">上周团建活动照片分享，感谢苏总特批的经费</span>
+                                                <span
+                                                    class="title-unread">上周<b>928安全日</b>团建活动照片分享，感谢<b>苏总</b>特批的经费</span>
                                             </div>
                                         </td>
                                         <td><span class="tag tag-green">后勤部-讨论</span></td>
@@ -2048,7 +2246,7 @@
                                     <tr>
                                         <td>
                                             <div class="title-cell">
-                                                <span class="title-unread">最近公司怎么总有记者来转悠？</span>
+                                                <span class="title-unread">最近公司怎么总有<b>记者</b>来转悠？</span>
                                             </div>
                                         </td>
                                         <td><span class="tag tag-blue">公司-讨论</span></td>
@@ -2143,6 +2341,78 @@
             </div>
         </div>
     </div>
+
+
+
+    <!-- ==================== 小助手 ==================== -->
+    <!-- 浮动 AI 按钮 -->
+    <button id="aiBtn" onclick="toggleChat()"
+        class="fixed bottom-8 right-8 z-50 w-16 h-16 rounded-full hero-gradient text-white shadow-2xl shadow-indigo-300 hover:scale-110 transition-transform duration-300 float-anim pulse-ring flex items-center justify-center">
+        <svg class="relative z-10 w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+        </svg>
+    </button>
+
+    <!-- 对话框 -->
+    <div id="chatWindow" class="fixed bottom-28 right-8 z-50 w-[380px] max-w-[calc(100vw-2rem)] hidden">
+        <div class="chat-open bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-100 flex flex-col"
+            style="height: 560px;">
+
+            <!-- 头部 -->
+            <div class="hero-gradient px-5 py-4 flex items-center gap-3">
+                <div id="aiAvatar"
+                    class="w-11 h-11 rounded-full bg-white/20 backdrop-blur flex items-center justify-center text-xl">🤖
+                </div>
+                <div class="flex-1 text-white">
+                    <div class="font-bold">誉誉 小助手</div>
+                    <div class="text-xs text-indigo-100 flex items-center gap-1.5">
+                        <span class="w-1.5 h-1.5 rounded-full bg-green-400"></span>
+                        在线 · 通常即时回复
+                    </div>
+                </div>
+                <button onclick="toggleChat()"
+                    class="text-white/80 hover:text-white p-1.5 hover:bg-white/10 rounded-lg transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- 消息区 -->
+            <div id="chatBox"
+                class="chat-box flex-1 overflow-y-auto px-5 py-4 bg-gradient-to-b from-indigo-50/30 to-white space-y-4">
+            </div>
+
+            <!-- 快捷问题 -->
+            <div id="quickQuestions" class="px-4 py-2 border-t border-gray-100 bg-white flex gap-2 overflow-x-auto">
+                <button onclick="askQuestion('想申请采购')"
+                    class="flex-shrink-0 text-xs px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-full hover:bg-indigo-100 transition">想申请采购</button>
+                <button onclick="askQuestion('出差报销流程是什么？')"
+                    class="flex-shrink-0 text-xs px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-full hover:bg-indigo-100 transition">出差报销流程是什么？</button>
+                <button onclick="askQuestion('管理员入口')"
+                    class="flex-shrink-0 text-xs px-3 py-1.5 bg-indigo-50 text-indigo-600 rounded-full hover:bg-indigo-100 transition">管理员入口</button>
+            </div>
+
+            <!-- 输入区 -->
+            <div class="px-4 py-3 border-t border-gray-100 bg-white">
+                <div class="flex items-center gap-2">
+                    <input id="chatInput" type="text" placeholder="输入你的问题..."
+                        class="flex-1 px-4 py-2.5 bg-gray-100 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:bg-white transition"
+                        onkeypress="if(event.key==='Enter') sendMessage()">
+                    <button onclick="sendMessage()"
+                        class="w-10 h-10 hero-gradient rounded-full text-white flex items-center justify-center hover:opacity-90 transition flex-shrink-0">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- 编辑弹窗 -->
     <div class="edit-modal" id="editModal">
         <div class="edit-modal-content">
@@ -2417,24 +2687,24 @@
             date: 'unknown'
         }, {
             to: 'regret_0928@privatemail.com',
-            subject: '敏考上大学了',
-            content: `敏考上大学了，她说要来江州找我。哦不对，找你。她是一个懂事的孩子，但是这件事情，我不能让她知道。`,
+            subject: '她考上大学了',
+            content: `她考上大学了，她说要来江州找我。哦不对，找你。她是一个懂事的孩子，但是这件事情，我不能让她知道。`,
             date: '2028-06-27'
         }, {
             to: 'regret_0928@privatemail.com',
-            subject: '敏现在也十几岁了，应该长得很像你吧。',
-            content: `敏现在也十几岁了，应该长得很像你吧。当年还好我们熟悉，我一直用你的口吻给她写信、寄生活费，她都没有察觉。`,
+            subject: '注册了新邮箱',
+            content: `上一次不小心点到了发送，哎，但是提示了你的邮箱账号已经停用了。江城热线看到了一个能免手机注册邮箱的广告，就注册了一个，就当你还在，能陪我说说话吧。以后就用那个邮箱了。`,
+            date: '2021-10-25'
+        }, {
+            to: 'yangweijiang888@163.com',
+            subject: '她现在也十几岁了，应该长得很像你吧。',
+            content: `她现在也十几岁了，应该长得很像你吧。当年还好我们熟悉，我一直用你的口吻给她写信、寄生活费，她都没有察觉。`,
             date: '2021-09-28'
         }, {
-            to: 'regret_0928@privatemail.com',
+            to: 'yangweijiang888@163.com',
             subject: '离婚了',
-            content: `我把工资大部分都寄给了敏，我老婆一直问我，我都不知道如何开口。我不想牵扯她，但是和我在一起只会害了她。`,
+            content: `我把工资大部分都寄给了她，我老婆一直问我，我都不知道如何开口。我不想牵扯她，但是和我在一起只会害了她。`,
             date: '2020-05-30'
-        }, {
-            to: 'regret_0928@privatemail.com',
-            subject: '注册了新邮箱',
-            content: `上一次不小心点到了发送，哎，但是提示了你的邮箱账号已经停用了。看到了一个能免手机注册邮箱的广告，就注册了一个，就当你还在，能陪我说说话吧。`,
-            date: '2012-10-25'
         }, {
             to: 'yangweijiang888@163.com',
             subject: '又是这一天了，每次都让人难以入眠。',
@@ -2442,13 +2712,13 @@
             date: '2012-09-28'
         }, {
             to: 'yangweijiang888@163.com',
-            subject: '我一直在被监视中',
-            content: `我一直在被监视中，我的一举一动都在他的眼皮底下！只要有一点异常就会来问我，我是一个懦弱的人！但是这里好像不会被察觉。`,
+            subject: '草稿箱是安全的',
+            content: `我一直在被监视中，我的一举一动都在他的眼皮底下！只要有一点异常就会来问我，我真是一个懦弱的人！但是这里好像不会被察觉。`,
             date: '2010-11-31'
         }, {
             to: 'yangweijiang888@163.com',
-            subject: '110',
-            content: `110`,
+            subject: '110测试',
+            content: `110测试`,
             date: '2010-11-30'
         }
     ];
@@ -2511,6 +2781,136 @@
         closeEditModal();
     }
 
+    // 小助手
+    // 生成 AI 头像
+    (async function () {
+        try {
+            const res = await fetch('https://image.pollinations.ai/prompt/cute%20friendly%20AI%20robot%20assistant%20avatar%2C%20gradient%20purple%20blue%2C%20minimalist%2C%20round%2C%20flat%20design%2C%20glowing%20eyes?width=128&height=128&nologo=true');
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            document.getElementById('aiAvatar').innerHTML = `<img src="${url}" class="w-full h-full rounded-full object-cover">`;
+        } catch (e) { }
+    })();
+
+    // 固定对话库 —— 支持 <a> 行内链接 和 卡片式链接按钮
+    const qaMap = {
+        '想申请采购': '根据《誉鼎集团差旅管理制度》，出差报销流程如下：\n\n 出差前在OA系统提交"出差申请单"，经部门负责人审批 \n\n出差结束后7个工作日内，在OA系统提交"费用报销单"，附发票原件\n\n如需查看详细制度，请点击：[差旅管理制度.pdf]',
+        '出差报销流程是什么？': ' 好的。请问您需要采购什么物品？',
+        '管理员入口': '请输入密钥......',
+    };
+
+    let adminEntrFlag = false;
+
+    const defaultReply = '感谢你的提问！🤔 这个问题我已经记录下来啦。我们的团队会尽快完善相关知识库。\n\n你也可以试试以下问题：\n• 你们提供什么服务？\n• 如何联系你们？\n• 价格是多少？';
+
+    let chatOpen = false;
+    let firstOpen = true;
+
+    function toggleChat() {
+        const win = document.getElementById('chatWindow');
+        chatOpen = !chatOpen;
+        if (chatOpen) {
+            win.classList.remove('hidden');
+            if (firstOpen) {
+                firstOpen = false;
+                setTimeout(() => {
+                    addMessage('ai', '你好！👋 我是 誉誉 小助手，很高兴为你服务！\n\n你可以点击下方快捷问题，或直接输入你的问题～');
+                }, 300);
+            }
+            setTimeout(() => document.getElementById('chatInput').focus(), 400);
+        } else {
+            win.classList.add('hidden');
+        }
+    }
+
+    function addMessage(role, html) {
+        const box = document.getElementById('chatBox');
+        const div = document.createElement('div');
+        div.className = `msg-in flex ${role === 'user' ? 'justify-end msg-user' : 'justify-start'} items-end gap-2`;
+
+        const bubbleClass = role === 'user'
+            ? 'hero-gradient text-white rounded-2xl rounded-br-sm'
+            : 'bg-white text-gray-800 rounded-2xl rounded-bl-sm shadow-sm border border-gray-100';
+
+        const avatar = role === 'ai'
+            ? `<div class="w-8 h-8 rounded-full hero-gradient flex items-center justify-center text-white text-sm flex-shrink-0">🤖</div>`
+            : '';
+
+        // 将 \n 转为 <br>，保留 HTML 标签（链接等）
+        const formatted = html.replace(/\n/g, '<br>');
+
+        div.innerHTML = `
+      ${role === 'ai' ? avatar : ''}
+      <div class="${bubbleClass} px-4 py-2.5 max-w-[78%] text-sm leading-relaxed">${formatted}</div>
+    `;
+        box.appendChild(div);
+        box.scrollTop = box.scrollHeight;
+    }
+
+    function showTyping() {
+        const box = document.getElementById('chatBox');
+        const div = document.createElement('div');
+        div.id = 'typingIndicator';
+        div.className = 'msg-in flex justify-start items-end gap-2';
+        div.innerHTML = `
+      <div class="w-8 h-8 rounded-full hero-gradient flex items-center justify-center text-white text-sm flex-shrink-0">🤖</div>
+      <div class="bg-white rounded-2xl rounded-bl-sm shadow-sm border border-gray-100 px-4 py-3">
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
+        <span class="typing-dot"></span>
+      </div>
+    `;
+        box.appendChild(div);
+        box.scrollTop = box.scrollHeight;
+    }
+
+    function removeTyping() {
+        const el = document.getElementById('typingIndicator');
+        if (el) el.remove();
+    }
+
+    function getReply(msg) {
+        const lower = msg.trim();
+        if (qaMap[lower]) {
+            if (lower === '管理员入口') {
+                adminEntrFlag = true
+            } else {
+                adminEntrFlag = false
+            }
+            return qaMap[lower];
+        }
+        // 模糊匹配
+        for (const key in qaMap) {
+            if (lower.includes(key.replace(/[？?！!]/g, '')) || key.replace(/[？?！!]/g, '').includes(lower)) {
+                return qaMap[key];
+            }
+        }
+        if (adminEntrFlag && msg === 'x906yz') {
+            localStorage.setItem('login-manage-sys', 'lin')
+            return '<a class="chat-link" href="ManageSystem.html">后勤管理系统</a>'
+        }
+        adminEntrFlag = false
+        return defaultReply;
+    }
+
+    function sendMessage() {
+        const input = document.getElementById('chatInput');
+        const msg = input.value.trim();
+        if (!msg) return;
+        addMessage('user', msg);
+        input.value = '';
+
+        showTyping();
+        setTimeout(() => {
+            removeTyping();
+            addMessage('ai', getReply(msg));
+        }, 800 + Math.random() * 600);
+    }
+
+    function askQuestion(q) {
+        document.getElementById('chatInput').value = q;
+        sendMessage();
+    }
 </script>
 
 </html>

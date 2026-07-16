@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>誉鼎 - 后勤管理 v2.1</title>
+    <style>
+        /* 
+         * 98.css 核心样式模拟 
+         * 模拟 Windows 98/2000 的视觉风格
+         */
+        :root {
+            --bg-color: #c0c0c0;
+            --text-color: #000000;
+            --highlight: #ffffff;
+            --shadow: #808080;
+            --dark-shadow: #000000;
+            --active-blue: #000080;
+            --win-gray: #c0c0c0;
+        }
+
+        body {
+            background-color: #008080;
+            /* 经典 teal 桌面背景 */
+            font-family: "Tahoma", "MS Sans Serif", sans-serif;
+            font-size: 11px;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* 通用窗口容器 */
+        .window {
+            background-color: var(--bg-color);
+            border-top: 2px solid var(--highlight);
+            border-left: 2px solid var(--highlight);
+            border-right: 2px solid var(--dark-shadow);
+            border-bottom: 2px solid var(--dark-shadow);
+            box-shadow: 1px 1px 0 var(--shadow) inset, -1px -1px 0 var(--shadow) inset;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 标题栏 */
+        .title-bar {
+            background: linear-gradient(90deg, var(--active-blue), #1084d0);
+            padding: 3px 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .title-bar-controls button {
+            width: 16px;
+            height: 14px;
+            font-size: 9px;
+            line-height: 10px;
+            font-weight: bold;
+            margin-left: 2px;
+            background: var(--bg-color);
+            border-top: 1px solid var(--highlight);
+            border-left: 1px solid var(--highlight);
+            border-right: 1px solid var(--dark-shadow);
+            border-bottom: 1px solid var(--dark-shadow);
+            box-shadow: 1px 1px 0 #000;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        /* 窗口主体 */
+        .window-body {
+            padding: 10px;
+            flex: 1;
+            overflow: auto;
+        }
+
+        /* 输入框样式 (凹陷效果) */
+        input[type="text"],
+        input[type="password"],
+        select {
+            background: white;
+            border-top: 2px solid var(--shadow);
+            border-left: 2px solid var(--shadow);
+            border-right: 2px solid var(--highlight);
+            border-bottom: 2px solid var(--highlight);
+            padding: 3px 4px;
+            font-family: inherit;
+            font-size: 11px;
+            outline: none;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* 按钮样式 (凸起效果) */
+        button.btn {
+            background: var(--bg-color);
+            border-top: 2px solid var(--highlight);
+            border-left: 2px solid var(--highlight);
+            border-right: 2px solid var(--dark-shadow);
+            border-bottom: 2px solid var(--dark-shadow);
+            box-shadow: 1px 1px 0 #000;
+            padding: 4px 12px;
+            font-family: inherit;
+            font-size: 11px;
+            cursor: pointer;
+        }
+
+        button.btn:active {
+            border-top: 2px solid var(--dark-shadow);
+            border-left: 2px solid var(--dark-shadow);
+            border-right: 2px solid var(--highlight);
+            border-bottom: 2px solid var(--highlight);
+            box-shadow: none;
+            transform: translate(1px, 1px);
+        }
+
+        /* 表格样式 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border: 2px solid;
+            border-color: var(--shadow) var(--highlight) var(--highlight) var(--shadow);
+        }
+
+        th {
+            background: var(--bg-color);
+            border: 1px solid;
+            border-color: var(--highlight) var(--shadow) var(--shadow) var(--highlight);
+            padding: 4px;
+            text-align: left;
+            font-weight: normal;
+        }
+
+        td {
+            border: 1px solid #eee;
+            padding: 3px 4px;
+            color: black;
+        }
+
+        tr.selected {
+            background-color: var(--active-blue);
+            color: white;
+        }
+
+        /* 字段集 */
+        fieldset {
+            border: 2px groove var(--bg-color);
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        legend {
+            margin-left: 10px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: #000080;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 20px;
+            border: 2px inset white;
+        }
+
+        /* 主界面布局 */
+        #main-app {
+            width: 95vw;
+            height: 90vh;
+            flex-direction: row;
+        }
+
+        .sidebar {
+            width: 200px;
+            background: var(--bg-color);
+            border-right: 2px groove var(--bg-color);
+            padding: 5px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .nav-btn {
+            text-align: left;
+            width: 100%;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .nav-btn.active {
+            background: #e0e0e0;
+            border: 2px dotted #000;
+            /* 模拟选中 */
+            font-weight: bold;
+        }
+
+        .content-area {
+            flex: 1;
+            background: var(--bg-color);
+            padding: 10px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .module-box {
+            background: var(--bg-color);
+            border: 2px solid;
+            border-color: var(--shadow) var(--highlight) var(--highlight) var(--shadow);
+            padding: 10px;
+        }
+
+        .module-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            border-bottom: 1px solid var(--shadow);
+            padding-bottom: 4px;
+        }
+
+        .highlight-red {
+            color: red;
+            font-weight: bold;
+        }
+
+        /* 文件列表模拟资源管理器 */
+        .file-list {
+            background: white;
+            border: 2px inset white;
+            padding: 5px;
+            min-height: 100px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            padding: 2px;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .file-item:hover {
+            background-color: var(--active-blue);
+            color: white;
+        }
+
+        /* 模态框 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            /* 简单的遮罩 */
+        }
+
+        .modal-window {
+            position: absolute;
+            top: 20%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 400px;
+            background: var(--bg-color);
+        }
+
+        .video-screen {
+            background: black;
+            height: 240px;
+            margin: 10px;
+            border: 2px inset white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #0f0;
+            font-family: monospace;
+            position: relative;
+        }
+
+        .progress-container {
+            width: 80%;
+            height: 20px;
+            background: #000;
+            border: 1px solid #555;
+            margin-top: 10px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: #000080;
+            width: 0%;
+        }
+
+        .status-bar {
+            margin-top: 5px;
+            border-top: 1px solid var(--shadow);
+            border-left: 1px solid var(--shadow);
+            border-right: 1px solid var(--highlight);
+            border-bottom: 1px solid var(--highlight);
+            padding: 2px 5px;
+            font-size: 10px;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        /* 视频播放器复古样式 */
+        .retro-video-wrapper {
+            background: black;
+            border: 2px inset #c0c0c0;
+            margin-bottom: 10px;
+            position: relative;
+            width: 100%;
+            height: 250px;
+        }
+
+        .retro-video-wrapper video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            /* 轻微的CRT显示器扫描线滤镜 */
+            background: repeating-linear-gradient(rgba(0, 0, 0, 0.2),
+                    rgba(0, 0, 0, 0.2) 1px,
+                    transparent 1px,
+                    transparent 2px);
+        }
+    </style>
+</head>
+
+<body>
+
+
+    <!-- 主应用界面 -->
+    <div id="main-app" class="window">
+
+        <div style="display: flex; flex: 1;">
+            <!-- 左侧导航 -->
+            <aside class="sidebar">
+                <button class="btn nav-btn" onclick="switchTab(this, 'electricity')">
+                    用电量监控
+                </button>
+                <button class="btn nav-btn" onclick="switchTab(this, 'canteen')">
+                    食堂订餐系统
+                </button>
+                <button class="btn nav-btn" onclick="switchTab(this, 'procurement')">
+                    物资采购记录
+                </button>
+                <button class="btn nav-btn" onclick="switchTab(this, 'security')">
+                    安防监控归档
+                </button>
+
+                <div style="margin-top: auto; padding: 5px; border-top: 1px solid #808080;">
+                    <small>系统状态: 在线</small><br>
+                    <small>v2.1 Build 2004</small>
+                </div>
+            </aside>
+
+            <!-- 右侧内容区 -->
+            <main class="content-area">
+                <!-- 默认首页 -->
+                <div id="home">
+                    <p>本系统为2004年上线的旧版后勤管理系统，2004-2010年的历史数据暂不迁移至新系统：</p>
+                    <p>系统数据格式与新系统不兼容，批量迁移存在数据丢失风险；</p>
+                    <p>本系统仅保留查询权限，禁止修改、删除操作。</p>
+                </div>
+                <!-- 模块1：用电量监控 -->
+                <div id="module-electricity" class="module-box" style="display:none;">
+                    <div class="module-header">
+                        <strong>海伯利安大厦用电量报表</strong>
+                        <div style="display:flex; gap:5px; align-items:center;">
+                            <select id="elec-year" style="width: 70px;">
+                                <option selected>2004</option>
+                                <option>2005</option>
+                                <option>2006</option>
+                                <option>2007</option>
+                                <option>2008</option>
+                                <option>2009</option>
+                                <option>2010</option>
+                            </select>
+                            <select id="elec-floor" style="width: 70px;">
+                                <option selected>1-4楼</option>
+                                <option>4-7楼</option>
+                                <option>8楼</option>
+                                <option>9-14楼</option>
+                                <option>15-30楼</option>
+                                <option>31-42楼</option>
+                            </select>
+                            <button class="btn" onclick="renderElectricity()">查询(Q)</button>
+                        </div>
+                    </div>
+                    <table id="elec-table">
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>用电量（度）</th>
+                                <th>用水量（吨）</th>
+                                <th>备注</th>
+                            </tr>
+                        </thead>
+                        <tbody><!-- JS生成 --></tbody>
+                    </table>
+                </div>
+
+                <!-- 模块2：食堂订餐 -->
+                <div id="module-canteen" class="module-box hidden" style="display:none;">
+                    <div class="module-header">
+                        <strong>海伯利安大厦食堂订餐记录</strong>
+                        <div style="display:flex; gap:5px;">
+                            <select id="cant-year" style="width: 70px;">
+                                <option selected>2004</option>
+                                <option>2005</option>
+                                <option>2006</option>
+                                <option>2007</option>
+                                <option>2008</option>
+                                <option>2009</option>
+                                <option>2010</option>
+                            </select>
+                            <button class="btn" onclick="renderCanteen()">刷新</button>
+                        </div>
+                    </div>
+                    <table id="cant-table">
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>常规订餐（份）</th>
+                                <th>额外订餐（份）</th>
+                                <th>备注</th>
+                            </tr>
+                        </thead>
+                        <tbody><!-- JS生成 --></tbody>
+                    </table>
+                </div>
+
+                <!-- 模块3：物资采购 -->
+                <div id="module-procurement" class="module-box hidden" style="display:none;">
+                    <div class="module-header">
+                        <strong>物资采购单</strong>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>采购日期</th>
+                                <th>物资名称</th>
+                                <th>数量</th>
+                                <th>金额</th>
+                                <th>审批人</th>
+                                <th>备注</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2006-09-10</td>
+                                <td>车间数控机床</td>
+                                <td>5</td>
+                                <td>¥2,8000</td>
+                                <td>苏柏年</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>2006-09-15</td>
+                                <td>隔音棉</td>
+                                <td>160平方米</td>
+                                <td>¥8,000</td>
+                                <td>苏柏年</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>2006-09-29</td>
+                                <td>施工改造</td>
+                                <td>/</td>
+                                <td>¥8,000</td>
+                                <td class="highlight-red">苏柏年</td>
+                                <td class="highlight-red">8楼升级车间改造</td>
+                            </tr>
+                            <tr>
+                                <td>2008-09-16</td>
+                                <td class="highlight-red">C30混凝土</td>
+                                <td class="highlight-red">80立方米</td>
+                                <td>¥48,000</td>
+                                <td class="highlight-red">苏柏年</td>
+                            </tr>
+                            <tr>
+                                <td>2008-09-17</td>
+                                <td class="highlight-red">钢筋</td>
+                                <td class="highlight-red">2吨</td>
+                                <td>¥8,000</td>
+                                <td class="highlight-red">苏柏年</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>2008-09-18</td>
+                                <td class="highlight-red">模板</td>
+                                <td class="highlight-red">50套</td>
+                                <td>¥5,000</td>
+                                <td class="highlight-red">苏柏年</td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>2008-09-29</td>
+                                <td>施工改造</td>
+                                <td>/</td>
+                                <td>¥8,000</td>
+                                <td class="highlight-red">苏柏年</td>
+                                <td class="highlight-red">8楼升级车间改造</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 模块4：监控 -->
+                <div id="module-security" class="module-box hidden" style="display:none;">
+                    <div class="module-header">
+                        <strong>监控视频归档</strong>
+                    </div>
+                    <div class="file-list">
+                        <div class="file-item">
+                            <span>📹</span> [2006-02-28_20:00-21:00] 6楼走廊监控.mp4 <span
+                                style="color:#888; margin-left:auto;">1.3GB</span>
+                        </div>
+                        <div class="file-item">
+                            <span>📹</span> [2006-11-21_20:00-21:00] 4楼走廊监控.mp4 <span
+                                style="color:#888; margin-left:auto;">1.1GB</span>
+                        </div>
+                        <div class="file-item">
+                            <span>📹</span> [2007-01-31_20:00-21:00] 16楼走廊监控.mp4 <span
+                                style="color:#888; margin-left:auto;">1.2GB</span>
+                        </div>
+                        <div class="file-item" onclick="openVideo('2008-09-28_21:00', '../assets/monitor.mp4')">
+                            <span>📹</span> [2008-09-28_21:00-22:00] ▇▇▇▇.mp4 <span
+                                style="color:#888; margin-left:auto;">1.2GB</span>
+                        </div>
+                        <div class="file-item">
+                            <span>📹</span> [2008-11-17_21:00-23:30] 货梯监控.mp4 <span
+                                style="color:#888; margin-left:auto;">2.4GB</span>
+                        </div>
+                    </div>
+                </div>
+
+            </main>
+        </div>
+        <div class="status-bar">
+            <p>就绪 | 连接服务器: 43.241.84.17 | 延迟: 12ms</p>
+            <p>当前状态：只读模式 </p>
+            <p>最后备份：2011年1月15日 </p>
+        </div>
+    </div>
+
+    <!-- 视频播放弹窗 -->
+    <div id="video-modal" class="window"
+        style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 500px; z-index: 100;">
+        <div class="title-bar">
+            <div class="title-bar-text" id="modal-title">视频播放器</div>
+            <div class="title-bar-controls">
+                <button aria-label="Close" onclick="closeModal()"></button>
+            </div>
+        </div>
+        <div class="window-body" style="padding: 10px;">
+            <div class="retro-video-wrapper">
+                <video id="real-video-player" controls></video>
+            </div>
+            <div style="display: flex; justify-content: space-between;">
+                <button onclick="closeModal()">关闭</button>
+                <button id="download-btn" onclick="downloadVideo()">下载视频</button>
+            </div>
+        </div>
+    </div>
+    <script src="../js/util.js"></script>
+    <script src="../data/ManageData.js"></script>
+    <script>
+        // 验证
+        const loginUser = localStorage.getItem('login-manage-sys')
+        if (!loginUser) {
+            alert('你...怎么进来的？');
+            window.location.href = 'YuDingOaLogin.html';
+        }
+
+        // 标签切换
+        function switchTab(element, moduleId) {
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('home').classList.add("hidden")
+            element.classList.add('active');
+
+            ['electricity', 'canteen', 'procurement', 'approval', 'security'].forEach(m => {
+                const el = document.getElementById('module-' + m);
+                if (el) {
+                    if (m === moduleId) {
+                        el.style.display = 'block';
+                        if (m === 'electricity') renderElectricity();
+                        if (m === 'canteen') renderCanteen();
+                    } else {
+                        el.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        // 随机数生成
+        function getRandomInt(min, max) {
+            return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+        let powerData = {};
+        powerData = decryptData(Power_Data) || {};
+        let canteenData = {};
+        canteenData = decryptData(Canteen_Data) || {};
+        // 渲染用电数据
+        function renderElectricity() {
+            const tbody = document.querySelector('#elec-table tbody');
+            const year = parseInt(document.getElementById('elec-year').value);
+            const floor = parseInt(document.getElementById('elec-floor').value);
+
+            tbody.innerHTML = '';
+            powerData[floor][year].forEach(item => {
+                const tr = document.createElement('tr');
+                remark = '';
+                if (item.remark) {
+                    tr.style.backgroundColor = "#ffcccc";
+                    remark = '8楼工厂-额外用电';
+                }
+                tr.innerHTML = `<td>${item.date}</td><td>${item.power}</td><td>${item.water}</td><td>${remark}</td>`;
+                tbody.appendChild(tr);
+            })
+        }
+
+        // 渲染食堂数据
+        function renderCanteen() {
+            const tbody = document.querySelector('#cant-table tbody');
+            tbody.innerHTML = '';
+            const year = parseInt(document.getElementById('cant-year').value);
+
+            tbody.innerHTML = '';
+            canteenData[year].forEach(item => {
+                const tr = document.createElement('tr');
+                remark = '';
+                if (item.remark) {
+                    tr.style.backgroundColor = "#ffcccc";
+                    remark = '8楼用餐(19口粮)';
+                }
+                tr.innerHTML = `<td>${item.date}</td><td>${item.normal}</td><td>${item.extra}</td><td>${remark}</td>`;
+                tbody.appendChild(tr);
+            })
+        }
+
+        // 视频播放模拟
+        function openVideo(title, videoSrc) {
+            const modal = document.getElementById('video-modal');
+            const videoPlayer = document.getElementById('real-video-player');
+            const downloadBtn = document.getElementById('download-btn');
+
+            // 设置标题和真实视频源
+            document.getElementById('modal-title').innerText = title + ".mp4";
+            videoPlayer.src = videoSrc;
+            videoPlayer.currentTime = 0; // 重置进度
+            videoPlayer.play().catch(e => console.log("自动播放被浏览器拦截，需手动点击"));
+
+            // 初始禁用下载按钮，直到视频播放结束
+            downloadBtn.disabled = true;
+            downloadBtn.style.opacity = "0.6";
+
+            // 监听视频播放结束事件
+            videoPlayer.onended = function () {
+                downloadBtn.disabled = false;
+                downloadBtn.style.opacity = "1";
+            };
+
+            modal.style.display = 'block';
+        }
+        function closeModal() {
+            const modal = document.getElementById('video-modal');
+            const videoPlayer = document.getElementById('real-video-player');
+            videoPlayer.pause(); // 关闭时暂停视频
+            videoPlayer.src = ""; // 清空视频源释放内存
+            modal.style.display = 'none';
+        }
+
+
+        function downloadVideo() {
+            if (loginUser === 'lin') {
+                alert("访问被拒绝\n\n错误代码: 0x80070005\n该账号没有权限下载此级别监控录像。\n请联系安保部主管授权。");
+                localStorage.setItem('stageKey', 'isStage2'); // 进入阶段2
+                window.location.href = 'Desktop.html';
+            } else {
+                alert("下载成功");
+                localStorage.setItem('stageKey', 'End'); // 下载证据完成，最终阶段
+            }
+        }
+    </script>
+</body>
+
+</html>

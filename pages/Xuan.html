@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>弟子名录 [网页存档]</title>
+    <style>
+        /* --- 全局重置与基础样式 --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "SimSun", "宋体", "Microsoft YaHei", serif;
+            background-color: #FDFBF7;
+            /* 米白色背景 */
+            color: #333;
+            font-size: 13px;
+            line-height: 1.6;
+            /* 模拟轻微噪点或纹理，增加古朴感 */
+            background-image: linear-gradient(#fdfbf7 2px, transparent 2px),
+                linear-gradient(90deg, #fdfbf7 2px, transparent 2px),
+                linear-gradient(rgba(139, 0, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(139, 0, 0, 0.03) 1px, transparent 1px);
+            background-size: 100px 100px, 100px 100px, 20px 20px, 20px 20px;
+            background-position: -2px -2px, -2px -2px, -1px -1px, -1px -1px;
+            padding-top: 60px;
+            /* 为固定顶部留出空间 */
+        }
+
+        a {
+            text-decoration: none;
+            color: #8B0000;
+            transition: color 0.2s ease;
+        }
+
+        a:hover {
+            color: #D4AF37;
+            /* 暗金色 */
+            text-decoration: underline;
+        }
+
+        /* --- 1. 模拟浏览器地址栏 (Fixed Top) --- */
+        .browser-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 32px;
+            background-color: #F5F5F5;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            z-index: 2000;
+            font-family: Arial, sans-serif;
+        }
+
+        .browser-controls {
+            display: flex;
+            gap: 8px;
+            margin-right: 15px;
+            color: #666;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .address-input-container {
+            flex: 1;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            font-size: 12px;
+            color: #333;
+        }
+
+        .snapshot-tag {
+            background-color: #FFF3E0;
+            border: 1px solid #FFB74D;
+            color: #E65100;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 1px 4px;
+            border-radius: 2px;
+            margin-right: 8px;
+        }
+
+        .url-text {
+            font-family: "Consolas", "Courier New", monospace;
+            color: #333;
+        }
+
+        .url-input {
+            flex: 1;
+            /* 占据剩余宽度 */
+            border: none;
+            outline: none;
+            /* 去除浏览器默认的聚焦边框 */
+            background: transparent;
+            font-family: monospace;
+            /* 使用等宽字体，符合地址栏特征 */
+            font-size: 14px;
+            color: #333;
+            padding: 0 8px;
+            height: 100%;
+        }
+
+        /* --- 2. 快照提示横幅 --- */
+        .archive-banner {
+            position: fixed;
+            top: 32px;
+            /* 紧接地址栏 */
+            left: 0;
+            width: 100%;
+            height: 28px;
+            background-color: #FFF9E6;
+            border-bottom: 1px solid #FFD700;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            font-size: 12px;
+            color: #665c00;
+            z-index: 1999;
+            transition: transform 0.3s ease-out;
+        }
+
+        .archive-banner.hidden {
+            transform: translateY(-100%);
+        }
+
+        .banner-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .close-banner {
+            cursor: pointer;
+            font-weight: bold;
+            color: #999;
+        }
+
+        .close-banner:hover {
+            color: #333;
+            text-decoration: none;
+        }
+
+        /* --- 3. 网站头部 (Header) --- */
+        header {
+            background: linear-gradient(to bottom, #8B0000, #A52A2A);
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+            border-bottom: 4px solid #D4AF37;
+            margin-top: 0;
+            /* 紧贴横幅下方 */
+        }
+
+        .site-title {
+            font-family: "KaiTi", "楷体", serif;
+            font-size: 48px;
+            font-weight: bold;
+            letter-spacing: 8px;
+            color: #D4AF37;
+            /* 金色大字 */
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 5px;
+        }
+
+        .site-subtitle {
+            font-size: 14px;
+            color: #FFD700;
+            opacity: 0.9;
+            letter-spacing: 2px;
+        }
+
+        /* 导航菜单 */
+        nav {
+            background-color: #600000;
+            border-top: 1px solid #D4AF37;
+            border-bottom: 1px solid #D4AF37;
+        }
+
+        .nav-menu {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            padding: 0;
+            margin: 0;
+        }
+
+        .nav-menu li {
+            position: relative;
+        }
+
+        .nav-menu a {
+            display: block;
+            padding: 10px 20px;
+            color: #fff;
+            font-size: 14px;
+            border-right: 1px solid rgba(212, 175, 55, 0.3);
+        }
+
+        .nav-menu li:last-child a {
+            border-right: none;
+        }
+
+        .nav-menu a:hover {
+            color: #D4AF37;
+            background-color: rgba(0, 0, 0, 0.2);
+            text-decoration: none;
+        }
+
+        .nav-menu a:hover::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 20%;
+            width: 60%;
+            height: 2px;
+            background-color: #D4AF37;
+        }
+
+        /* --- 4. 主体内容区 (Main Content) --- */
+        .container {
+            width: 960px;
+            margin: 20px auto;
+            display: flex;
+            gap: 20px;
+        }
+
+        /* 左侧：弟子名录列表 */
+        .sidebar {
+            width: 40%;
+            background: #fff;
+            border: 1px solid #D4AF37;
+        }
+
+        .section-header {
+            background-color: #8B0000;
+            color: #fff;
+            padding: 8px 12px;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #D4AF37;
+        }
+
+        .section-header a {
+            color: #FFD700;
+            font-size: 12px;
+            font-weight: normal;
+        }
+
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 12px;
+        }
+
+        table.data-table th {
+            background-color: #F5F5DC;
+            /* 浅米色 */
+            color: #555;
+            padding: 8px;
+            border: 1px solid #D4AF37;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        table.data-table td {
+            padding: 8px;
+            border: 1px solid #D4AF37;
+            color: #333;
+        }
+
+        /* 斑马纹与高亮 */
+        table.data-table tr:nth-child(even) {
+            background-color: #FAFAFA;
+        }
+
+        table.data-table tr.highlight-row {
+            background-color: #FFF0F0;
+            /* 浅红色高亮 */
+        }
+
+        table.data-table tr:hover {
+            background-color: #FFF8DC;
+        }
+
+        .account-link {
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .account-link:hover {
+            color: #8B0000;
+            text-decoration: underline;
+        }
+
+        /* 右侧：详细信息卡片 */
+        .main-content {
+            width: 60%;
+        }
+
+        .profile-card {
+            background: #fff;
+            border: 1px solid #D4AF37;
+            padding: 20px;
+            box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+            /* 内阴影模拟纸质感 */
+            position: relative;
+        }
+
+        .card-title-bar {
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #8B0000;
+            font-family: "KaiTi", "楷体", serif;
+        }
+
+        .action-icons span {
+            font-size: 12px;
+            color: #999;
+            cursor: not-allowed;
+            margin-left: 10px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+
+        .info-label {
+            color: #666;
+            font-weight: bold;
+            text-align: right;
+            padding-right: 10px;
+        }
+
+        .info-value {
+            color: #333;
+        }
+
+        .signature {
+            font-style: italic;
+            color: #555;
+            font-family: "Times New Roman", serif;
+        }
+
+        .record-table-container {
+            margin-top: 20px;
+            border-top: 1px solid #eee;
+            padding-top: 10px;
+        }
+
+        .record-title {
+            font-size: 14px;
+            font-weight: bold;
+            color: #8B0000;
+            margin-bottom: 10px;
+            padding-left: 5px;
+            border-left: 3px solid #D4AF37;
+        }
+
+        /* --- 5. 功德芳名录模块 (全宽) --- */
+        .merit-section {
+            width: 960px;
+            margin: 20px auto;
+            background: #fff;
+            border: 1px solid #D4AF37;
+        }
+
+        .merit-table-container {
+            padding: 0;
+        }
+
+        /* --- 6. 底部版权区 (Footer) --- */
+        footer {
+            background-color: #333;
+            color: #CCC;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+            font-size: 11px;
+            border-top: 3px solid #D4AF37;
+        }
+
+        footer p {
+            margin: 5px 0;
+        }
+
+        /* --- 7. 页面水印 --- */
+        .watermark {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 1px solid #fff;
+            border-radius: 4px;
+            padding: 8px 12px;
+            color: #fff;
+            z-index: 3000;
+            pointer-events: none;
+        }
+
+        .wm-line-1 {
+            font-size: 11px;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .wm-line-2 {
+            font-size: 10px;
+            color: #ccc;
+            font-family: "Consolas", monospace;
+            display: block;
+        }
+
+        /* 装饰性云纹背景 (低透明度) */
+        .bg-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.05;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%238B0000' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 1. 模拟浏览器地址栏 -->
+    <div class="browser-bar">
+        <div class="browser-controls">
+            <span>&#8592;</span> <!-- Left Arrow -->
+            <span>&#8594;</span> <!-- Right Arrow -->
+            <span>&#8635;</span> <!-- Refresh -->
+        </div>
+        <div class="address-input-container">
+            <span class="snapshot-tag">快照</span>
+            <input type="text" class="url-input" value="www.xuanchengfu.org/disciples/bain1an5u" spellcheck="false" />
+        </div>
+    </div>
+
+    <!-- 2. 快照提示横幅 -->
+    <div class="archive-banner" id="archiveBanner">
+        <div class="banner-left">
+            <span>⚠️</span>
+            <span>您正在查看网页快照 | 原始网站已不可访问 | 快照时间：2014-12-31</span>
+        </div>
+        <div class="close-banner" onclick="closeBanner()">×</div>
+    </div>
+
+    <!-- 背景纹理 -->
+    <div class="bg-pattern"></div>
+
+    <!-- 3. 网站头部 -->
+    <header>
+        <div class="site-title">☯ 玄 ☯</div>
+        <div class="site-subtitle">传承古法，修身养性</div>
+    </header>
+
+    <!-- 导航 -->
+    <nav>
+        <ul class="nav-menu">
+            <li><a>首页</a></li>
+            <li><a>道观简介</a></li>
+            <li><a>教义经典</a></li>
+            <li><a>弟子名录</a></li>
+            <li><a>功德芳名录</a></li>
+            <li><a>联系我们</a></li>
+        </ul>
+    </nav>
+
+    <!-- 4. 主体内容区 -->
+    <div class="container">
+        <!-- 左侧列表 -->
+        <aside class="sidebar">
+            <div class="section-header">
+                <span>弟子名录</span>
+                <a>查看更多 &raquo;</a>
+            </div>
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>账号</th>
+                        <th>注册时间</th>
+                        <th>等级</th>
+                        <th>贡献值</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a class="account-link">wangj1an</a></td>
+                        <td>2007-09-01</td>
+                        <td>内门弟子</td>
+                        <td>19,888</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td><a class="account-link">bain1an5u</a></td>
+                        <td>2008-09-08</td>
+                        <td>内门弟子</td>
+                        <td>8,888</td>
+                    </tr>
+                    <tr>
+                        <td><a class="account-link">j1angzh0u</a></td>
+                        <td>2010-01-15</td>
+                        <td>内门弟子</td>
+                        <td>5,200</td>
+                    </tr>
+                    <tr>
+                        <td><a class="account-link">daoist_007</a></td>
+                        <td>2010-01-31</td>
+                        <td>内门弟子</td>
+                        <td>5,280</td>
+                    </tr>
+                    <tr>
+                        <td><a class="account-link">l1ufe1</a></td>
+                        <td>2009-03-22</td>
+                        <td>外门弟子</td>
+                        <td>1,850</td>
+                    </tr>
+                    <tr>
+                        <td><a class="account-link">zhangm1ng</a></td>
+                        <td>2008-05-26</td>
+                        <td>外门弟子</td>
+                        <td>1,800</td>
+                    </tr>
+                    <tr>
+                        <td><a class="account-link">chenwe0</a></td>
+                        <td>2014-07-01</td>
+                        <td>外门弟子</td>
+                        <td>1,420</td>
+                    </tr>
+                    <tr>
+                        <td><a class="account-link">sunwe1</a></td>
+                        <td>2013-05-16</td>
+                        <td>外门弟子</td>
+                        <td>1,100</td>
+                    </tr>
+                    <tr>
+                        <td><a class="account-link">zha0yuan</a></td>
+                        <td>2011-11-11</td>
+                        <td>外门弟子</td>
+                        <td>1,000</td>
+                    </tr>
+                    <tr>
+                        <td><a class="account-link">l1uyang</a></td>
+                        <td>2009-10-08</td>
+                        <td>记名弟子</td>
+                        <td>750</td>
+                    </tr>
+                    <tr>
+                        <td><a class="account-link">huangta0</a></td>
+                        <td>2012-12-11</td>
+                        <td>记名弟子</td>
+                        <td>550</td>
+                    </tr>
+                    <tr>
+                        <td><a class="account-link">x1a0m1ng</a></td>
+                        <td>2008-03-11</td>
+                        <td>外门弟子</td>
+                        <td>400</td>
+                    </tr>
+                </tbody>
+            </table>
+        </aside>
+
+        <!-- 右侧详情 -->
+        <main class="main-content">
+            <div class="profile-card">
+                <div class="card-title-bar">
+                    <div class="card-title">弟子档案详情 - bain1an5u</div>
+                    <div class="action-icons">
+                        <span>🖨️ 打印</span>
+                        <span>💾 导出</span>
+                    </div>
+                </div>
+
+                <div class="info-grid">
+                    <div class="info-label">注册时间：</div>
+                    <div class="info-value">2008年09月08日</div>
+
+                    <div class="info-label">当前等级：</div>
+                    <div class="info-value" style="color: #8B0000; font-weight: bold;">内门弟子</div>
+
+                    <div class="info-label">个人签名：</div>
+                    <div class="info-value signature"></div>
+                </div>
+
+                <div class="record-table-container">
+                    <div class="record-title">近期法事预约记录</div>
+                    <table class="data-table" , style="height: 100px;">
+                        <thead>
+                            <tr>
+                                <th>日期</th>
+                                <th>法事类型</th>
+                                <th>贡献值(玄)</th>
+                                <th>状态</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2014-09-28</td>
+                                <td>秋分祈福大法会</td>
+                                <td>100</td>
+                                <td><span style="color: green;">已完成</span></td>
+                            </tr>
+                            <tr>
+                                <td>2013-09-28</td>
+                                <td>秋分祈福大法会</td>
+                                <td>100</td>
+                                <td><span style="color: green;">已完成</span></td>
+                            </tr>
+                            <tr>
+                                <td>2012-09-28</td>
+                                <td>秋分祈福大法会</td>
+                                <td>100</td>
+                                <td><span style="color: green;">已完成</span></td>
+                            </tr>
+                            <tr>
+                                <td>2011-09-28</td>
+                                <td>秋分祈福大法会</td>
+                                <td>100</td>
+                                <td><span style="color: green;">已完成</span></td>
+                            </tr>
+                            <tr>
+                                <td>2010-09-28</td>
+                                <td>秋分祈福大法会</td>
+                                <td>100</td>
+                                <td><span style="color: green;">已完成</span></td>
+                            </tr>
+                            <tr>
+                                <td>2009-09-28</td>
+                                <td>秋分祈福大法会</td>
+                                <td>100</td>
+                                <td><span style="color: green;">已完成</span></td>
+                            </tr>
+                            <tr>
+                                <td>2008-09-28</td>
+                                <td><b>实现愿望的必经途径</b></td>
+                                <td><b>500</b></td>
+                                <td><span style="color: green;">已完成</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 5. 功德芳名录模块 -->
+    <div class="merit-section">
+        <div class="section-header">
+            <span>许愿录</span>
+        </div>
+        <div class="merit-table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>愿望</th>
+                        <th>起始时间</th>
+                        <th>转换度</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="wish-item">与喜欢的人在一起</td>
+                        <td>2007-09-01</td>
+                        <td>100%</td>
+                    </tr>
+                    <tr>
+                        <td class="wish-item">耀祖成名，金榜题名</td>
+                        <td>2010-01-15</td>
+                        <td>100%</td>
+                    </tr>
+                    <tr class="highlight-row">
+                        <td class="wish-item">enjoymorerights</td>
+                        <td>2008-09-28</td>
+                        <td>100%</td>
+                    </tr>
+                    <tr>
+                        <td class="wish-item">家族平安</td>
+                        <td>2009-03-22</td>
+                        <td>75%</td>
+                    </tr>
+                    <tr>
+                        <td class="wish-item">投资成功，财运亨通</td>
+                        <td>2011-11-11</td>
+                        <td>33%</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 6. 底部版权 -->
+    <footer>
+        <p>本网站已于 2019 年停止更新，当前页面为网页存档快照。</p>
+        <p>技术支持：江州传统网络文化服务中心</p>
+    </footer>
+
+    <!-- 7. 页面水印 -->
+    <div class="watermark">
+        <span class="wm-line-1">WEB ARCHIVE SNAPSHOT</span>
+        <span class="wm-line-2">2014-12-31 23:59:59</span>
+    </div>
+
+    <script>
+        // 简单的关闭横幅逻辑
+        function closeBanner() {
+            const banner = document.getElementById('archiveBanner');
+            if (banner) {
+                banner.classList.add('hidden');
+                // 调整body padding，因为横幅消失了
+                document.body.style.paddingTop = '32px';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const urlInput = document.querySelector('.url-input');
+
+            urlInput.addEventListener('keydown', function (event) {
+                if (event.key === 'Enter') {
+                    let targetUrl = this.value.trim();
+                    if (targetUrl === 'www.xuanchengfu.org/disciples?keyword=enjoymorerights') {
+                        window.location.href = 'XuanRoom.html';
+                    }
+                }
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // 1. 获取页面上所有的许愿内容元素
+            const wishItems = document.querySelectorAll('.wish-item');
+            // 2. 获取地址栏的输入框元素
+            const urlInput = document.querySelector('.url-input');
+
+            // 3. 为每一个许愿内容添加点击事件监听器
+            wishItems.forEach(function (item) {
+                item.addEventListener('click', function () {
+                    // 当点击时，将地址栏的值修改为目标URL
+                    urlInput.value = 'www.xuanchengfu.org/disciples?keyword=whatsyourdesire';
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

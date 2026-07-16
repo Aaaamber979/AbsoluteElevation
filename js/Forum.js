@@ -91,40 +91,6 @@ function logout() {
     location.reload();
 }
 
-// ==================== 数据加密/解密工具 ====================
-
-// Base64编码（支持UTF-8）
-function encryptData(data) {
-    try {
-        const jsonStr = JSON.stringify(data);
-        const bytes = new TextEncoder('utf-8').encode(jsonStr);
-        let binaryString = '';
-        for (let i = 0; i < bytes.length; i++) {
-            binaryString += String.fromCharCode(bytes[i]);
-        }
-        return btoa(binaryString);
-    } catch (e) {
-        console.error('数据加密失败:', e);
-        return '';
-    }
-}
-
-// Base64解码（支持UTF-8）
-function decryptData(encryptedStr) {
-    try {
-        const base64Str = atob(encryptedStr);
-        const bytes = new Uint8Array(base64Str.length);
-        for (let i = 0; i < base64Str.length; i++) {
-            bytes[i] = base64Str.charCodeAt(i);
-        }
-        const jsonStr = new TextDecoder('utf-8').decode(bytes);
-        return JSON.parse(jsonStr);
-    } catch (e) {
-        console.error('数据解密失败:', e);
-        return null;
-    }
-}
-
 
 // ==================== 搜索功能 ====================
 

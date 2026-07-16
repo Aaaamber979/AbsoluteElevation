@@ -1,7 +1,15 @@
 /* ================= 基础重置与桌面背景 ================= */
-* { box-sizing: border-box; margin: 0; padding: 0; user-select: none; }
-body, html {
-    width: 100%; height: 100%;
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    /* user-select: none; */
+}
+
+body,
+html {
+    width: 100%;
+    height: 100%;
     background: url('../assets/background.png') no-repeat center center fixed;
     background-size: cover;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
@@ -38,7 +46,7 @@ body, html {
     -webkit-backdrop-filter: blur(20px);
     border-radius: 12px;
     padding: 15px 20px;
-    box-shadow: 
+    box-shadow:
         0 8px 32px rgba(0, 0, 0, 0.15),
         0 2px 8px rgba(0, 0, 0, 0.1);
     display: flex;
@@ -56,6 +64,7 @@ body, html {
         transform: translateX(400px);
         opacity: 0;
     }
+
     to {
         transform: translateX(0);
         opacity: 1;
@@ -71,6 +80,7 @@ body, html {
         transform: translateX(0);
         opacity: 1;
     }
+
     to {
         transform: translateX(400px);
         opacity: 0;
@@ -133,11 +143,20 @@ body, html {
     font-size: 13px;
     font-weight: 500;
     color: #000;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
     z-index: 1000;
 }
-.menu-left, .menu-right { display: flex; gap: 15px; align-items: center; }
-.apple-logo { font-size: 15px; }
+
+.menu-left,
+.menu-right {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+}
+
+.apple-logo {
+    font-size: 15px;
+}
 
 /* ================= Dock 栏 ================= */
 .dock-container {
@@ -152,9 +171,10 @@ body, html {
     border-radius: 20px;
     display: flex;
     gap: 15px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
     z-index: 1000;
 }
+
 .dock-icon {
     width: 50px;
     height: 50px;
@@ -163,7 +183,7 @@ body, html {
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
     transition: transform 0.2s cubic-bezier(0.2, 0, 0, 1), margin-bottom 0.2s;
     position: relative;
 }
@@ -199,7 +219,7 @@ body, html {
     display: flex;
     justify-content: center;
     align-items: center;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
     z-index: 20;
 }
 
@@ -208,7 +228,7 @@ body, html {
     position: absolute;
     background: #fff;
     border-radius: 10px;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     overflow: hidden;
     display: none;
     animation: windowOpen 0.3s ease-out;
@@ -221,6 +241,7 @@ body, html {
         opacity: 0;
         transform: scale(0.8);
     }
+
     to {
         opacity: 1;
         transform: scale(1);
@@ -245,9 +266,17 @@ body, html {
     cursor: pointer;
 }
 
-.btn-close { background: #ff5f57; }
-.btn-minimize { background: #febc2e; }
-.btn-maximize { background: #28c840; }
+.btn-close {
+    background: #ff5f57;
+}
+
+.btn-minimize {
+    background: #febc2e;
+}
+
+.btn-maximize {
+    background: #28c840;
+}
 
 .window-title {
     flex: 1;
@@ -324,7 +353,7 @@ body, html {
 .file-icon {
     width: 64px;
     height: 64px;
-    color: rgba(107, 114, 128, 0.6);
+    color: rgba(204, 210, 222, 0.6);
     margin-bottom: 20px;
     transition: all 0.3s ease;
 }
@@ -335,7 +364,7 @@ body, html {
 
 .drop-text {
     font-size: 14px;
-    color: rgba(107, 114, 128, 0.8);
+    color: rgba(236, 238, 244, 0.8);
     text-align: center;
     font-family: 'Courier New', 'Consolas', monospace;
     letter-spacing: 1px;
@@ -422,7 +451,9 @@ body, html {
 }
 
 @keyframes fadeIn {
-    to { opacity: 1; }
+    to {
+        opacity: 1;
+    }
 }
 
 .log-line::before {
@@ -434,8 +465,16 @@ body, html {
 }
 
 @keyframes blink {
-    0%, 50% { opacity: 1; }
-    51%, 100% { opacity: 0; }
+
+    0%,
+    50% {
+        opacity: 1;
+    }
+
+    51%,
+    100% {
+        opacity: 0;
+    }
 }
 
 .log-line.success {
@@ -470,12 +509,29 @@ body, html {
 }
 
 @keyframes warningGlitch {
-    0% { transform: translate(0); }
-    20% { transform: translate(-2px, 2px); }
-    40% { transform: translate(-2px, -2px); }
-    60% { transform: translate(2px, 2px); }
-    80% { transform: translate(2px, -2px); }
-    100% { transform: translate(0); }
+    0% {
+        transform: translate(0);
+    }
+
+    20% {
+        transform: translate(-2px, 2px);
+    }
+
+    40% {
+        transform: translate(-2px, -2px);
+    }
+
+    60% {
+        transform: translate(2px, 2px);
+    }
+
+    80% {
+        transform: translate(2px, -2px);
+    }
+
+    100% {
+        transform: translate(0);
+    }
 }
 
 .warning-border {
@@ -486,22 +542,25 @@ body, html {
     bottom: 0;
     border: 1px solid #EF4444;
     border-radius: 6px;
-    box-shadow: 
+    box-shadow:
         0 0 10px rgba(239, 68, 68, 0.3),
         0 0 20px rgba(239, 68, 68, 0.2);
     animation: warningPulse 2s ease-in-out infinite;
 }
 
 @keyframes warningPulse {
-    0%, 100% { 
+
+    0%,
+    100% {
         opacity: 0.6;
-        box-shadow: 
+        box-shadow:
             0 0 10px rgba(239, 68, 68, 0.3),
             0 0 20px rgba(239, 68, 68, 0.2);
     }
-    50% { 
+
+    50% {
         opacity: 1;
-        box-shadow: 
+        box-shadow:
             0 0 15px rgba(239, 68, 68, 0.5),
             0 0 30px rgba(239, 68, 68, 0.3);
     }
@@ -533,8 +592,13 @@ body, html {
 }
 
 @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .view-details-btn {
@@ -734,7 +798,7 @@ body, html {
     background: white;
     padding: 30px 50px;
     border-radius: 10px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     text-align: center;
     min-width: 400px;
 }
@@ -1102,7 +1166,7 @@ body, html {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.8);
+    background: rgba(0, 0, 0, 0.8);
     z-index: 10000;
     display: none;
     justify-content: center;
@@ -1231,13 +1295,13 @@ body, html {
     width: 60px;
     height: 60px;
     margin-bottom: 5px;
-    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 .file-name {
     font-size: 11px;
     color: white;
-    text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
     word-wrap: break-word;
     line-height: 1.3;
 }

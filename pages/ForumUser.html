@@ -506,10 +506,44 @@
                 transform: translateX(-50%) translateY(0);
             }
         }
+
+        /* 遮罩层基础样式 */
+        .page-transition-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: #000000;
+            /* 纯黑背景 */
+
+            /* 初始状态：完全透明且不可见 */
+            opacity: 0;
+            visibility: hidden;
+
+            /* 核心：设置过渡动画，0.6秒平滑过渡 */
+            transition: opacity 0.6s ease-in-out, visibility 0.6s ease-in-out;
+
+            /* 确保遮罩层在最顶层 */
+            z-index: 99999;
+
+            /* 隐藏时不阻挡页面下方的点击事件 */
+            pointer-events: none;
+        }
+
+        /* 激活状态：黑屏 */
+        .page-transition-overlay.active {
+            opacity: 1;
+            visibility: visible;
+            /* 显示时阻挡所有点击，防止用户在动画期间乱点 */
+            pointer-events: auto;
+        }
     </style>
 </head>
 
 <body>
+    <!-- 页面过渡黑屏遮罩层 -->
+    <div id="pageTransitionOverlay" class="page-transition-overlay"></div>
     <!-- 顶部导航 -->
     <div class="header">
         <div class="header-top">
@@ -621,7 +655,7 @@
             <div class="login-success" id="loginSuccess">✓ 登录成功！</div>
         </div>
     </div>
-
+    <script src="../js/util.js"></script>
     <script src="../js/Forum.js"></script>
     <script src="../data/ForumData.js"></script>
     <script>
@@ -786,9 +820,11 @@
             const chatHistory = JSON.parse(localStorage.getItem(chatKey) || '[]');
 
             // 获取阶段标志位
-            const stage2Key = `chat_stage2_${currentUserKey}`;
-            const isStage2 = localStorage.getItem(stage2Key) === 'isStage2';
-            const isEnd = localStorage.getItem(stage2Key) === 'isEnd';
+            // const stage2Key = `chat_stage2_${currentUserKey}`;
+            const isStage2 = localStorage.getItem('stageKey') === 'isStage2';
+            const isStage3 = localStorage.getItem('stageKey') === 'isStage3';
+            const isEnd = localStorage.getItem('stageKey') === 'isEnd';
+            const allEnd = localStorage.getItem('stageKey') === 'allEnd';
 
             if (chatHistory.length === 0) {
                 // 第一次打开,触发阶段一
@@ -827,11 +863,20 @@
                     hideHint();
                     input.readOnly = true;
                     input.placeholder = '输入消息...';
-                    input.value = '之前说的8楼发生大事故，是苏柏年下令浇筑，封掉了他们的尸骨！但是当我准备下载证据的时候，他禁掉了我的后台权限。';
-                } else if (isEnd) {
+                    input.value = '8楼确实发生大事故，是苏柏年干的，他还早就准备了混凝土，直接浇筑封掉了他们的尸骨！但是当我准备下载证据的时候，他禁掉了我的后台权限。';
+                } else if (isStage3) {
+                    // 阶段二结束，阶段三搜证状态
                     showHint('来不及了！时间不等人！');
                     input.readOnly = true;
                     input.value = '';
+                } else if (isEnd) {
+                    // 事件结束 找到小顾提交材料
+                    hideHint();
+                    input.readOnly = true;
+                    input.placeholder = '输入消息...';
+                    input.value = '我下载到了当时的监控视频，还整理了他和玄清子勾搭的证据。他08年听邪教的话献祭了19个人！交给你了！📁附件';
+                } else if (allEnd) {
+                    return
                 } else {
                     // 阶段二未触发,显示提示
                     showHint('再搜查一下线索再来找他吧。');
@@ -916,49 +961,117 @@
             }
 
             // 阶段二逻辑
-            const stage2Key = `chat_stage2_${currentUserKey}`;
-            const isStage2 = localStorage.getItem(stage2Key) === 'isStage2';
+            // const stage2Key = `chat_stage2_${currentUserKey}`;
+            const isStage2 = localStorage.getItem('stageKey') === 'isStage2';
+            const isEnd = localStorage.getItem('stageKey') === 'isEnd';
 
-            if (!isStage2) {
-                // 阶段二未解锁,不处理
-                return;
-            }
-            // 清空输入框
-            input.value = '';
-            hideHint();
-            // 保存并显示我的消息
-            appendMessage('me', message);
-            saveChatMessage('me', message);
+            if (isStage2) {
 
-            // 对方回复(阶段二)
-            setTimeout(() => {
-                showTypingIndicator();
+                // 清空输入框
+                input.value = '';
+                hideHint();
+                // 保存并显示我的消息
+                appendMessage('me', message);
+                saveChatMessage('me', message);
+
+                // 对方回复(阶段二)
                 setTimeout(() => {
-                    hideTypingIndicator();
-                    appendMessage('other', '我就知道，苏柏年一定有问题！我想想......');
-                    saveChatMessage('other', '我就知道，苏柏年一定有问题！我想想......');
-
+                    showTypingIndicator();
                     setTimeout(() => {
-                        showTypingIndicator();
+                        hideTypingIndicator();
+                        appendMessage('other', '我就知道，苏柏年一定有问题！我想想......');
+                        saveChatMessage('other', '我就知道，苏柏年一定有问题！我想想......');
                         setTimeout(() => {
-                            hideTypingIndicator();
-                            appendMessage('other', '之前我查过苏柏年，这里是苏柏年的私人账号和云盘。不知道有没有帮助？www.userlog.cn/acc_sbyn_L7we');
-                            saveChatMessage('other', '之前我查过苏柏年，这里是苏柏年的私人账号和云盘。不知道有没有帮助？www.userlog.cn/acc_sbyn_L7we');
-
+                            showTypingIndicator();
                             setTimeout(() => {
-                                showTypingIndicator();
+                                hideTypingIndicator();
+                                appendMessage('other', '这几年我一直在论坛发帖子寻求信息，但是都没有人回复。可是有一篇很奇怪，是我28年调查“玄清子”的时候发的，这篇帖子发出去没多久被私密了，我以为是因为涉及传道被论坛屏蔽的。<a href="ForumPost.html?detail=abouthai_gu4">江城热线-【求助】</a>');
+                                saveChatMessage('other', '这几年我一直在论坛发帖子寻求信息，但是都没有人回复。可是有一篇很奇怪，是我28年调查“玄清子”的时候发的，这篇帖子发出去没多久被私密了，我以为是因为涉及传道被论坛屏蔽的。<a href="ForumPost.html?detail=abouthai_gu4">江城热线-【求助】</a>');
                                 setTimeout(() => {
-                                    hideTypingIndicator();
-                                    appendMessage('me', '谢谢，我先试试！');
-                                    saveChatMessage('me', '谢谢，我先试试！');
-                                    triggerStage('isEnd');
-                                }, 1000);
-                            }, 500);
-                        }, 1000);
-                    }, 500);
-                }, 1000);
-            }, 500);
+                                    showTypingIndicator();
+                                    setTimeout(() => {
+                                        hideTypingIndicator();
+                                        appendMessage('other', '现在想来，他可以是一个突破口。刚刚通过你给的信息，我重点排查了过去已经关停的网站，虽然依旧找不到“玄清子”的相关信息，但是找到了叫“玄承付”的道观网站的快照。<a href="Xuan.html">玄承负</a>');
+                                        saveChatMessage('other', '现在想来，他可以是一个突破口。刚刚通过你给的信息，我重点排查了过去已经关停的网站，虽然依旧找不到“玄清子”的相关信息，但是找到了叫“玄承付”的道观网站的快照。<a href="Xuan.html">玄承负</a>');
+                                        setTimeout(() => {
+                                            showTypingIndicator();
+                                            setTimeout(() => {
+                                                hideTypingIndicator();
+                                                appendMessage('me', '谢谢，我先试试！');
+                                                saveChatMessage('me', '谢谢，我先试试！');
+                                                triggerStage('isStage3');
+                                            }, 1000);
+                                        }, 500);
+                                    }, 1000);
+                                }, 500);
+                            }, 1000);
+                        }, 500);
+                    }, 1000);
+                }, 500);
+            }
+            else if (isEnd) {
+                input.value = '';
+                hideHint();
+                // 保存并显示我的消息
+                appendMessage('me', message);
+                saveChatMessage('me', message);
+
+                // 对方回复(阶段二)
+                setTimeout(() => {
+                    showTypingIndicator();
+                    setTimeout(() => {
+                        hideTypingIndicator();
+                        appendMessage('other', '谢谢你！我一定会让真相大白的，这就是我们做记者的意义。');
+                        saveChatMessage('other', '谢谢你！我一定会让真相大白的，这就是我们做记者的意义。');
+                        setTimeout(() => {
+                            showTypingIndicator();
+                            setTimeout(() => {
+                                hideTypingIndicator();
+                                appendMessage('other', '我的母亲也是从家乡来到江州打工的，她也曾经是海伯利安的员工，她在08年9月底彻底失联。这些年我一直在坚持调查，但是对于当年的事情很多人都默契的闭口不提，让我感觉处处受挫。');
+                                saveChatMessage('other', '我的母亲也是从家乡来到江州打工的，她也曾经是海伯利安的员工，她在08年9月底彻底失联。这些年我一直在坚持调查，但是对于当年的事情很多人都默契的闭口不提，让我感觉处处受挫。');
+                                setTimeout(() => {
+                                    showTypingIndicator();
+                                    setTimeout(() => {
+                                        hideTypingIndicator();
+                                        appendMessage('other', '算是给我，给我母亲，也是给那19个人一个交代。');
+                                        saveChatMessage('other', '算是给我，给我母亲，也是给那19个人一个交代。');
+                                        setTimeout(() => {
+                                            showTypingIndicator();
+                                            setTimeout(() => {
+                                                hideTypingIndicator();
+                                                appendMessage('me', '让他们重见天日吧。');
+                                                saveChatMessage('me', '让他们重见天日吧。');
+                                                triggerStage('allEnd');
+                                                setTimeout(() => {
+                                                    fadeAndRedirect();
+                                                }, 2000);
+                                            }, 1000);
+                                        }, 500);
+                                    }, 1000);
+                                }, 100);
+                            }, 3000);
+                        }, 500);
+                    }, 1000);
+                }, 500);
+            }
         }
+
+        // 封装好的黑屏跳转函数
+        function fadeAndRedirect() {
+            const overlay = document.getElementById('pageTransitionOverlay');
+
+            // 防止用户在动画期间重复点击
+            if (overlay.classList.contains('active')) return;
+
+            // 1. 添加类名，触发 CSS 黑屏动画
+            overlay.classList.add('active');
+
+            // 2. 等待动画播放完毕（600毫秒），然后执行跳转
+            setTimeout(() => {
+                window.location.href = 'End.html';
+            }, 3000);
+        }
+
 
         // 显示输入提示
         function showTypingIndicator() {
@@ -1009,7 +1122,7 @@
 
             const bubble = document.createElement('div');
             bubble.className = 'message-bubble';
-            bubble.textContent = content;
+            bubble.innerHTML = content;
 
             if (animate) {
                 bubble.classList.add('fade-in');
@@ -1032,8 +1145,8 @@
 
         // 触发阶段二(外部调用)
         function triggerStage(stage) {
-            const stage2Key = `chat_stage2_${currentUserKey}`;
-            localStorage.setItem(stage2Key, stage);
+            // const stage2Key = `chat_stage2_${currentUserKey}`;
+            localStorage.setItem('stageKey', stage);
         }
 
         // 清除当前用户的对话历史(供外部调用)
@@ -1041,10 +1154,10 @@
             if (!currentUserKey) return;
 
             const chatKey = `chat_${currentUserKey}`;
-            const stage2Key = `chat_stage2_${currentUserKey}`;
+            // const stage2Key = `chat_stage2_${currentUserKey}`;
 
             localStorage.removeItem(chatKey);
-            localStorage.removeItem(stage2Key);
+            localStorage.removeItem('stageKey');
 
             // 清除全局变量
             delete window._stageOneMessages;
