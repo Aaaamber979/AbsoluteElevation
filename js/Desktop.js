@@ -2261,21 +2261,25 @@ function executeSearch(keyword) {
     if (existingIndex > -1) {
         searchHistoryData.splice(existingIndex, 1);
     }
-    searchHistoryData.unshift({
-        keyword: keyword,
-        timestamp: new Date().toISOString()
-    });
-
-    // 只保留最近10条
-    if (searchHistoryData.length > 10) {
-        searchHistoryData = searchHistoryData.slice(0, 10);
-    }
-    saveSearchHistory();
 
     // 查找匹配的跳转
     const redirect = findRedirect(keyword);
+
+    if (redirect) {
+        searchHistoryData.unshift({
+            keyword: keyword,
+            timestamp: new Date().toISOString()
+        });
+
+        // 只保留最近10条
+        if (searchHistoryData.length > 10) {
+            searchHistoryData = searchHistoryData.slice(0, 10);
+        }
+        saveSearchHistory();
+    }
     // 显示搜索结果
     showSearchResults(keyword, redirect);
+    loadSearchHistory();
 }
 
 // 查找匹配的跳转规则
