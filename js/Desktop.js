@@ -302,7 +302,7 @@ function restoreTriggeredEmails() {
 
         // 深拷贝模板,避免引用污染
         const suEmail = JSON.parse(JSON.stringify(SU_EMAIL_TEMPLATE));
-        emailData.inbox.unshift(regretEmail);
+        emailData.inbox.unshift(suEmail);
     }
 }
 
