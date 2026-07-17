@@ -318,7 +318,7 @@
           </div>
           <div class="form-options">
             <label><input type="checkbox"> 记住账号</label>
-            <a href="#">忘记密码？</a>
+            <a id="forgetPassword" href="#">忘记密码？</a>
           </div>
           <button type="submit" class="btn-submit">登 录</button>
         </form>
@@ -389,6 +389,7 @@
 
     const user1MD5 = '93df054025ff86d7faaccfb8602cb874';
     const user2MD5 = '26757f58fea704b0b5f5d071e19e0ba8';
+    const user3MD5 = '56999fc8637d4449c57fc9de6bf37ac7';
 
     if (credentialsMD5 === user1MD5) {
       // 账号被禁用标记
@@ -412,6 +413,17 @@
       // 延迟0.8秒后显示加载状态并跳转
       setTimeout(() => {
         showLoadingAndRedirect('正在跳转...', 'YuDingOaSu.html');
+      }, 800);
+
+      return false; // 阻止表单默认提交
+
+    } else if (credentialsMD5 === user3MD5) {
+      localStorage.setItem('login-oa-user', 'YD20150001');
+      localStorage.setItem('login-oa-time', getCurrentTime());
+
+      // 延迟0.8秒后显示加载状态并跳转
+      setTimeout(() => {
+        showLoadingAndRedirect('正在跳转...', 'YuDingOaLi.html');
       }, 800);
 
       return false; // 阻止表单默认提交

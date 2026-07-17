@@ -897,6 +897,7 @@ html {
     width: 24px;
     height: 24px;
     pointer-events: none;
+    filter: invert(100%);
 }
 
 /* 中间列表区域 - 较窄 */

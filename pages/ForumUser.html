@@ -849,8 +849,8 @@
                     } else if (myMessages === 1 && otherMessages === 1) {
                         // 已发第一条,等待发送第二条
                         window._stageOneMessages = [
-                            '你好，你是记者吗？看到你在海伯利安的线。我这边摸到一点“8楼”的异常。',
-                            '我可以帮你，但是时间紧张，稍后再找你。'
+                            '你好，你是记者吗？关于海伯利安你知道哪些？我朋友的父亲好像08年在那栋楼失踪了。',
+                            '杨伟江。'
                         ];
                         window._currentMessageIndex = 1;
                         input.value = window._stageOneMessages[1];
@@ -893,15 +893,15 @@
             const input = document.getElementById('messageInput');
 
             // 设置第一条消息为待发送状态
-            input.value = '你好，你是记者吗？看到你在海伯利安的线。我这边摸到一点“8楼”的异常。';
+            input.value = '你好，你是记者吗？关于海伯利安你知道哪些？我朋友的父亲好像08年在那栋楼失踪了。';
             input.readOnly = true;
             input.placeholder = '输入消息...';
             hideHint();
 
             // 监听发送按钮点击
             window._stageOneMessages = [
-                '你好，你是记者吗？看到你在海伯利安的线。我这边摸到一点“8楼”的异常。',
-                '我可以帮你，但是时间紧张，稍后再找你。'
+                '你好，你是记者吗？关于海伯利安你知道哪些？我朋友的父亲好像08年在那栋楼失踪了。',
+                '杨伟江。'
             ];
             window._currentMessageIndex = 0;
         }
@@ -932,8 +932,8 @@
 
                             if (currentIndex === 0) {
                                 // 第一条消息的回复
-                                appendMessage('other', '我是记者，你是想要投稿吗？我知道海伯利安大厦08年9月底的时候8楼绝对有事故发生，但是那里具体发生了什么，现在一切都追查不下去。');
-                                saveChatMessage('other', '我是记者，你是想要投稿吗？我知道海伯利安大厦08年9月底的时候8楼绝对有事故发生，但是那里具体发生了什么，现在一切都追查不下去。');
+                                appendMessage('other', '我是记者。你朋友的父亲叫什么？');
+                                saveChatMessage('other', '我是记者。你朋友的父亲叫什么？');
 
                                 // 准备第二条消息
                                 window._currentMessageIndex = 1;
@@ -941,8 +941,8 @@
                                 input.placeholder = '输入消息...';
                             } else if (currentIndex === 1) {
                                 // 第二条消息的回复
-                                appendMessage('other', '好的，感谢！我随时在这里等你。有需要其他帮助也随时找我！');
-                                saveChatMessage('other', '好的，感谢！我随时在这里等你。有需要其他帮助也随时找我！');
+                                appendMessage('other', '<a href="ForumPost.html?detail=whereisyang">江城热线-【吐槽】</a>这篇帖子应该和她父亲相关？或许我们可以一起追查，这篇帖子里的公司应该也是誉鼎，应该有线索：<a href="ForumPost.html?detail=aboutli">江城热线-【八卦】</a>');
+                                saveChatMessage('other', '<a href="ForumPost.html?detail=whereisyang">江城热线-【吐槽】</a>这篇帖子应该和她父亲相关？或许我们可以一起追查，这篇帖子里的公司应该也是誉鼎，应该有线索：<a href="ForumPost.html?detail=aboutli">江城热线-【八卦】</a>');
 
                                 // 阶段一完成
                                 delete window._stageOneMessages;

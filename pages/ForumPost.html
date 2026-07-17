@@ -161,6 +161,16 @@
             margin-bottom: 5px;
         }
 
+        .clickable-username {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .clickable-username:hover {
+            color: #FF6600;
+            text-decoration: underline;
+        }
+
         .user-group {
             font-size: 11px;
             color: #ff6600;
@@ -272,6 +282,120 @@
         }
 
         .btn-reply:hover {
+            background: linear-gradient(to bottom, #4A86E8, #0d3a7a);
+            border-color: #0d3a7a;
+        }
+
+        /* 用户信息弹框 */
+        .user-info-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .user-info-modal.show {
+            display: flex;
+        }
+
+        .user-info-modal-content {
+            background: white;
+            border-radius: 8px;
+            width: 400px;
+            max-width: 90%;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .user-info-modal-header {
+            background: linear-gradient(to bottom, #f0f4fa, #e0e8f5);
+            padding: 15px 20px;
+            border-bottom: 1px solid #d0d0d0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-info-modal-title {
+            font-size: 16px;
+            font-weight: bold;
+            color: #1E50A2;
+        }
+
+        .user-info-modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .user-info-modal-close:hover {
+            color: #1E50A2;
+            background: rgba(30, 80, 162, 0.1);
+            border-radius: 4px;
+        }
+
+        .user-info-modal-body {
+            padding: 20px;
+        }
+
+        .user-info-stats {
+            font-size: 13px;
+            color: #666;
+            line-height: 2;
+        }
+
+        .user-info-stats div {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+
+        .user-info-stats div:last-child {
+            border-bottom: none;
+        }
+
+        .user-info-stats label {
+            color: #999;
+            font-weight: normal;
+        }
+
+        .user-info-stats span {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .user-info-home-btn {
+            margin-top: 15px;
+            width: 100%;
+            padding: 10px;
+            background: linear-gradient(to bottom, #5A96F8, #1E50A2);
+            border: 1px solid #1a3d7a;
+            color: white;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+
+        .user-info-home-btn:hover {
             background: linear-gradient(to bottom, #4A86E8, #0d3a7a);
             border-color: #0d3a7a;
         }
@@ -449,11 +573,15 @@
                 imagesHtml += '</div>';
             }
 
+            // 为小顾报道添加特殊标记和点击事件
+            const usernameClass = 'username clickable-username';
+            const usernameClickHandler = `onclick="showUserInfo('${data.author}', ${JSON.stringify(data.authorStats).replace(/"/g, '&quot;')})"`;
+
             return `
                 <div class="floor">
                     <div class="user-info-bar">
                         <div class="user-avatar-small">${data.authorAvatar || '👤'}</div>
-                        <div class="username">${data.author}</div>
+                        <div class="${usernameClass}" ${usernameClickHandler}>${data.author}</div>
                         <div class="user-group">${data.authorGroup || data.userGroup || '普通会员'}</div>
                         <div class="divider"></div>
                         <div class="user-stats">
@@ -478,7 +606,62 @@
                 </div>
             `;
         }
+
+        // 显示用户信息弹框
+        function showUserInfo(username, stats) {
+            const modal = document.getElementById('userInfoModal');
+            const statsContainer = document.getElementById('userInfoStats');
+            const homeBtn = document.getElementById('userInfoHomeBtn');
+
+            // 生成统计信息HTML
+            let statsHtml = '';
+            statsHtml += `<div>${stats.authorAvatar || '👤'}${username}</div>`;
+            for (const [key, value] of Object.entries(stats)) {
+                statsHtml += `<div><label>${key}:</label><span>${value}</span></div>`;
+            }
+            statsContainer.innerHTML = statsHtml;
+
+            // 如果是小顾报道，显示进入主页按钮
+            if (username === '小顾报道') {
+                homeBtn.style.display = 'block';
+                homeBtn.href = 'ForumUser.html?user=xiaogu_reporter';
+            } else {
+                homeBtn.style.display = 'none';
+            }
+
+            // 显示弹框
+            modal.classList.add('show');
+        }
+
+        // 关闭用户信息弹框
+        function closeUserInfoModal() {
+            const modal = document.getElementById('userInfoModal');
+            modal.classList.remove('show');
+        }
+
+        // 点击弹框背景关闭
+        document.getElementById('userInfoModal').addEventListener('click', function (e) {
+            if (e.target === this) {
+                closeUserInfoModal();
+            }
+        });
     </script>
+
+    <!-- 用户信息弹框 -->
+    <div class="user-info-modal" id="userInfoModal">
+        <div class="user-info-modal-content">
+            <div class="user-info-modal-header">
+                <div class="user-info-modal-title">用户信息</div>
+                <button class="user-info-modal-close" onclick="closeUserInfoModal()">&times;</button>
+            </div>
+            <div class="user-info-modal-body">
+                <div class="user-info-stats" id="userInfoStats">
+                    <!-- 动态填充用户统计信息 -->
+                </div>
+                <a href="#" class="user-info-home-btn" id="userInfoHomeBtn" style="display: none;">进入主页</a>
+            </div>
+        </div>
+    </div>
 </body>
 
 </html>

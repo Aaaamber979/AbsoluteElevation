@@ -832,6 +832,158 @@
             justify-content: flex-end;
         }
 
+        /* 文件列表面板 */
+        .file-list-panel {
+            min-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .file-list-item {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-list-item:hover {
+            background: rgba(201, 169, 97, 0.05);
+        }
+
+        .file-icon {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--border-strong);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .file-icon.pdf {
+            color: #e74c3c;
+            border-color: rgba(231, 76, 60, 0.3);
+        }
+
+        .file-icon.chat {
+            color: var(--gold);
+            border-color: var(--gold-dim);
+        }
+
+        .file-info {
+            flex: 1;
+        }
+
+        .file-name {
+            font-size: 14px;
+            color: var(--text);
+            font-weight: 300;
+            margin-bottom: 4px;
+        }
+
+        .file-meta {
+            font-size: 11px;
+            color: var(--text-mute);
+        }
+
+        /* 聊天对话框 */
+        .chat-panel {
+            min-width: 500px;
+            max-height: 70vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+            color: var(--gold);
+            letter-spacing: 2px;
+            font-weight: 300;
+        }
+
+        .chat-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .chat-message {
+            display: flex;
+            gap: 12px;
+            max-width: 80%;
+        }
+
+        .chat-message.left {
+            align-self: flex-start;
+        }
+
+        .chat-message.right {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .chat-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .chat-bubble {
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.6;
+            position: relative;
+        }
+
+        .chat-message.left .chat-bubble {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .chat-message.right .chat-bubble {
+            background: rgba(201, 169, 97, 0.1);
+            border: 1px solid var(--gold-dim);
+            color: var(--text);
+        }
+
+        .chat-time {
+            font-size: 10px;
+            color: var(--text-mute);
+            margin-top: 4px;
+        }
+
+        /* 图片展示模块 */
+        .image-module {
+            text-align: center;
+        }
+
+        .image-module img {
+            max-width: 100%;
+            max-height: 60vh;
+            border: 1px solid var(--border-strong);
+            border-radius: 4px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
         /* 响应式 */
         @media (max-width: 1100px) {
             .container {
@@ -1131,15 +1283,15 @@
 
                     <!-- 入口2 海外资产 -->
                     <div class="vault-item">
-                        <div class="vault-item-title">海外资产与信托管理</div>
+                        <div class="vault-item-title">有福同享有难同当</div>
                         <div class="vault-item-status">
                             <span class="status-dot locked"></span>
                             <span>加密访问 · ENCRYPTED</span>
                         </div>
                         <div class="vault-item-detail">
-                            包含开曼、BVI、新加坡三地信托架构文件。需动态令牌验证。
+                            未知存储。需要令牌验证。
                         </div>
-                        <button class="vault-btn">需要动态令牌</button>
+                        <button class="vault-btn" onclick="showModal('vault-token')">需要动态令牌</button>
                     </div>
 
                     <!-- 入口3 日志清理 -->
@@ -1153,6 +1305,19 @@
                             一键清除本终端所有浏览、操作、登录日志。执行后不可恢复。
                         </div>
                         <button class="vault-btn danger">执行清理</button>
+                    </div>
+
+                    <!-- 入口4 我们 -->
+                    <div class="vault-item" onclick="showWeModule()" style="cursor: pointer;">
+                        <div class="vault-item-title">我们</div>
+                        <div class="vault-item-status">
+                            <span class="status-dot"></span>
+                            <span>私密相册 · PRIVATE</span>
+                        </div>
+                        <div class="vault-item-detail">
+                            珍藏的回忆...
+                        </div>
+                        <button class="vault-btn">查看</button>
                     </div>
                 </div>
             </div>
@@ -1208,14 +1373,14 @@
                     break;
                 case 'vault-cloud':
                     t = 'PRIVATE CLOUD · 私人云盘';
-                    b = `正在建立加密通道...<br><br>云端目录：<span class="mono" style="color:var(--gold);">/vault/2004-2010/classified/</span><br>文件总数：<span class="mono">2,847</span><br>总容量：<span class="mono">1.2 TB</span><br><br><span style="color:var(--text-mute);font-size:11px;">所有文件已端到端加密，仅您本人可访问。</span>`;
+                    b = `刚刚上传的目录文件...<br><br>云端目录：<span class="mono" style="color:var(--gold);">/vault/2004-2010/classified/</span><br>文件总数：<span class="mono">2,847</span><br>总容量：<span class="mono">1.2 TB</span><br><br><span style="color:var(--text-mute);font-size:11px;">所有文件已端到端加密，仅您本人可访问。</span>`;
                     a = `<button class="btn-act btn-sign" onclick="toManage()">进入目录</button>`;
                     break;
                 case 'vault-token':
                     t = 'DYNAMIC TOKEN · 动态令牌验证';
-                    b = `请输入您实体令牌设备上显示的 6 位动态验证码。<br><br><input type="text" maxlength="6" style="width:100%;padding:12px;background:rgba(0,0,0,0.4);border:1px solid var(--border-strong);color:var(--gold);font-family:monospace;font-size:20px;text-align:center;letter-spacing:8px;outline:none;" placeholder="······"><br><br><span style="color:var(--text-mute);font-size:11px;">令牌每30秒刷新一次，请在有效期内输入。</span>`;
+                    b = `请输入您实体令牌设备上显示的 8 位动态验证码。<br><br><input type="password" id="tokenInput" maxlength="8" style="width:100%;padding:12px;background:rgba(0,0,0,0.4);border:1px solid var(--border-strong);color:var(--gold);font-family:monospace;font-size:20px;text-align:center;letter-spacing:8px;outline:none;" placeholder="········"><br><br>`;
                     a = `<button class="btn-act btn-hold" onclick="closeModal()">取消</button>
-                 <button class="btn-act btn-sign" onclick="confirmAction('验证通过，正在解密...')">验证</button>`;
+                 <button class="btn-act btn-sign" onclick="confirmToken()">验证</button>`;
                     break;
                 case 'vault-clean':
                     t = 'PURGE LOGS · 痕迹清理';
@@ -1249,6 +1414,215 @@
     </div>`;
             actions.innerHTML = `<button class="btn-act btn-sign" onclick="closeModal()">确 定</button>`;
         }
+
+        function confirmToken() {
+            const input = document.getElementById('tokenInput');
+            if (!input) return;
+
+            const token = input.value.trim();
+
+            // 验证密码
+            if (token === '19991214') {
+                // 验证成功，显示文件列表面板
+                showFileListPanel();
+            } else {
+                // 验证失败
+                const body = document.getElementById('modalBody');
+                body.innerHTML = `<div style="text-align:center;padding:20px 0;">
+                    <div style="color:var(--red);font-size:24px;margin-bottom:16px;">✗</div>
+                    <div style="color:var(--text);letter-spacing:2px;">令牌验证失败</div>
+                </div>`;
+                const actions = document.getElementById('modalActions');
+                actions.innerHTML = `<button class="btn-act btn-sign" onclick="closeModal()">确 定</button>`;
+            }
+        }
+
+        // 显示文件列表面板
+        function showFileListPanel() {
+            const mask = document.getElementById('modalMask');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+            const actions = document.getElementById('modalActions');
+
+            title.innerHTML = 'PRIVATE FILES · 私密文件库';
+
+            body.innerHTML = `
+                <div class="file-list-panel">
+                    <div class="file-list-item" onclick="openPDF()">
+                        <div class="file-icon pdf">📄</div>
+                        <div class="file-info">
+                            <div class="file-name">合同文件.pdf</div>
+                            <div class="file-meta">大小: 2.4 MB · 修改时间: 2026-07-10</div>
+                        </div>
+                    </div>
+                    <div class="file-list-item" onclick="showChat(1)">
+                        <div class="file-icon chat">💬</div>
+                        <div class="file-info">
+                            <div class="file-name">聊天记录 - 2026年7月</div>
+                            <div class="file-meta">消息数: 128 · 最后更新: 刚刚</div>
+                        </div>
+                    </div>
+                    <div class="file-list-item" onclick="showChat(2)">
+                        <div class="file-icon chat">💬</div>
+                        <div class="file-info">
+                            <div class="file-name">聊天记录 - 2026年6月</div>
+                            <div class="file-meta">消息数: 95 · 最后更新: 上月</div>
+                        </div>
+                    </div>
+                    <div class="file-list-item" onclick="showChat(3)">
+                        <div class="file-icon chat">💬</div>
+                        <div class="file-info">
+                            <div class="file-name">聊天记录 - 2026年5月</div>
+                            <div class="file-meta">消息数: 156 · 最后更新: 前月</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            actions.innerHTML = `<button class="btn-act btn-hold" onclick="closeModal()">关 闭</button>`;
+            mask.classList.add('show');
+        }
+
+        // 打开PDF文件
+        function openPDF() {
+            window.open('../data/hetong.pdf', '_blank');
+        }
+
+        // 显示聊天记录
+        function showChat(chatId) {
+            const mask = document.getElementById('modalMask');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+            const actions = document.getElementById('modalActions');
+
+            let chatTitle = '';
+            let messages = [];
+
+            switch (chatId) {
+                case 1:
+                    chatTitle = '聊天记录 - 2006年8月14日 23:47';
+                    messages = [
+                        { side: 'right', text: '老陈，睡了吗？' },
+                        { side: 'left', text: '还没。怎么了？' },
+                        { side: 'right', text: '公司账上只剩不到200万了。下个月银行贷款到期，还差300万。' },
+                        { side: 'left', text: '……我知道。我这几天也在想办法。' },
+                        { side: 'right', text: '我有个想法，但不知道你敢不敢。' },
+                        { side: 'left', text: '说。' },
+                        { side: 'right', text: '海伯利安8楼不是设备层吗？现在空着也是空着。我认识一个做服装加工的朋友，他想租个场地。' },
+                        { side: 'left', text: '你的意思是……把8楼改成工厂？' },
+                        { side: 'right', text: '对。临时用一下，赚点快钱。等公司缓过来，再恢复。' },
+                        { side: 'left', text: '这不合规矩。设备层不能改作他用，消防也过不了。' },
+                        { side: 'right', text: '我知道。但现在公司快死了，还讲什么规矩？' },
+                        { side: 'left', text: '……' },
+                        { side: 'right', text: '老陈，你想想。当年我们五个一起创业，现在跑了三个。就剩我们俩了。难道眼睁睁看着誉鼎也倒了？' },
+                        { side: 'left', text: '……我不是不想帮。但这事要是被查出来……' },
+                        { side: 'right', text: '不会的。我找的人靠谱，工人都是外地的，出了事也没人追究。' },
+                        { side: 'left', text: '你让我想想。' },
+                        { side: 'right', text: '老陈，没时间想了。下个月贷款到期，不还就破产。' },
+                        { side: 'left', text: '……' },
+                        { side: 'left', text: '好。我签字。但你要保证，安全第一。' },
+                        { side: 'right', text: '放心。我什么时候坑过你？' },
+                        { side: 'left', text: '希望如此。' }
+                    ];
+                    break;
+                case 2:
+                    chatTitle = '聊天记录 - 2008年9月29日 22:15';
+                    messages = [
+                        { side: 'right', text: '老陈，你回来了吗？' },
+                        { side: 'left', text: '现在还回不来，刚和资方吃完饭结束。什么事这么急？' },
+                        { side: 'right', text: '昨天晚上，8楼工厂起火。' },
+                        { side: 'left', text: '什么？！人呢？有没有伤亡？' },
+                        { side: 'right', text: '……19个工人，都没出来。好在我已经处理好了。' },
+                        { side: 'left', text: '你说什么？！处理好了？19条人命你处理好了？！报警了吗？' },
+                        { side: 'right', text: '报什么警？你报了警，公司就完了。2000多号员工怎么办？' },
+                        { side: 'left', text: '你疯了！这是杀人！' },
+                        { side: 'right', text: '不是杀人，是意外。我已经把8楼用混凝土封死了，对外说是"设备层结构加固"。' },
+                        { side: 'left', text: '你简直疯了！' },
+                        { side: 'right', text: '老陈，你冷静一下。你想想，06年8楼工厂改造的协议，是谁签字的？' },
+                        { side: 'right', text: '是你。如果事情曝光，你也脱不了干系。非法改造、违规用工、重大责任事故，你至少判十年。' },
+                        { side: 'left', text: '你这是在威胁我？' },
+                        { side: 'right', text: '我不是威胁你。我只是提醒你，我们是一条船上的。' },
+                        { side: 'right', text: '老陈，我这都是为了公司好。玄清子道长说，这是"借运"，公司会好起来的。' },
+                        { side: 'left', text: '什么玄清子？什么借运？你搞什么邪教？' },
+                        { side: 'right', text: '不是邪教。是风水。道长说，19个人的命格特殊，可以为公司"转运"。' },
+                        { side: 'left', text: '你简直不可理喻。' },
+                        { side: 'right', text: '老陈，你听我说。只要每年928做法事，他们就会安息，公司也会越来越好。' },
+                        { side: 'right', text: '老陈，求你了。不要报警。不仅是为了公司，也是为了你自己。' },
+                        { side: 'left', text: '……你好自为之。' },
+                        { side: 'right', text: '老陈，谢谢你。以后公司会越来越好，你的投资也会得到回报。' },
+                        { side: 'left', text: '我不稀罕。' }
+                    ];
+                    break;
+                case 3:
+                    chatTitle = '聊天记录 - 2020年9月28日 21:30';
+                    messages = [
+                        { side: 'right', text: '老陈，我想和你好好聊聊。' },
+                        { side: 'left', text: '聊什么？' },
+                        { side: 'right', text: '我是创始人，干了20年。王丽华2010年才来，干了十年现在是总裁。我呢？还是副总裁。' },
+                        { side: 'left', text: '这是董事会的决定。' },
+                        { side: 'right', text: '董事会？董事会不就是你在掌控吗？' },
+                        { side: 'right', text: '还有，今天928安全日，你为什么又不来？每年都是我一个人主持。你是不是还放不下当年的事？' },
+                        { side: 'left', text: '我不想牵扯太多。' },
+                        { side: 'right', text: '不想牵扯？老陈，你以为公司能发展到今天，是靠什么？是靠我！' },
+                        { side: 'left', text: '靠你？' },
+                        { side: 'right', text: '当年，如果不是我听了玄清子道长的建议，公司早就倒了。哪有今天的誉鼎？' },
+                        { side: 'left', text: '你搞错了。' },
+                        { side: 'right', text: '我搞错了？' },
+                        { side: 'left', text: '公司能活下来，是因为2009年我在沪江拉到了第一笔投资。2010年到2015年，我跑了十几个城市，见了上百个投资人，才让公司起死回生。' },
+                        { side: 'left', text: '你以为公司是靠什么发展起来的？是靠你那套邪教吗？' },
+                        { side: 'right', text: '你……' },
+                        { side: 'left', text: '苏柏年，我告诉你。公司能有今天，是我没日没夜在外面拉投资拉来的。不是你那些神神鬼鬼的东西。' },
+                        { side: 'left', text: '我什么？你以为我不知道？之后公司的好转，跟你的"借运"一点关系都没有。是我一笔一笔谈下来的投资。' },
+                        { side: 'left', text: '我从不参加928，是因为我不想跟你的那些东西沾边。' },
+                        { side: 'right', text: '老陈，你……' },
+                        { side: 'left', text: '好了，我不想再说了。你做好你的副总裁，我当我的董事长。各安其位。' },
+                    ];
+                    break;
+            }
+
+            title.innerHTML = chatTitle;
+
+            let messagesHtml = messages.map(msg => `
+                <div class="chat-message ${msg.side}">
+                    <div class="chat-avatar">${msg.side === 'left' ? '👤' : '🧑'}</div>
+                    <div>
+                        <div class="chat-bubble">${msg.text}</div>
+                        <div class="chat-time mono">unknown</div>
+                    </div>
+                </div>
+            `).join('');
+
+            body.innerHTML = `
+                <div class="chat-panel">
+                    <div class="chat-body">
+                        ${messagesHtml}
+                    </div>
+                </div>
+            `;
+
+            actions.innerHTML = `<button class="btn-act btn-hold" onclick="showFileListPanel()">返回</button>
+                                 <button class="btn-act btn-sign" onclick="closeModal()">关 闭</button>`;
+        }
+
+        // 显示“我们”模块
+        function showWeModule() {
+            const mask = document.getElementById('modalMask');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+            const actions = document.getElementById('modalActions');
+
+            title.innerHTML = 'US · 我们';
+
+            body.innerHTML = `
+                <div class="image-module">
+                    <img src="../assets/bro.jpg" alt="我们">
+                </div>
+            `;
+
+            actions.innerHTML = `<button class="btn-act btn-sign" onclick="closeModal()">关 闭</button>`;
+            mask.classList.add('show');
+        }
+
     </script>
 
 </body>

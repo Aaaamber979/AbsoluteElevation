@@ -1427,7 +1427,7 @@
         </div>
       </div>
       <div class="hero-visual">
-        <img src="https://images.unsplash.placeholder/hero" id="heroImg" alt="集团宣传">
+        <img src="../assets/yuding-xuan.png" alt="集团宣传">
         <div class="hero-badge">
           <div class="hero-badge-icon">★</div>
           <div class="hero-badge-text">
@@ -1451,7 +1451,7 @@
   <section class="section" id="dev" style="padding-top: 0;">
     <div class="dev-intro">
       <div class="dev-intro-img">
-        <img src="https://images.unsplash.placeholder/dev" id="devImg" alt="集团发展">
+        <img src="../assets/yuding-nei.png" alt="集团发展">
       </div>
       <div class="dev-intro-text">
         <h3>集团简介</h3>
@@ -1532,14 +1532,14 @@
   </section>
 
   <!-- HONOR -->
-  <section class="section" id="honor">
+  <!-- <section class="section" id="honor">
     <div class="section-header">
       <span class="section-tag">Honors</span>
       <h2 class="section-title">荣誉资质</h2>
       <p class="section-desc">每一份荣誉，都是对品质的最好见证</p>
     </div>
     <div class="honor-wall" id="honorWall"></div>
-  </section>
+  </section> -->
 
   <!-- INDUSTRY -->
   <section class="section section-alt" id="industry">
@@ -1652,7 +1652,7 @@
         <div class="footer-contact">
           <p><span class="icon">☎</span> 0571-8888-9900</p>
           <p><span class="icon">✉</span> info@yuding-holdings.cn</p>
-          <p><span class="icon">⌂</span> 浙江省杭州市钱江新城誉鼎大厦 38F</p>
+          <p><span class="icon">⌂</span> 江州新城誉鼎大厦 38F</p>
         </div>
       </div>
       <div>
@@ -1704,40 +1704,6 @@
       return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)));
     }
 
-    /* Generate images via tool */
-    async function genImages() {
-      const prompts = [
-        { id: 'heroImg', prompt: 'Modern Chinese city skyline at golden hour, luxury skyscrapers with glass facades reflecting sunset, aerial view of a prosperous metropolis with river, cinematic lighting, ultra high quality, professional corporate photography' },
-        { id: 'devImg', prompt: 'Elegant modern corporate headquarters building with traditional Chinese architectural elements, lush landscaping, blue sky, professional architectural photography, warm afternoon light' },
-        { id: 'team1', prompt: 'Professional headshot portrait of a confident Chinese male executive in his 50s, wearing dark business suit, neutral studio background, corporate photography, sharp focus' },
-        { id: 'team2', prompt: 'Professional headshot portrait of an elegant Chinese female executive in her 40s, wearing navy business attire, neutral studio background, corporate photography, warm lighting' },
-        { id: 'team3', prompt: 'Professional headshot portrait of a distinguished Chinese male executive in his 40s, wearing grey suit with tie, neutral studio background, corporate photography' },
-        { id: 'team4', prompt: 'Professional headshot portrait of a professional Chinese female executive in her 30s, wearing business blazer, neutral studio background, corporate photography, confident smile' },
-        { id: 'honor1', prompt: 'Elegant gold framed corporate award certificate with red ribbon and official seal on dark blue background, premium quality, studio lighting' },
-        { id: 'honor2', prompt: 'Prestigious crystal trophy award on marble pedestal, golden accent, corporate recognition award, studio photography, dark background' },
-        { id: 'honor3', prompt: 'Collection of corporate certificates and awards displayed on wooden wall, gold frames, warm lighting, professional photography' },
-        { id: 'honor4', prompt: 'Modern architectural award plaque with Chinese characters, metallic finish, displayed on elegant background, studio photography' },
-        { id: 'classic1', prompt: 'Luxury modern residential tower complex with landscaped gardens, aerial view, blue sky, Chinese city, professional real estate photography' },
-        { id: 'classic2', prompt: 'Iconic commercial skyscraper with unique architectural design, glass curtain wall, city center location, dramatic perspective, professional photography' },
-        { id: 'classic3', prompt: 'Modern cultural center building with flowing curves, waterfront location, evening blue hour lighting, architectural photography' },
-        { id: 'classic4', prompt: 'Urban renewal project showing renovated historic district with modern amenities, tree-lined streets, pedestrians, warm daylight, architectural photography' },
-        { id: 'realestate1', prompt: 'Luxury high-end residential community entrance with grand gate, manicured gardens, water features, premium materials, professional real estate photography' },
-        { id: 'realestate2', prompt: 'Modern minimalist luxury apartment interior with floor-to-ceiling windows overlooking city, elegant furniture, warm lighting, interior design photography' },
-        { id: 'realestate3', prompt: 'Premium villa community with Mediterranean style architecture, swimming pool, lush landscaping, sunny day, luxury real estate photography' },
-        { id: 'realestate4', prompt: 'Elegant residential lobby with marble floors, modern chandelier, sophisticated design, warm ambient lighting, luxury real estate photography' },
-        { id: 'qrWechat', prompt: 'Clean minimalist QR code design with green accent colors on white background, centered, suitable for WeChat official account, high contrast' }
-      ];
-      for (const p of prompts) {
-        try {
-          const url = await image_gen({ prompt: p.prompt });
-          document.getElementById(p.id).src = url;
-        } catch (e) {
-          document.getElementById(p.id).src = svgPlaceholder(800, 600, p.id, '#0a3d62', '#1e5a8a');
-        }
-      }
-    }
-    genImages();
-
     /* ============ TEAM DATA ============ */
     const teamData = [
       { img: '../assets/chen.png', name: '陈振华', role: '誉鼎集团董事长', bio: '陈先生于2000年创办誉鼎公司，带领公司完成了从传统房地产开发商向综合性城市运营服务商的战略转型。在陈先生的领导下，集团资产规模从2000年的100亿元增长至2030...' },
@@ -1761,25 +1727,25 @@
     });
 
     /* ============ HONOR DATA ============ */
-    const honorData = [
-      { img: 'honor1', title: '国家房地产开发一级资质', year: '城市规划协会' },
-      { img: 'honor4', title: 'ISO14001环境管理体系认证', year: '国家住建部认证' },
-      { img: 'honor2', title: '江州市优秀企业', year: '2018-2030 连续12年' },
-      { img: 'honor3', title: '房地产百强企业', year: '2018-2030 连续12年' },
-    ];
-    const honorWall = document.getElementById('honorWall');
-    honorData.forEach((h, i) => {
-      honorWall.innerHTML += `
-    <div class="honor-item">
-      <img id="honor${(i % 4) + 1}" alt="${h.title}">
-      <div class="honor-overlay">
-        <div>
-          <h4>${h.title}</h4>
-          <p>${h.year}</p>
-        </div>
-      </div>
-    </div>`;
-    });
+    // const honorData = [
+    //   { img: 'honor1', title: '国家房地产开发一级资质', year: '城市规划协会' },
+    //   { img: 'honor4', title: 'ISO14001环境管理体系认证', year: '国家住建部认证' },
+    //   { img: 'honor2', title: '江州市优秀企业', year: '2018-2030 连续12年' },
+    //   { img: 'honor3', title: '房地产百强企业', year: '2018-2030 连续12年' },
+    // ];
+    // const honorWall = document.getElementById('honorWall');
+    // honorData.forEach((h, i) => {
+    //   honorWall.innerHTML += `
+    // <div class="honor-item">
+    //   <img id="honor${i + 1}" src="${svgPlaceholder(800, 600, h.img, '#0a3d62', '#1e5a8a')}">
+    //   <div class="honor-overlay">
+    //     <div>
+    //       <h4>${h.title}</h4>
+    //       <p>${h.year}</p>
+    //     </div>
+    //   </div>
+    // </div>`;
+    // });
 
     /* ============ CLASSIC PROJECTS ============ */
     const classicData = [
@@ -1793,7 +1759,7 @@
     classicData.forEach((p, i) => {
       classicTrack.innerHTML += `
     <div class="project-slide">
-      <div class="project-img"><img id="classic${i + 1}" alt="${p.name}"></div>
+      <div class="project-img"><img id="${p.img}" alt="${p.name}"></div>
       <div class="project-info">
         <div class="project-meta">
           <span>📍 ${p.name.split('·')[1] || p.name}</span>
@@ -1854,22 +1820,20 @@
     function realestatePrev() { realestateGo((realestateIdx - 1 + realestateData.length) % realestateData.length); }
 
     /* ============ AWARD CAROUSEL ============ */
-    let awardIdx = 0;
-    const awardTrack = document.getElementById('awardTrack');
-    function awardGo(i) {
-      awardIdx = i;
-      awardTrack.style.transform = `translateX(-${i * 100}%)`;
-    }
-    function awardNext() { awardGo((awardIdx + 1) % 2); }
-    function awardPrev() { awardGo((awardIdx - 1 + 2) % 2); }
-    setInterval(awardNext, 6000);
+    // let awardIdx = 0;
+    // const awardTrack = document.getElementById('awardTrack');
+    // function awardGo(i) {
+    //   awardIdx = i;
+    //   awardTrack.style.transform = `translateX(-${i * 100}%)`;
+    // }
+    // function awardNext() { awardGo((awardIdx + 1) % 2); }
+    // function awardPrev() { awardGo((awardIdx - 1 + 2) % 2); }
+    // setInterval(awardNext, 6000);
 
     /* ============ NEWS ============ */
     const newsData = [
-      { date: '2030-06-10', title: '集团召开2030年度安全生产专题会议', img: 'newsData2', content: '6月8日，誉鼎集团召开2030年度安全生产专题会议，集团领导班子、各部门负责人及项目负责人参加了会议。<br>会议强调了安全生产工作的重要性，要求各部门、各项目严格落实安全生产责任制，加强安全隐患排查与整改，确保集团各项业务安全平稳运行。会议还通报了上半年安全生产工作情况，部署了下半年安全生产重点任务。<br>集团董事长陈振华指出："安全是企业发展的生命线，必须时刻绷紧安全生产这根弦，确保万无一失。' },
       { date: '2030-01-22', title: '集团召开2029年度总结表彰大会', img: '../assets/lin_awards.jpg', content: '1月22日，誉鼎集团在总部多功能厅隆重召开2029年度总结表彰大会，集团领导班子、各部门负责人及优秀员工代表共计300余人参加了会议。<br>会议全面总结了2029年度各项工作完成情况，表彰了在过去一年中表现突出的优秀团队与个人。林建国同志荣获2029年度"老黄牛奖"。<br>集团董事长陈振华在讲话中指出，2029年是誉鼎集团发展史上具有重要意义的一年，集团在经济规模、品牌建设、ESG实践等方面都取得了显著成绩。他要求全体员工在2030年继续发扬"责任、创新、卓越"的精神，推动集团实现更高质量的发展。' },
-      { date: '2028-05-15', title: '集团总部迁址誉鼎金融大厦68层', img: 'newsData4', content: '5月10日，誉鼎集团总部正式迁址至江州市滨江区CBD中心誉鼎金融大厦68层。新办公场所总面积达15000平方米，采用现代化办公设计理念，配备了先进的办公设施与智能化系统。<br>新总部的启用，标志着誉鼎集团迈向了新的发展阶段。集团董事长陈振华表示："新总部不仅是办公场所的升级，更是集团品牌形象与企业文化的全新展示。我们将以此为契机，推动集团实现更高质量的发展。' },
-      { date: '2027-04-20', title: '誉鼎集团入选"中国房地产百强企业"', img: 'newsData5', content: '4月15日，由中国房地产研究会发布的"2027中国房地产百强企业"榜单揭晓，誉鼎集团凭借稳健的经营业绩与良好的品牌形象，成功入选该榜单。<br>这是誉鼎集团连续第五年入选中国房地产百强企业，充分体现了行业对誉鼎发展实力的认可。集团副总裁苏柏年表示："这份荣誉是对誉鼎过去发展的肯定，更是对未来发展的鞭策。我们将继续努力，为行业健康发展贡献力量。"' },
+      { date: '2027-04-20', title: '誉鼎集团2027-04生日会', img: '../assets/chen_birthday.jpg', content: '<p>4月12日晚，誉鼎集团总部洋溢着温馨欢乐的气氛，集团在此隆重举办了4月员工集体生日会。集团董事长陈振华与40余位4月出生的员工代表共同度过了一个难忘的夜晚。董事长他微笑着向大家表示：“今天是一个特别的日子，不仅是我们在座各位4月寿星的生日，也是<b>我个人的生日</b>。 能和这么多优秀的誉鼎人一起过生日，我感到非常荣幸和开心。”现场员工齐唱《生日快乐歌》，气氛热烈而感人。</p><p>此次生日会不仅体现了誉鼎集团“以人为本”的企业文化，也进一步增强了团队的凝聚力与归属感。未来，集团将继续完善员工关怀体系，让每一位誉鼎人都能在这里感受到家的温暖。</p>' },
     ];
     const newsList = document.getElementById('newsList');
     newsData.forEach((n, i) => {
@@ -1927,6 +1891,29 @@
       const links = document.querySelectorAll('.nav-menu > .nav-item > .nav-link');
       if (map[current] !== undefined && links[map[current]]) links[map[current]].classList.add('active');
     });
+
+    /* Generate images via tool */
+    async function genImages() {
+      const prompts = [
+        { id: 'classic1', prompt: 'Luxury modern residential tower complex with landscaped gardens, aerial view, blue sky, Chinese city, professional real estate photography' },
+        { id: 'classic2', prompt: 'Iconic commercial skyscraper with unique architectural design, glass curtain wall, city center location, dramatic perspective, professional photography' },
+        { id: 'classic3', prompt: 'Modern cultural center building with flowing curves, waterfront location, evening blue hour lighting, architectural photography' },
+        { id: 'realestate1', prompt: 'Luxury high-end residential community entrance with grand gate, manicured gardens, water features, premium materials, professional real estate photography' },
+        { id: 'realestate2', prompt: 'Modern minimalist luxury apartment interior with floor-to-ceiling windows overlooking city, elegant furniture, warm lighting, interior design photography' },
+        { id: 'realestate3', prompt: 'Premium villa community with Mediterranean style architecture, swimming pool, lush landscaping, sunny day, luxury real estate photography' },
+        { id: 'qrWechat', prompt: 'Clean minimalist QR code design with green accent colors on white background, centered, suitable for WeChat official account, high contrast' },
+
+      ];
+      for (const p of prompts) {
+        try {
+          const url = await image_gen({ prompt: p.prompt });
+          document.getElementById(p.id).src = url;
+        } catch (e) {
+          document.getElementById(p.id).src = svgPlaceholder(800, 600, p.id, '#0a3d62', '#1e5a8a');
+        }
+      }
+    }
+    genImages();
 
     /* Auto rotate classic projects */
     setInterval(classicNext, 7000);

@@ -804,8 +804,13 @@ function showEmailDetail(emailId, isSent = false) {
                     <hr style="margin: 20px 0; border: none; border-top: 1px solid #ddd;">
                     <h3 style="margin-bottom: 15px;">📎 附件 (${email.attachments.length})</h3>
                     <div style="display: flex; flex-direction: column; gap: 10px;">
-                        ${email.attachments.map(att => `
+                        ${email.attachments.map(att => att.type === 'drawing' ? `
                             <div class="attachment-item" data-file="${att.type}" onclick="downloadAttachment(this, '${att.name}')">
+                                <span>📄 ${att.name}</span>
+                                <span class="download-status">点击下载</span>
+                            </div>
+                        `: `
+                         <div class="attachment-item" data-file="${att.type}"">
                                 <span>📄 ${att.name}</span>
                                 <span class="download-status">点击下载</span>
                             </div>
@@ -868,7 +873,8 @@ function replyToEmail(emailId) {
         // 显示回复界面
         showReplyInterface(emailId);
     }
-    // 普通邮件点击回复无响应，不弹窗
+
+    showToast(`好像没有什么好回复的......`);
 }
 
 // 显示回复界面
@@ -2157,7 +2163,7 @@ function showWarningPopup() {
 // ==================== 搜索引擎系统 ====================
 
 // Base64编码的搜索重定向配置
-const encryptedSearchConfig = 'eyLmsZ/ln47ng63nur8iOnsicmVzdWx0cyI6W3sidXJsIjoiRm9ydW0uaHRtbCIsInRpdGxlIjoi5rGf5Z+O54Ot57q/IiwiZGVzY3JpcHRpb24iOiLmsZ/lt57kurrnmoTnvZHkuIrlrrblm60ifV19LCLoqonpvI7pm4blm6IiOnsicmVzdWx0cyI6W3sidXJsIjoiWXVEaW5nLmh0bWwiLCJ0aXRsZSI6Iuiqiem8jumbhuWboiAtIOWumOe9kSIsImRlc2NyaXB0aW9uIjoi6KqJ6byO5Z+O5biC5Y+R5bGV5o6n6IKh6ZuG5ZuiLeWumOe9kSJ9LHsidXJsIjoiV2lraVkuaHRtbCIsInRpdGxlIjoiV2lraSAtIOiqiem8jumbhuWboiIsImRlc2NyaXB0aW9uIjoi6KqJ6byO6ZuG5ZuiLXdpa2nor43mnaEifV19LCLmtbfkvK/liKnlrokiOnsicmVzdWx0cyI6W3sidXJsIjoiV2lraUguaHRtbCIsInRpdGxlIjoiV2lraSAtIOa1t+S8r+WIqeWuieWkp+WOpiIsImRlc2NyaXB0aW9uIjoi5rW35Lyv5Yip5a6J5aSn5Y6mLXdpa2nor43mnaEifV19fQ==';
+const encryptedSearchConfig = 'eyLmsZ/ln47ng63nur8iOnsicmVzdWx0cyI6W3sidXJsIjoiRm9ydW0uaHRtbCIsInRpdGxlIjoi5rGf5Z+O54Ot57q/IiwiZGVzY3JpcHRpb24iOiLmsZ/lt57kurrnmoTnvZHkuIrlrrblm60ifV19LCLoqonpvI7pm4blm6IiOnsicmVzdWx0cyI6W3sidXJsIjoiWXVEaW5nLmh0bWwiLCJ0aXRsZSI6Iuiqiem8jumbhuWboiAtIOWumOe9kSIsImRlc2NyaXB0aW9uIjoi6KqJ6byO5Z+O5biC5Y+R5bGV5o6n6IKh6ZuG5ZuiLeWumOe9kSJ9LHsidXJsIjoiV2lraVkuaHRtbCIsInRpdGxlIjoiV2lraSAtIOiqiem8jumbhuWboiIsImRlc2NyaXB0aW9uIjoi6KqJ6byO6ZuG5ZuiLXdpa2nor43mnaEifV19LCLmtbfkvK/liKnlrokiOnsicmVzdWx0cyI6W3sidXJsIjoiV2lraUguaHRtbCIsInRpdGxlIjoiV2lraSAtIOa1t+S8r+WIqeWuieWkp+WOpiIsImRlc2NyaXB0aW9uIjoi5rW35Lyv5Yip5a6J5aSn5Y6mLXdpa2nor43mnaEifV19LCLpmYjmjK/ljY4iOnsicmVzdWx0cyI6W3sidXJsIjoiY2hlbnpoLmh0bWwiLCJ0aXRsZSI6Ildpa2kgLSDpmYjmjK/ljY4iLCJkZXNjcmlwdGlvbiI6IumZiOaMr+WNji13aWtp6K+N5p2hIn1dfSwi546L5Li95Y2OIjp7InJlc3VsdHMiOlt7InVybCI6IndhbmdsaC5odG1sIiwidGl0bGUiOiJXaWtpIC0g546L5Li95Y2OIiwiZGVzY3JpcHRpb24iOiLnjovkuL3ljY4td2lraeivjeadoSJ9XX0sIuiLj+afj+W5tCI6eyJyZXN1bHRzIjpbeyJ1cmwiOiJzdWJuLmh0bWwiLCJ0aXRsZSI6Ildpa2kgLSDoi4/mn4/lubQiLCJkZXNjcmlwdGlvbiI6IuiLj+afj+W5tC13aWtp6K+N5p2hIn1dfX0=';
 
 // 解密函数（Base64解码 + UTF-8转换）
 function decryptSearchConfig() {
@@ -2489,7 +2495,7 @@ const momentsData = [
         user: '杨敏',
         avatar: '杨',
         time: '7天前',
-        content: '大老远跑来江州，连个面都不让见。发邮件说“工程保密”、“别再发邮件了”。爸，你到底在躲什么？我是你亲闺女，不是来要债的……[心碎][流泪]',
+        content: '大老远跑来江州，连个面都不让见。发邮件说“工程保密”、“别再发邮件了”。爸，二十几年了都没回过家，你到底在躲什么？我是你亲闺女，不是来要债的……[心碎]',
         images: ['../assets/re_email.png'],
         likes: [],
         comments: [
