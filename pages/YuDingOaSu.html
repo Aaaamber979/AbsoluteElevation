@@ -1927,14 +1927,13 @@
                 // 安防监控归档 - 检查是否已经下载过
                 const downloadedKey = 'yuding_monitor_downloaded';
                 const isDownloaded = localStorage.getItem(downloadedKey) === 'true';
-
+                localStorage.setItem('stageKey', 'isEnd');
                 if (isDownloaded) {
                     outputDiv.innerHTML += `<span style="color:#0f0;">✓ ${folderName} 已下载。</span>\n`;
                 } else {
                     showDownloadProgress(outputDiv, folderName);
                     // 标记为已下载
                     localStorage.setItem(downloadedKey, 'true');
-                    localStorage.setItem('stageKey', 'isEnd')
                 }
             } else if (folder.action === 'cleaned') {
                 // 其他文件夹 - 已被清理
