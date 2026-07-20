@@ -885,13 +885,43 @@
             const combined = yearPillar + monthPillar + dayPillar;
             const encrypted = md5(combined);
 
-            // 复制到剪贴板
-            navigator.clipboard.writeText(encrypted).then(() => {
-                showToast('✓ 已复制加密结果', 2000);
-            }).catch(err => {
-                console.error('复制失败:', err);
+            // 复制到剪贴板 - 优先使用现代API,失败则使用备用方案
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(encrypted).then(() => {
+                    showToast('✓ 已复制加密结果', 2000);
+                }).catch(err => {
+                    console.error('现代API复制失败:', err);
+                    fallbackCopy(encrypted);
+                });
+            } else {
+                fallbackCopy(encrypted);
+            }
+        }
+
+        // ===== 备用复制方案 =====
+        function fallbackCopy(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            textArea.style.position = 'fixed';
+            textArea.style.left = '-9999px';
+            textArea.style.top = '-9999px';
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    showToast('✓ 已复制加密结果', 2000);
+                } else {
+                    showToast('复制失败，请手动复制', 2000);
+                }
+            } catch (err) {
+                console.error('备用复制方案失败:', err);
                 showToast('复制失败，请手动复制', 2000);
-            });
+            }
+
+            document.body.removeChild(textArea);
         }
 
         // ===== 查询 =====
