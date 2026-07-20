@@ -1,0 +1,1005 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>天干地支查询工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --red: #c0392b;
+            --dark-red: #922b21;
+            --gold: #d4a017;
+            --light-gold: #f5e6b8;
+            --bg: #fdf6ec;
+            --card: #fffaf0;
+            --text: #3e2723;
+            --border: #d4a01766;
+        }
+
+        body {
+            font-family: "Noto Serif SC", "Songti SC", "SimSun", serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--dark-red), var(--red));
+            color: var(--light-gold);
+            text-align: center;
+            padding: 32px 16px 24px;
+            border-bottom: 4px solid var(--gold);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before,
+        header::after {
+            content: "☰";
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 80px;
+            opacity: 0.07;
+            color: var(--gold);
+        }
+
+        header::before {
+            left: 20px;
+        }
+
+        header::after {
+            right: 20px;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            letter-spacing: 8px;
+            margin-bottom: 6px;
+        }
+
+        header p {
+            font-size: 0.95rem;
+            opacity: 0.85;
+            letter-spacing: 2px;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            background: var(--dark-red);
+            border-bottom: 3px solid var(--gold);
+        }
+
+        .tab-btn {
+            padding: 12px 28px;
+            background: transparent;
+            color: var(--light-gold);
+            border: none;
+            font-family: inherit;
+            font-size: 1rem;
+            cursor: pointer;
+            letter-spacing: 3px;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -3px;
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .tab-btn.active {
+            background: var(--bg);
+            color: var(--dark-red);
+            border-bottom-color: var(--bg);
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+        }
+
+        .card h2 {
+            color: var(--dark-red);
+            font-size: 1.25rem;
+            margin-bottom: 18px;
+            padding-bottom: 10px;
+            border-bottom: 2px dashed var(--border);
+            letter-spacing: 3px;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: flex-end;
+            margin-bottom: 18px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-group label {
+            font-size: 0.85rem;
+            color: #795548;
+            letter-spacing: 1px;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1rem;
+            background: #fff;
+            color: var(--text);
+            width: 120px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 2px rgba(212, 160, 23, 0.2);
+        }
+
+        .btn {
+            padding: 10px 28px;
+            background: linear-gradient(135deg, var(--red), var(--dark-red));
+            color: var(--light-gold);
+            border: none;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1rem;
+            cursor: pointer;
+            letter-spacing: 3px;
+            transition: all 0.3s;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(192, 57, 43, 0.3);
+        }
+
+        .btn-encrypt {
+            padding: 10px 28px;
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: var(--light-gold);
+            border: none;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 1rem;
+            cursor: pointer;
+            letter-spacing: 3px;
+            transition: all 0.3s;
+        }
+
+        .btn-encrypt:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(44, 62, 80, 0.3);
+        }
+
+        /* Toast提示 */
+        .toast {
+            position: fixed;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: rgba(0, 0, 0, 0.85);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            letter-spacing: 2px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 10000;
+            pointer-events: none;
+        }
+
+        .toast.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+        }
+
+        .result-box {
+            background: linear-gradient(135deg, #fef9ef, #fdf2d8);
+            border: 2px solid var(--gold);
+            border-radius: 10px;
+            padding: 24px;
+            text-align: center;
+            min-height: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .result-box .placeholder {
+            color: #a1887f;
+            font-size: 0.95rem;
+        }
+
+        .sizhu {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .sizhu-pillar {
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .sizhu-pillar .label {
+            font-size: 0.8rem;
+            color: #8d6e63;
+            margin-bottom: 6px;
+            letter-spacing: 2px;
+        }
+
+        .sizhu-pillar .gz {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--dark-red);
+            line-height: 1.3;
+        }
+
+        .sizhu-pillar .gz .tg {
+            color: var(--red);
+        }
+
+        .sizhu-pillar .gz .dz {
+            color: var(--dark-red);
+        }
+
+        .sizhu-pillar .wx {
+            font-size: 0.75rem;
+            color: #795548;
+            margin-top: 4px;
+        }
+
+        .sizhu-pillar .sx {
+            font-size: 1.3rem;
+            margin-top: 2px;
+        }
+
+        .info-line {
+            margin-top: 14px;
+            font-size: 0.95rem;
+            color: #5d4037;
+            letter-spacing: 1px;
+        }
+
+        /* 六十甲子表 */
+        .jiazi-grid {
+            display: grid;
+            grid-template-columns: repeat(10, 1fr);
+            gap: 4px;
+        }
+
+        .jiazi-cell {
+            text-align: center;
+            padding: 8px 2px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: default;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .jiazi-cell:hover {
+            transform: scale(1.12);
+            z-index: 2;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            border-color: var(--gold);
+        }
+
+        .jiazi-cell .num {
+            font-size: 0.6rem;
+            color: #999;
+            display: block;
+        }
+
+        .wx-jin {
+            background: #fff8e1;
+            color: #f57f17;
+        }
+
+        .wx-mu {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .wx-shui {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .wx-huo {
+            background: #fce4ec;
+            color: #c62828;
+        }
+
+        .wx-tu {
+            background: #efebe9;
+            color: #6d4c41;
+        }
+
+        .legend {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            justify-content: center;
+        }
+
+        .legend span {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
+
+        /* 百科 */
+        .baike-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+        }
+
+        .baike-item {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 16px;
+            transition: all 0.2s;
+        }
+
+        .baike-item:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .baike-item .char {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--dark-red);
+            float: left;
+            margin-right: 12px;
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: var(--light-gold);
+        }
+
+        .baike-item .detail {
+            font-size: 0.88rem;
+            line-height: 1.8;
+            color: #5d4037;
+        }
+
+        .baike-item .detail b {
+            color: var(--dark-red);
+        }
+
+        .section-title {
+            color: var(--dark-red);
+            font-size: 1.1rem;
+            margin: 24px 0 12px;
+            letter-spacing: 2px;
+        }
+
+        @media (max-width: 600px) {
+            .jiazi-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+
+            .tab-btn {
+                padding: 10px 14px;
+                font-size: 0.85rem;
+                letter-spacing: 1px;
+            }
+
+            header h1 {
+                font-size: 1.5rem;
+                letter-spacing: 4px;
+            }
+
+            .sizhu {
+                gap: 12px;
+            }
+
+            .sizhu-pillar .gz {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>天干地支</h1>
+        <p>四柱八字 · 六十甲子 · 万年历查</p>
+    </header>
+
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('query')">干支查询</button>
+        <button class="tab-btn" onclick="switchTab('jiazi')">六十甲子</button>
+        <button class="tab-btn" onclick="switchTab('baike')">干支百科</button>
+    </div>
+
+    <div class="container">
+
+        <!-- Tab 1: 查询 -->
+        <div id="tab-query" class="tab-content active">
+            <div class="card">
+                <h2>📅 四柱干支查询</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>年</label>
+                        <input type="number" id="inputYear" value="2026" min="1" max="9999">
+                    </div>
+                    <div class="form-group">
+                        <label>月</label>
+                        <select id="inputMonth">
+                            <option value="1">1月</option>
+                            <option value="2">2月</option>
+                            <option value="3">3月</option>
+                            <option value="4">4月</option>
+                            <option value="5">5月</option>
+                            <option value="6">6月</option>
+                            <option value="7" selected>7月</option>
+                            <option value="8">8月</option>
+                            <option value="9">9月</option>
+                            <option value="10">10月</option>
+                            <option value="11">11月</option>
+                            <option value="12">12月</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>日</label>
+                        <input type="number" id="inputDay" value="20" min="1" max="31">
+                    </div>
+                    <button class="btn" onclick="doQuery()">查 询</button>
+                    <button class="btn-encrypt" onclick="encryptAndCopy()">🔐 加密复制</button>
+                </div>
+                <div class="result-box" id="resultBox">
+                    <span class="placeholder">请选择日期后点击查询</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tab 2: 六十甲子 -->
+        <div id="tab-jiazi" class="tab-content">
+            <div class="card">
+                <h2>🔄 六十甲子表</h2>
+                <div class="legend">
+                    <span class="wx-jin">金</span>
+                    <span class="wx-mu">木</span>
+                    <span class="wx-shui">水</span>
+                    <span class="wx-huo">火</span>
+                    <span class="wx-tu">土</span>
+                </div>
+                <div class="jiazi-grid" id="jiaziGrid"></div>
+            </div>
+        </div>
+
+        <!-- Tab 3: 百科 -->
+        <div id="tab-baike" class="tab-content">
+            <div class="card">
+                <h2>📖 天干地支百科</h2>
+                <div class="section-title">十天干</div>
+                <div class="baike-grid" id="tgBaike"></div>
+                <div class="section-title">十二地支</div>
+                <div class="baike-grid" id="dzBaike"></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Toast提示 -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // ===== 基础数据 =====
+        const TG = ['甲', '乙', '丙', '丁', '戊', '己', '庚', '辛', '壬', '癸'];
+        const DZ = ['子', '丑', '寅', '卯', '辰', '巳', '午', '未', '申', '酉', '戌', '亥'];
+        const SX = ['🐀', '🐂', '🐅', '🐇', '🐉', '🐍', '🐎', '🐑', '🐒', '🐔', '🐕', '🐖'];
+        const SX_NAME = ['鼠', '牛', '虎', '兔', '龙', '蛇', '马', '羊', '猴', '鸡', '狗', '猪'];
+
+        const TG_WX = ['木', '木', '火', '火', '土', '土', '金', '金', '水', '水'];
+        const TG_YY = ['阳', '阴', '阳', '阴', '阳', '阴', '阳', '阴', '阳', '阴'];
+        const DZ_WX = ['水', '土', '木', '木', '土', '火', '火', '土', '金', '金', '土', '水'];
+        const DZ_YY = ['阳', '阴', '阳', '阴', '阳', '阴', '阳', '阴', '阳', '阴', '阳', '阴'];
+        const DZ_SC = ['23-1', '1-3', '3-5', '5-7', '7-9', '9-11', '11-13', '13-15', '15-17', '17-19', '19-21', '21-23'];
+        const DZ_MONTH = ['十一月', '十二月', '正月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月'];
+
+        const TG_INFO = [
+            { desc: '参天大树，栋梁之材，性刚直' },
+            { desc: '花草藤蔓，柔韧灵活，性温和' },
+            { desc: '太阳之火，光明磊落，性热烈' },
+            { desc: '灯烛之火，温暖细腻，性柔和' },
+            { desc: '城墙大地，厚重稳固，性敦厚' },
+            { desc: '田园之土，滋养万物，性包容' },
+            { desc: '斧钺之金，刚健果断，性刚烈' },
+            { desc: '珠玉之金，精致秀气，性温润' },
+            { desc: '江河之水，奔流不息，性豪放' },
+            { desc: '雨露之水，润物无声，性聪慧' }
+        ];
+        const DZ_INFO = [
+            { desc: '夜半之时，属水，藏癸水' },
+            { desc: '鸡鸣之时，属土，藏己癸辛' },
+            { desc: '平旦之时，属木，藏甲丙戊' },
+            { desc: '日出之时，属木，藏乙木' },
+            { desc: '食时之时，属土，藏戊乙癸' },
+            { desc: '隅中之时，属火，藏丙庚戊' },
+            { desc: '日中之时，属火，藏丁己' },
+            { desc: '日昳之时，属土，藏己丁乙' },
+            { desc: '哺时之时，属金，藏庚壬戊' },
+            { desc: '日入之时，属金，藏辛金' },
+            { desc: '黄昏之时，属土，藏戊辛丁' },
+            { desc: '人定之时，属水，藏壬甲' }
+        ];
+
+        // 纳音五行
+        const NAYIN = [
+            '海中金', '海中金', '炉中火', '炉中火', '大林木', '大林木',
+            '路旁土', '路旁土', '剑锋金', '剑锋金', '山头火', '山头火',
+            '涧下水', '涧下水', '城头土', '城头土', '白蜡金', '白蜡金',
+            '杨柳木', '杨柳木', '泉中水', '泉中水', '屋上土', '屋上土',
+            '霹雳火', '霹雳火', '松柏木', '松柏木', '长流水', '长流水',
+            '砂石金', '砂石金', '山下火', '山下火', '平地木', '平地木',
+            '壁上土', '壁上土', '金箔金', '金箔金', '覆灯火', '覆灯火',
+            '天河水', '天河水', '大驿土', '大驿土', '钗钏金', '钗钏金',
+            '桑柘木', '桑柘木', '大溪水', '大溪水', '沙中土', '沙中土',
+            '天上火', '天上火', '石榴木', '石榴木', '大海水', '大海水'
+        ];
+
+        const WX_CLASS = { '金': 'wx-jin', '木': 'wx-mu', '水': 'wx-shui', '火': 'wx-huo', '土': 'wx-tu' };
+
+        // ===== 六十甲子 =====
+        const JIAZI = [];
+        for (let i = 0; i < 60; i++) {
+            JIAZI.push(TG[i % 10] + DZ[i % 12]);
+        }
+
+        // ===== 计算函数 =====
+        // 年干支（以立春为界简化为农历新年，此处用公历年近似）
+        function yearGZ(y) {
+            const tgIdx = (y - 4) % 10;
+            const dzIdx = (y - 4) % 12;
+            return { tg: tgIdx, dz: dzIdx };
+        }
+
+        // 日干支：以2000-01-01为戊午(54)为基准
+        function dayGZ(y, m, d) {
+            const base = new Date(2000, 0, 1);
+            const target = new Date(y, m - 1, d);
+            const diff = Math.round((target - base) / 86400000);
+            const idx = ((54 + diff) % 60 + 60) % 60;
+            return { tg: idx % 10, dz: idx % 12, idx: idx };
+        }
+
+        // 月干支（五虎遁元，以年干推月干，寅月为正月）
+        function monthGZ(yearTG, lunarMonth) {
+            // lunarMonth: 1=寅, 2=卯, ... 11=子, 12=丑
+            const startTG = [2, 4, 6, 8, 0]; // 甲己->丙, 乙庚->戊, 丙辛->庚, 丁壬->壬, 戊癸->甲
+            const base = startTG[yearTG % 5];
+            const tgIdx = (base + lunarMonth - 1) % 10;
+            const dzIdx = (lunarMonth + 1) % 12; // 寅=2
+            return { tg: tgIdx, dz: dzIdx };
+        }
+
+        // 时干支（五鼠遁元，以日干推时干）
+        function hourGZ(dayTG, hourBranch) {
+            const startTG = [0, 2, 4, 6, 8]; // 甲己->甲, 乙庚->丙, 丙辛->戊, 丁壬->庚, 戊癸->壬
+            const base = startTG[dayTG % 5];
+            const tgIdx = (base + hourBranch) % 10;
+            return { tg: tgIdx, dz: hourBranch };
+        }
+
+        // 公历月转近似农历月（简化：以节气近似）
+        function solarToLunarMonth(m, d) {
+            // 简化处理：以每月5日为节气分界近似
+            const jieqi = [
+                [2, 4], [3, 6], [4, 5], [5, 6], [6, 6], [7, 7],
+                [8, 8], [9, 8], [10, 8], [11, 7], [12, 7], [1, 6]
+            ];
+            // 返回地支月序号：寅=1, 卯=2, ..., 丑=12
+            if (m === 1 && d < 6) return 12; // 丑月
+            if (m === 2 && d < 4) return 12;
+            if (m === 2 && d >= 4) return 1;
+            if (m === 3 && d < 6) return 1;
+            if (m === 3 && d >= 6) return 2;
+            if (m === 4 && d < 5) return 2;
+            if (m === 4 && d >= 5) return 3;
+            if (m === 5 && d < 6) return 3;
+            if (m === 5 && d >= 6) return 4;
+            if (m === 6 && d < 6) return 4;
+            if (m === 6 && d >= 6) return 5;
+            if (m === 7 && d < 7) return 5;
+            if (m === 7 && d >= 7) return 6;
+            if (m === 8 && d < 8) return 6;
+            if (m === 8 && d >= 8) return 7;
+            if (m === 9 && d < 8) return 7;
+            if (m === 9 && d >= 8) return 8;
+            if (m === 10 && d < 8) return 8;
+            if (m === 10 && d >= 8) return 9;
+            if (m === 11 && d < 7) return 9;
+            if (m === 11 && d >= 7) return 10;
+            if (m === 12 && d < 7) return 10;
+            if (m === 12 && d >= 7) return 11;
+            return 1;
+        }
+
+        // ===== MD5加密函数 =====
+        function md5(string) {
+            function cmn(q, a, b, x, s, t) {
+                a = add32(a, q);
+                return add32((a << s) | (a >>> (32 - s)), b);
+            }
+            function ff(a, b, c, d, x, s, t) { return cmn((b & c) | ((~b) & d), a, b, x, s, t); }
+            function gg(a, b, c, d, x, s, t) { return cmn((b & d) | (c & (~d)), a, b, x, s, t); }
+            function hh(a, b, c, d, x, s, t) { return cmn(b ^ c ^ d, a, b, x, s, t); }
+            function ii(a, b, c, d, x, s, t) { return cmn(c ^ (b | (~d)), a, b, x, s, t); }
+            function md5cycle(x, k) {
+                var a = x[0], b = x[1], c = x[2], d = x[3];
+                a = ff(a, b, c, d, k[0], 7, -680876936); d = ff(d, a, b, c, k[1], 12, -389564586);
+                c = ff(c, d, a, b, k[2], 17, 606105819); b = ff(b, c, d, a, k[3], 22, -1044525330);
+                a = ff(a, b, c, d, k[4], 7, -176418897); d = ff(d, a, b, c, k[5], 12, 1200080426);
+                c = ff(c, d, a, b, k[6], 17, -1473231341); b = ff(b, c, d, a, k[7], 22, -45705983);
+                a = ff(a, b, c, d, k[8], 7, 1770035416); d = ff(d, a, b, c, k[9], 12, -1958414417);
+                c = ff(c, d, a, b, k[10], 17, -42063); b = ff(b, c, d, a, k[11], 22, -1990404162);
+                a = ff(a, b, c, d, k[12], 7, 1804603682); d = ff(d, a, b, c, k[13], 12, -40341101);
+                c = ff(c, d, a, b, k[14], 17, -1502002290); b = ff(b, c, d, a, k[15], 22, 1236535329);
+                a = gg(a, b, c, d, k[1], 5, -165796510); d = gg(d, a, b, c, k[6], 9, -1069501632);
+                c = gg(c, d, a, b, k[11], 14, 643717713); b = gg(b, c, d, a, k[0], 20, -373897302);
+                a = gg(a, b, c, d, k[5], 5, -701558691); d = gg(d, a, b, c, k[10], 9, 38016083);
+                c = gg(c, d, a, b, k[15], 14, -660478335); b = gg(b, c, d, a, k[4], 20, -405537848);
+                a = gg(a, b, c, d, k[9], 5, 568446438); d = gg(d, a, b, c, k[14], 9, -1019803690);
+                c = gg(c, d, a, b, k[3], 14, -187363961); b = gg(b, c, d, a, k[8], 20, 1163531501);
+                a = gg(a, b, c, d, k[13], 5, -1444681467); d = gg(d, a, b, c, k[2], 9, -51403784);
+                c = gg(c, d, a, b, k[7], 14, 1735328473); b = gg(b, c, d, a, k[12], 20, -1926607734);
+                a = hh(a, b, c, d, k[5], 4, -378558); d = hh(d, a, b, c, k[8], 11, -2022574463);
+                c = hh(c, d, a, b, k[11], 16, 1839030562); b = hh(b, c, d, a, k[14], 23, -35309556);
+                a = hh(a, b, c, d, k[1], 4, -1530992060); d = hh(d, a, b, c, k[4], 11, 1272893353);
+                c = hh(c, d, a, b, k[7], 16, -155497632); b = hh(b, c, d, a, k[10], 23, -1094730640);
+                a = hh(a, b, c, d, k[13], 4, 681279174); d = hh(d, a, b, c, k[0], 11, -358537222);
+                c = hh(c, d, a, b, k[3], 16, -722521979); b = hh(b, c, d, a, k[6], 23, 76029189);
+                a = hh(a, b, c, d, k[9], 4, -640364487); d = hh(d, a, b, c, k[12], 11, -421815835);
+                c = hh(c, d, a, b, k[15], 16, 530742520); b = hh(b, c, d, a, k[2], 23, -979650874);
+                a = ii(a, b, c, d, k[0], 6, -1044525330); d = ii(d, a, b, c, k[7], 10, -176418897);
+                c = ii(c, d, a, b, k[14], 15, 1200080426); b = ii(b, c, d, a, k[5], 21, -1473231341);
+                a = ii(a, b, c, d, k[12], 6, -45705983); d = ii(d, a, b, c, k[3], 10, 1770035416);
+                c = ii(c, d, a, b, k[10], 15, -1958414417); b = ii(b, c, d, a, k[1], 21, -42063);
+                a = ii(a, b, c, d, k[8], 6, -1990404162); d = ii(d, a, b, c, k[15], 10, 1804603682);
+                c = ii(c, d, a, b, k[6], 15, -40341101); b = ii(b, c, d, a, k[13], 21, -1502002290);
+                a = ii(a, b, c, d, k[4], 6, 1236535329); d = ii(d, a, b, c, k[11], 10, -165796510);
+                c = ii(c, d, a, b, k[2], 15, -1069501632); b = ii(b, c, d, a, k[9], 21, 643717713);
+                a = ii(a, b, c, d, k[0], 6, -373897302); d = ii(d, a, b, c, k[7], 10, -701558691);
+                c = ii(c, d, a, b, k[14], 15, 38016083); b = ii(b, c, d, a, k[5], 21, -660478335);
+                a = ii(a, b, c, d, k[12], 6, -405537848); d = ii(d, a, b, c, k[3], 10, 568446438);
+                c = ii(c, d, a, b, k[10], 15, -1019803690); b = ii(b, c, d, a, k[1], 21, -187363961);
+                a = ii(a, b, c, d, k[8], 6, 1163531501); d = ii(d, a, b, c, k[15], 10, -1444681467);
+                c = ii(c, d, a, b, k[6], 15, -51403784); b = ii(b, c, d, a, k[13], 21, 1735328473);
+                a = ii(a, b, c, d, k[4], 6, -1926607734); d = ii(d, a, b, c, k[11], 10, -378558);
+                c = ii(c, d, a, b, k[2], 15, -2022574463); b = ii(b, c, d, a, k[9], 21, 1839030562);
+                a = ii(a, b, c, d, k[0], 6, -35309556); d = ii(d, a, b, c, k[7], 10, -1530992060);
+                c = ii(c, d, a, b, k[14], 15, 1272893353); b = ii(b, c, d, a, k[5], 21, -155497632);
+                a = ii(a, b, c, d, k[12], 6, -1094730640); d = ii(d, a, b, c, k[3], 10, 681279174);
+                c = ii(c, d, a, b, k[10], 15, -358537222); b = ii(b, c, d, a, k[1], 21, -722521979);
+                a = ii(a, b, c, d, k[8], 6, 76029189); d = ii(d, a, b, c, k[15], 10, -640364487);
+                c = ii(c, d, a, b, k[6], 15, -421815835); b = ii(b, c, d, a, k[13], 21, 530742520);
+                a = ii(a, b, c, d, k[4], 6, -979650874); d = ii(d, a, b, c, k[11], 10, -1044525330);
+                c = ii(c, d, a, b, k[2], 15, -176418897); b = ii(b, c, d, a, k[9], 21, 1200080426);
+                a = ii(a, b, c, d, k[0], 6, -1473231341); d = ii(d, a, b, c, k[7], 10, -45705983);
+                c = ii(c, d, a, b, k[14], 15, 1770035416); b = ii(b, c, d, a, k[5], 21, -1958414417);
+                a = ii(a, b, c, d, k[12], 6, -42063); d = ii(d, a, b, c, k[3], 10, -1990404162);
+                c = ii(c, d, a, b, k[10], 15, 1804603682); b = ii(b, c, d, a, k[1], 21, -40341101);
+                a = ii(a, b, c, d, k[8], 6, -1502002290); d = ii(d, a, b, c, k[15], 10, 1236535329);
+                c = ii(c, d, a, b, k[6], 15, -165796510); b = ii(b, c, d, a, k[13], 21, -1069501632);
+                a = ii(a, b, c, d, k[4], 6, 643717713); d = ii(d, a, b, c, k[11], 10, -373897302);
+                c = ii(c, d, a, b, k[2], 15, -701558691); b = ii(b, c, d, a, k[9], 21, 38016083);
+                a = ii(a, b, c, d, k[0], 6, -660478335); d = ii(d, a, b, c, k[7], 10, -405537848);
+                c = ii(c, d, a, b, k[14], 15, 568446438); b = ii(b, c, d, a, k[5], 21, -1019803690);
+                a = ii(a, b, c, d, k[12], 6, -187363961); d = ii(d, a, b, c, k[3], 10, -1444681467);
+                c = ii(c, d, a, b, k[10], 15, -51403784); b = ii(b, c, d, a, k[1], 21, 1735328473);
+                a = ii(a, b, c, d, k[8], 6, -1926607734); d = ii(d, a, b, c, k[15], 10, -378558);
+                c = ii(c, d, a, b, k[6], 15, -2022574463); b = ii(b, c, d, a, k[13], 21, 1839030562);
+                a = ii(a, b, c, d, k[4], 6, -35309556); d = ii(d, a, b, c, k[11], 10, -1530992060);
+                c = ii(c, d, a, b, k[2], 15, 1272893353); b = ii(b, c, d, a, k[9], 21, -155497632);
+                a = ii(a, b, c, d, k[0], 6, -1094730640); d = ii(d, a, b, c, k[7], 10, 681279174);
+                c = ii(c, d, a, b, k[14], 15, -358537222); b = ii(b, c, d, a, k[5], 21, -722521979);
+                a = ii(a, b, c, d, k[12], 6, -640364487); d = ii(d, a, b, c, k[3], 10, -421815835);
+                c = ii(c, d, a, b, k[10], 15, 76029189); b = ii(b, c, d, a, k[1], 21, 530742520);
+                a = ii(a, b, c, d, k[8], 6, -979650874); d = ii(d, a, b, c, k[15], 10, -1044525330);
+                c = ii(c, d, a, b, k[6], 15, -176418897); b = ii(b, c, d, a, k[13], 21, 1200080426);
+                a = ii(a, b, c, d, k[4], 6, -45705983); d = ii(d, a, b, c, k[11], 10, -1958414417);
+                c = ii(c, d, a, b, k[2], 15, -42063); b = ii(b, c, d, a, k[9], 21, -40341101);
+                a = ii(a, b, c, d, k[0], 6, -1502002290); d = ii(d, a, b, c, k[7], 10, 1236535329);
+                c = ii(c, d, a, b, k[14], 15, -165796510); b = ii(b, c, d, a, k[5], 21, -1069501632);
+                a = ii(a, b, c, d, k[12], 6, 643717713); d = ii(d, a, b, c, k[3], 10, -373897302);
+                c = ii(c, d, a, b, k[10], 15, -701558691); b = ii(b, c, d, a, k[1], 21, 38016083);
+                a = ii(a, b, c, d, k[8], 6, -660478335); d = ii(d, a, b, c, k[15], 10, -405537848);
+                c = ii(c, d, a, b, k[6], 15, 568446438); b = ii(b, c, d, a, k[13], 21, -1019803690);
+                a = ii(a, b, c, d, k[4], 6, -187363961); d = ii(d, a, b, c, k[11], 10, -1444681467);
+                c = ii(c, d, a, b, k[2], 15, -51403784); b = ii(b, c, d, a, k[9], 21, 1735328473);
+                a = ii(a, b, c, d, k[0], 6, -1926607734); d = ii(d, a, b, c, k[7], 10, -378558);
+                c = ii(c, d, a, b, k[14], 15, -2022574463); b = ii(b, c, d, a, k[5], 21, 1839030562);
+                a = ii(a, b, c, d, k[12], 6, -35309556); d = ii(d, a, b, c, k[3], 10, -1530992060);
+                c = ii(c, d, a, b, k[10], 15, 1272893353); b = ii(b, c, d, a, k[1], 21, -155497632);
+                a = ii(a, b, c, d, k[8], 6, -1094730640); d = ii(d, a, b, c, k[15], 10, 681279174);
+                c = ii(c, d, a, b, k[6], 15, -358537222); b = ii(b, c, d, a, k[13], 21, -722521979);
+                a = ii(a, b, c, d, k[4], 6, -640364487); d = ii(d, a, b, c, k[11], 10, -421815835);
+                c = ii(c, d, a, b, k[2], 15, 76029189); b = ii(b, c, d, a, k[9], 21, 530742520);
+                a = ii(a, b, c, d, k[0], 6, -979650874); d = ii(d, a, b, c, k[7], 10, -1044525330);
+                c = ii(c, d, a, b, k[14], 15, -176418897); b = ii(b, c, d, a, k[5], 21, 1200080426);
+                a = ii(a, b, c, d, k[12], 6, -45705983); d = ii(d, a, b, c, k[3], 10, -1958414417);
+                c = ii(c, d, a, b, k[10], 15, -42063); b = ii(b, c, d, a, k[1], 21, -40341101);
+                a = ii(a, b, c, d, k[8], 6, -1502002290); d = ii(d, a, b, c, k[15], 10, 1236535329);
+                c = ii(c, d, a, b, k[6], 15, -165796510); b = ii(b, c, d, a, k[13], 21, -1069501632);
+                a = ii(a, b, c, d, k[4], 6, 643717713); d = ii(d, a, b, c, k[11], 10, -373897302);
+                c = ii(c, d, a, b, k[2], 15, -701558691); b = ii(b, c, d, a, k[9], 21, 38016083);
+                a = ii(a, b, c, d, k[0], 6, -660478335); d = ii(d, a, b, c, k[7], 10, -405537848);
+                c = ii(c, d, a, b, k[14], 15, 568446438); b = ii(b, c, d, a, k[5], 21, -1019803690);
+                a = ii(a, b, c, d, k[12], 6, -187363961); d = ii(d, a, b, c, k[3], 10, -1444681467);
+                c = ii(c, d, a, b, k[10], 15, -51403784); b = ii(b, c, d, a, k[1], 21, 1735328473);
+                a = ii(a, b, c, d, k[8], 6, -1926607734); d = ii(d, a, b, c, k[15], 10, -378558);
+                c = ii(c, d, a, b, k[6], 15, -2022574463); b = ii(b, c, d, a, k[13], 21, 1839030562);
+                a = ii(a, b, c, d, k[4], 6, -35309556); d = ii(d, a, b, c, k[11], 10, -1530992060);
+                c = ii(c, d, a, b, k[2], 15, 1272893353); b = ii(b, c, d, a, k[9], 21, -155497632);
+                a = ii(a, b, c, d, k[0], 6, -1094730640); d = ii(d, a, b, c, k[7], 10, 681279174);
+                c = ii(c, d, a, b, k[14], 15, -358537222); b = ii(b, c, d, a, k[5], 21, -722521979);
+                a = ii(a, b, c, d, k[12], 6, -640364487); d = ii(d, a, b, c, k[3], 10, -421815835);
+                c = ii(c, d, a, b, k[10], 15, 76029189); b = ii(b, c, d, a, k[1], 21, 530742520);
+                x[0] = add32(x[0], a); x[1] = add32(x[1], b); x[2] = add32(x[2], c); x[3] = add32(x[3], d);
+            }
+            function md5blk(s) {
+                var md5blks = [], i;
+                for (i = 0; i < 64; i += 4) {
+                    md5blks[i >> 2] = s.charCodeAt(i) + (s.charCodeAt(i + 1) << 8) + (s.charCodeAt(i + 2) << 16) + (s.charCodeAt(i + 3) << 24);
+                }
+                return md5blks;
+            }
+            function md5blk_array(a) {
+                var md5blks = [], i;
+                for (i = 0; i < 64; i += 4) {
+                    md5blks[i >> 2] = a[i] + (a[i + 1] << 8) + (a[i + 2] << 16) + (a[i + 3] << 24);
+                }
+                return md5blks;
+            }
+            function rhex(n) {
+                var s = '', j;
+                for (j = 0; j < 4; j++) s += ('0' + ((n >> (j * 8 + 4)) & 0x0F).toString(16)).slice(-1) + ('0' + ((n >> (j * 8)) & 0x0F).toString(16)).slice(-1);
+                return s;
+            }
+            function hex(x) {
+                for (var i = 0; i < x.length; i++) x[i] = rhex(x[i]);
+                return x.join('');
+            }
+            function add32(a, b) { return (a + b) & 0xFFFFFFFF; }
+            function md51(s) {
+                var n = s.length,
+                    state = [1732584193, -271733879, -1732584194, 271733878], i;
+                for (i = 64; i <= n; i += 64) {
+                    md5cycle(state, md5blk(s.substring(i - 64, i)));
+                }
+                s = s.substring(i - 64);
+                var tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                for (i = 0; i < s.length; i++)
+                    tail[i >> 2] |= s.charCodeAt(i) << ((i % 4) << 3);
+                tail[i >> 2] |= 0x80 << ((i % 4) << 3);
+                if (i > 55) {
+                    md5cycle(state, tail);
+                    for (i = 0; i < 16; i++) tail[i] = 0;
+                }
+                tail[14] = n * 8;
+                md5cycle(state, tail);
+                return state;
+            }
+            function md5_array(arr) {
+                var n = arr.length,
+                    state = [1732584193, -271733879, -1732584194, 271733878], i;
+                for (i = 64; i <= n; i += 64) {
+                    md5cycle(state, md5blk_array(arr.slice(i - 64, i)));
+                }
+                arr = arr.slice(i - 64);
+                var tail = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+                for (i = 0; i < arr.length; i++)
+                    tail[i >> 2] |= arr[i] << ((i % 4) << 3);
+                tail[i >> 2] |= 0x80 << ((i % 4) << 3);
+                if (i > 55) {
+                    md5cycle(state, tail);
+                    for (i = 0; i < 16; i++) tail[i] = 0;
+                }
+                tail[14] = n * 8;
+                md5cycle(state, tail);
+                return state;
+            }
+            return hex(md51(string));
+        }
+
+        // ===== 全局变量存储当前查询结果 =====
+        let currentResult = null;
+
+        // ===== Toast提示 =====
+        function showToast(message, duration = 2000) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, duration);
+        }
+
+        // ===== 加密并复制 =====
+        function encryptAndCopy() {
+            if (!currentResult) {
+                showToast('请先进行查询！', 2000);
+                return;
+            }
+
+            // 拼接年柱、月柱、日柱
+            const yearPillar = TG[currentResult.yg.tg] + DZ[currentResult.yg.dz];
+            const monthPillar = TG[currentResult.mg.tg] + DZ[currentResult.mg.dz];
+            const dayPillar = TG[currentResult.dg.tg] + DZ[currentResult.dg.dz];
+
+            const combined = yearPillar + monthPillar + dayPillar;
+            const encrypted = md5(combined);
+
+            // 复制到剪贴板
+            navigator.clipboard.writeText(encrypted).then(() => {
+                showToast('✓ 已复制加密结果', 2000);
+            }).catch(err => {
+                console.error('复制失败:', err);
+                showToast('复制失败，请手动复制', 2000);
+            });
+        }
+
+        // ===== 查询 =====
+        function doQuery() {
+            const y = parseInt(document.getElementById('inputYear').value);
+            const m = parseInt(document.getElementById('inputMonth').value);
+            const d = parseInt(document.getElementById('inputDay').value);
+
+            if (!y || y < 1) { alert('请输入有效年份'); return; }
+
+            const yg = yearGZ(y);
+            const lunarM = solarToLunarMonth(m, d);
+            const mg = monthGZ(yg.tg, lunarM);
+            const dg = dayGZ(y, m, d);
+            // 保存当前结果供加密使用
+            currentResult = { yg, mg, dg };
+
+            const yearNayin = NAYIN[(yg.tg % 10) * 6 + Math.floor(yg.dz / 2)];
+            const dayNayin = NAYIN[dg.idx];
+
+            const sxIdx = yg.dz;
+            const gzStr = TG[yg.tg] + DZ[yg.dz];
+
+            let html = `<div class="sizhu">
+    <div class="sizhu-pillar">
+      <div class="label">年柱</div>
+      <div class="gz"><span class="tg">${TG[yg.tg]}</span><span class="dz">${DZ[yg.dz]}</span></div>
+      <div class="wx">${TG_WX[yg.tg]}${DZ_WX[yg.dz]}</div>
+      <div class="sx">${SX[sxIdx]}</div>
+    </div>
+    <div class="sizhu-pillar">
+      <div class="label">月柱</div>
+      <div class="gz"><span class="tg">${TG[mg.tg]}</span><span class="dz">${DZ[mg.dz]}</span></div>
+      <div class="wx">${TG_WX[mg.tg]}${DZ_WX[mg.dz]}</div>
+    </div>
+    <div class="sizhu-pillar">
+      <div class="label">日柱</div>
+      <div class="gz"><span class="tg">${TG[dg.tg]}</span><span class="dz">${DZ[dg.dz]}</span></div>
+      <div class="wx">${TG_WX[dg.tg]}${DZ_WX[dg.dz]}</div>
+    </div>
+  </div>
+  <div class="info-line">
+    ${y}年 · ${gzStr}年 · 生肖${SX_NAME[sxIdx]}${SX[sxIdx]} · 纳音「${NAYIN[((yg.tg % 10) * 6 + Math.floor(yg.dz / 2)) % 60]}」
+  </div>
+  <div class="info-line" style="font-size:0.82rem;color:#8d6e63;margin-top:6px;">
+    日柱纳音「${NAYIN[dg.idx]}」 · 月柱近似节气推算
+  </div>`;
+
+            document.getElementById('resultBox').innerHTML = html;
+        }
+
+        // ===== 六十甲子表 =====
+        function buildJiazi() {
+            const grid = document.getElementById('jiaziGrid');
+            let html = '';
+            for (let i = 0; i < 60; i++) {
+                const wx = NAYIN[i].slice(-1);
+                const cls = WX_CLASS[wx] || '';
+                html += `<div class="jiazi-cell ${cls}" title="${NAYIN[i]}">
+      <span class="num">${i + 1}</span>${JIAZI[i]}
+    </div>`;
+            }
+            grid.innerHTML = html;
+        }
+
+        // ===== 百科 =====
+        function buildBaike() {
+            let tgHtml = '';
+            for (let i = 0; i < 10; i++) {
+                tgHtml += `<div class="baike-item">
+      <div class="char">${TG[i]}</div>
+      <div class="detail">
+        <b>阴阳：</b>${TG_YY[i]}<br>
+        <b>五行：</b>${TG_WX[i]}<br>
+        <b>释义：</b>${TG_INFO[i].desc}
+      </div>
+    </div>`;
+            }
+            document.getElementById('tgBaike').innerHTML = tgHtml;
+
+            let dzHtml = '';
+            for (let i = 0; i < 12; i++) {
+                dzHtml += `<div class="baike-item">
+      <div class="char">${DZ[i]}</div>
+      <div class="detail">
+        <b>阴阳：</b>${DZ_YY[i]}<br>
+        <b>五行：</b>${DZ_WX[i]}<br>
+        <b>生肖：</b>${SX_NAME[i]}${SX[i]}<br>
+        <b>藏干：</b>${DZ_INFO[i].desc}
+      </div>
+    </div>`;
+            }
+            document.getElementById('dzBaike').innerHTML = dzHtml;
+        }
+
+        // ===== Tab 切换 =====
+        function switchTab(name) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            document.getElementById('tab-' + name).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        // ===== 初始化 =====
+        buildJiazi();
+        buildBaike();
+        doQuery();
+    </script>
+</body>
+
+</html>

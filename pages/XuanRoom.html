@@ -19,6 +19,7 @@
             color: #333;
             font-size: 14px;
             line-height: 1.5;
+            overflow: hidden;
             overflow-x: hidden;
         }
 
@@ -185,6 +186,21 @@
             color: #333;
         }
 
+        .msg-guanzhu-reveal {
+            align-self: flex-start;
+            background: #fff;
+            border-left: 3px solid #ff0000;
+        }
+
+        .msg-guanzhu-reveal .msg-header {
+            color: #ff0000;
+        }
+
+        .msg-guanzhu-reveal .msg-body {
+            color: #ff0000;
+            font-weight: bold;
+        }
+
         /* --- 5. 底部输入区 --- */
         .input-area {
             background: #F0F0F0;
@@ -309,6 +325,83 @@
             padding: 0 8px;
             height: 100%;
         }
+
+        #intro {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            font-family: serif;
+            font-size: 22px;
+            letter-spacing: 14px;
+            z-index: 40;
+            transition: opacity 1.2s;
+            cursor: pointer;
+        }
+
+        #intro:hover {
+            color: #000
+        }
+
+        .eye-container-div {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 30;
+            /* 层级高于黑幕，确保眼睛能显示出来 */
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        #eye {
+            color: #ff1a1a;
+            font-family: 'Courier New', monospace;
+            white-space: pre;
+            text-shadow: 0 0 5px #ff0000, 0 0 12px #ff0000, 0 0 20px #cc0000;
+            line-height: 1.1;
+        }
+
+        #blackout {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 20;
+            opacity: 0;
+            /* 初始透明，不遮挡 */
+            transition: opacity 1.8s;
+            pointer-events: none;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                text-shadow: 0 0 5px #ff0000, 0 0 12px #ff0000, 0 0 20px #cc0000;
+                color: #ff1a1a
+            }
+
+            50% {
+                text-shadow: 0 0 10px #ff0000, 0 0 25px #ff0000, 0 0 40px #ff0000, 0 0 60px #cc0000;
+                color: #ff3333
+            }
+        }
+
+        .pulsing {
+            animation: pulse 2s ease-in-out infinite
+        }
     </style>
 </head>
 
@@ -350,7 +443,6 @@
 
         <div class="chat-area">
             <div class="system-msg">--- [2008-09-29 14:00] 会话已建立并加密归档 ---</div>
-
             <div class="message-block msg-guanzhu">
                 <div class="msg-header">
                     <span>观主</span>
@@ -415,11 +507,177 @@
         <span class="time">2014-12-31 23:59:59</span>
     </div>
 
+    <div id="eye-container" class="eye-container-div">
+        <pre id="eye"></pre>
+    </div>
+    <div id="blackout"></div>
+
     <script>
-        // 简单的关闭横幅交互
-        document.querySelector('.snapshot-banner .close-btn').addEventListener('click', function () {
-            document.querySelector('.snapshot-banner').style.display = 'none';
+        const $ = id => document.getElementById(id);
+
+        // 观主揭示的消息内容
+        const revealMessages = [
+            '找到你了......',
+            '你的生辰真不错……怪不得玄尊这么青睐你，能让你在这么多信息里看到有用的。',
+            '看来我的弟子气运已尽。',
+            '你应该在找他的密码吧？让我来告诉你，密码是19"清"们特殊的天干地支。',
+            '还需要我给别的提示？',
+            '没有了。'
+        ];
+
+        // 检查是否已经显示过消息
+        function hasRevealedMessages() {
+            return localStorage.getItem('xuanroom_revealed') === 'true';
+        }
+
+        // 保存消息状态
+        function saveRevealState() {
+            localStorage.setItem('xuanroom_revealed', 'true');
+        }
+
+        // 添加观主消息到聊天区
+        function addGuanzhuMessage(text, index) {
+            const chatArea = document.querySelector('.chat-area');
+            if (!chatArea) {
+                console.error('Chat area not found');
+                return;
+            }
+
+            const messageBlock = document.createElement('div');
+            messageBlock.className = 'message-block msg-guanzhu-reveal';
+
+            const header = document.createElement('div');
+            header.className = 'msg-header';
+            header.innerHTML = `
+                <span>unknow</span>
+                <span class="msg-timestamp">[unknown]</span>
+            `;
+
+            const body = document.createElement('div');
+            body.className = 'msg-body';
+            body.textContent = text;
+
+            messageBlock.appendChild(header);
+            messageBlock.appendChild(body);
+            chatArea.appendChild(messageBlock);
+
+            // 滚动到底部
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        // 显示所有揭示消息
+        async function showRevealMessages() {
+            for (let i = 0; i < revealMessages.length; i++) {
+                await sleep(1000); // 0.5秒间隔
+                addGuanzhuMessage(revealMessages[i], i);
+            }
+            // 保存状态
+            saveRevealState();
+        }
+
+        const eyeLines = [
+            "    .         ..   .  ...:--+==--=+*###****-====-:::=++=:-:+==-====+=*=--=++*#%#%**########*=+++*+**",
+            "            ...:. ..:..:::==---=+*+---===-=--:.:..::.:::.:===-:--====-:----====###*###**%##**++++***",
+            " ....:......  .....::--::-=-.   ..::-:::. ...  :.    ..   ..   ...:--::-+=--==*###**###*#%#*++++**##",
+            " ..:::......  .:.....:.:.::.         ...                       ........::::--=+++*######%%%#*+***###",
+            ".      ....  ...  .....   ...                                         .   .....:-----=*#+**=++**####",
+            "   ::.......           ...::                                   .                ....::---=++########",
+            " ...........       ..::                                      :=-:...                   .:-=+++***###",
+            " .:. :.::....   ..::.     ::-                                 --+-=+-..                  ....:-=+++*",
+            " . :.... ..   .:::. ... .-##-                                  :=%*-:..                     ..:=+*##",
+            ".......  .. :.:-:. .:.:=%@@+         ..        .                :**=--.:. .                 ..:--=*#",
+            "        ....::.. ....=%@@@@:        ....  .#.                   .*%%#**==*=:                 ..:--=+",
+            ".   .  .:.:-::.   :+#@@@@@#.    ..:.::.:. .-                    -@@@@@@@@%#*:                 .:::-:",
+            ".. ...:-.==-.   .-=*%@@@@@#.    :..:.. :                        =%%%%%%@%##%#=.            ..:.--=++",
+            "..::-=+-=+=-. .:++*%%@@@@@@-    .  . ..                         *@@@@@@@@@%#%#:     .. ... ..:-=+++*",
+            ":--=+++*#-... -*#%@@@@@@@@@*      .......             ....:.   =@@@@@@@@%###+-.   .-===--:::::=+*##*",
+            "-===++#*-. :+-+#@@@@@@@@@@@@*     ......... .           ..    -@@@@@@%##%**+-:....::-=+*+=-===+**+*+",
+            ":::-=++:  .===+*#@@@@@@@@@@@@#.       ....:..:...::.:.      .*@@@@@@%@%##*+=-:::::::-+*+**++***#****",
+            "..:---. :-.:--.-=#@@@@@@@@@@@@@=          :-:::..::.       :#@@@@@@@@@%**+=-:::: :---=++++*+*#%#***#",
+            " .::-:. :.  :...-*%%####%%%@@@@@%=.       .             .-#@@@@@@@%%#*+-==---..::===++==*+++=+##*+*#",
+            " ...:..  .....:-...--:-+=**#*#%###*+-:.               .-+*##%%%%#***==+-==:::-----==***+=*#*++#%%*=*",
+            "  ..:--:--===++*=======**#*+===++-:---=---:....::..::==--:-=+##*#==***=----==-=++=--=#%#*+#%#*+#####",
+            " ..:-=---=+=***#%%%##**%%%%#*#***:-:=*--=+-:::--=--:..:-++****=---::::-====-=+=+=**+==*##***+#######",
+            " .  :-::.--=*+****%##%###**%%%%#*=-=+#+:+-=-:.::.-:.:  .:.-........::.-===-=-++*******=+***#*#****#*",
+            "     . ..:-=++==+=+++**+*++*#***+==:+#+=*-:==---:::. -...:..::..::.:=:.-=+===+###%#*##****+%%######*"
+        ];
+
+        let phase = 'idle';
+
+        function calculateFontSize() {
+            const containerWidth = window.innerWidth * 0.95;
+            const containerHeight = window.innerHeight * 0.95;
+            const lineHeight = 1.1;
+            const charWidthRatio = 0.6;
+
+            const maxLines = eyeLines.length;
+            const maxChars = Math.max(...eyeLines.map(l => l.length));
+
+            const fontSizeByHeight = containerHeight / (maxLines * lineHeight);
+            const fontSizeByWidth = containerWidth / (maxChars * charWidthRatio);
+
+            return Math.min(fontSizeByHeight, fontSizeByWidth);
+        }
+
+        function renderEye(linesToShow) {
+            $('eye').textContent = linesToShow.join('\n');
+        }
+
+        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+        async function run() {
+            const fontSize = calculateFontSize();
+            $('eye').style.fontSize = fontSize + 'px';
+
+            phase = 'waiting';
+
+            $('blackout').style.opacity = '1';
+            await sleep(1000);
+
+            $('eye-container').style.opacity = '1';
+            await sleep(600);
+
+            const revealDelay = Math.max(50, Math.floor(2000 / eyeLines.length));
+            for (let i = 0; i < eyeLines.length; i++) {
+                renderEye(eyeLines.slice(0, i + 1));
+                await sleep(100);
+            }
+
+            $('eye').classList.add('pulsing');
+            await sleep(2000);
+
+            $('blackout').style.transition = 'opacity 1.5s';
+            $('blackout').style.opacity = '0';
+
+            $('eye').classList.remove('pulsing');
+            $('eye-container').style.opacity = '0';
+            $('eye-container').classList.remove('eye-container-div');
+
+            renderEye([]);
+
+            await sleep(1500);
+            phase = 'idle';
+
+            // 黑幕消失后，显示观主揭示消息
+            await showRevealMessages();
+        }
+
+        // 页面加载完成后执行
+        window.addEventListener('load', function () {
+            setTimeout(() => {
+                // 检查是否已经显示过消息
+                if (hasRevealedMessages()) {
+                    // 已显示过，直接显示消息，不调用run()
+                    $('eye-container').classList.remove('eye-container-div');
+                    showRevealMessages();
+                } else {
+                    // 未显示过，执行完整流程
+                    run();
+                }
+            }, 1000);
         });
+
+
     </script>
 </body>
 

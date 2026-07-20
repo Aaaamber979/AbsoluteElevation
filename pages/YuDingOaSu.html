@@ -984,6 +984,139 @@
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         }
 
+        /* 命令行终端 */
+        .terminal-panel {
+            min-width: 700px;
+            max-height: 80vh;
+            background: #0a0a0a;
+            border: 1px solid var(--gold-dim);
+            font-family: 'Courier New', monospace;
+        }
+
+        .terminal-header {
+            padding: 12px 20px;
+            background: #1a1a1a;
+            border-bottom: 1px solid var(--gold-dim);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .terminal-title {
+            color: var(--gold);
+            font-size: 13px;
+            letter-spacing: 2px;
+        }
+
+        .terminal-close {
+            background: none;
+            border: none;
+            color: var(--text-dim);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            line-height: 24px;
+            text-align: center;
+        }
+
+        .terminal-close:hover {
+            color: var(--gold);
+        }
+
+        .terminal-body {
+            padding: 20px;
+            height: 500px;
+            overflow-y: auto;
+            background: #0a0a0a;
+        }
+
+        .terminal-output {
+            color: #0f0;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+            white-space: pre-wrap;
+        }
+
+        .terminal-input-line {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .terminal-prompt {
+            color: var(--gold);
+            font-size: 13px;
+            user-select: none;
+        }
+
+        .terminal-input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+
+        .terminal-file-list {
+            list-style: none;
+            padding: 0;
+            margin: 10px 0;
+        }
+
+        .terminal-file-item {
+            padding: 4px 0;
+            color: #0f0;
+            cursor: pointer;
+        }
+
+        .terminal-file-item:hover {
+            background: rgba(201, 169, 97, 0.1);
+        }
+
+        .terminal-file-item.folder::before {
+            content: '[DIR] ';
+            color: var(--gold);
+        }
+
+        .terminal-file-item.file::before {
+            content: '[FILE] ';
+            color: #ccc;
+        }
+
+        .terminal-progress-bar {
+            width: 100%;
+            height: 30px;
+            background: #1a1a1a;
+            border: 1px solid var(--gold-dim);
+            margin: 10px 0;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .terminal-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+            transition: width 0.3s;
+        }
+
+        .terminal-progress-text {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #fff;
+            font-size: 12px;
+            font-weight: bold;
+            text-shadow: 0 0 4px rgba(0, 0, 0, 0.8);
+            z-index: 1;
+        }
+
         /* 响应式 */
         @media (max-width: 1100px) {
             .container {
@@ -1266,19 +1399,17 @@
                 </div>
 
                 <div class="vault-grid">
-                    <!-- 入口1 私人云盘 -->
-                    <div class="vault-item">
-                        <div class="vault-item-title">私人云盘同步端</div>
+                    <!-- 入口1 私密终端 -->
+                    <div class="vault-item" onclick="showTerminal()" style="cursor: pointer;">
+                        <div class="vault-item-title">私密终端</div>
                         <div class="vault-item-status">
                             <span class="status-dot"></span>
-                            <span>已连接 · SYNCED</span>
+                            <span>指令控制 · TERMINAL</span>
                         </div>
                         <div class="vault-item-detail">
-                            最近同步文件：<br>
-                            <span class="mono">后勤管理系统.zip</span><br>
-                            <span style="color:var(--text-mute);">刚刚 同步</span>
+                            数据转移中，前端页面未加载，可尝试指令控制...
                         </div>
-                        <button class="vault-btn" onclick="showModal('vault-cloud')">打开云端目录</button>
+                        <button class="vault-btn">进入终端</button>
                     </div>
 
                     <!-- 入口2 海外资产 -->
@@ -1305,19 +1436,6 @@
                             一键清除本终端所有浏览、操作、登录日志。执行后不可恢复。
                         </div>
                         <button class="vault-btn danger">执行清理</button>
-                    </div>
-
-                    <!-- 入口4 我们 -->
-                    <div class="vault-item" onclick="showWeModule()" style="cursor: pointer;">
-                        <div class="vault-item-title">我们</div>
-                        <div class="vault-item-status">
-                            <span class="status-dot"></span>
-                            <span>私密相册 · PRIVATE</span>
-                        </div>
-                        <div class="vault-item-detail">
-                            珍藏的回忆...
-                        </div>
-                        <button class="vault-btn">查看</button>
                     </div>
                 </div>
             </div>
@@ -1621,6 +1739,297 @@
 
             actions.innerHTML = `<button class="btn-act btn-sign" onclick="closeModal()">关 闭</button>`;
             mask.classList.add('show');
+        }
+
+        // 终端相关变量
+        let terminalHistory = [];
+        let currentPath = '/';
+        let fileSystem = {
+            '/': {
+                '..': null,
+                '我们us.jpg': { type: 'file', path: '../assets/bro.jpg' },
+                '后勤管理': {
+                    type: 'folder',
+                    children: {
+                        '..': '/',
+                        '安防监控归档': { type: 'folder', action: 'download' },
+                        '物资采购记录': { type: 'folder', action: 'cleaned' },
+                        '用电量监控': { type: 'folder', action: 'cleaned' },
+                        '食堂订餐系统': { type: 'folder', action: 'cleaned' }
+                    }
+                },
+                'auther-amber': { type: 'folder', action: 'empty' }
+            }
+        };
+
+        // 显示终端
+        function showTerminal() {
+            const mask = document.getElementById('modalMask');
+            const title = document.getElementById('modalTitle');
+            const body = document.getElementById('modalBody');
+            const actions = document.getElementById('modalActions');
+
+            title.innerHTML = 'TERMINAL · 私密终端';
+
+            body.innerHTML = `
+                <div class="terminal-panel">
+                    <div class="terminal-header">
+                        <span class="terminal-title">YUDING SECURE TERMINAL v2.0</span>
+                        <button class="terminal-close" onclick="closeModal()">×</button>
+                    </div>
+                    <div class="terminal-body" id="terminalBody">
+                        <div class="terminal-output">数据转移中，前端页面未加载，可尝试指令控制......\n\n输入 'help' 查看可用指令列表。\n</div>
+                        <div class="terminal-input-line">
+                            <span class="terminal-prompt">root@yuding:~$</span>
+                            <input type="text" class="terminal-input" id="terminalInput" autofocus onkeypress="handleTerminalCommand(event)">
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            actions.innerHTML = '';
+            mask.classList.add('show');
+
+            // 聚焦输入框
+            setTimeout(() => {
+                const input = document.getElementById('terminalInput');
+                if (input) input.focus();
+            }, 100);
+        }
+
+        // 处理终端命令
+        function handleTerminalCommand(event) {
+            if (event.key === 'Enter') {
+                const input = document.getElementById('terminalInput');
+                const command = input.value.trim().toLowerCase();
+
+                if (command) {
+                    executeCommand(command);
+                    input.value = '';
+                }
+            }
+        }
+
+        // 执行命令
+        function executeCommand(command) {
+            const terminalBody = document.getElementById('terminalBody');
+            const outputDiv = terminalBody.querySelector('.terminal-output');
+
+            // 添加命令到输出
+            outputDiv.innerHTML += `\n<span style="color:var(--gold);">root@yuding:~$</span> ${command}\n`;
+
+            // 解析命令
+            const parts = command.split(' ');
+            const cmd = parts[0];
+            const args = parts.slice(1);
+
+            switch (cmd) {
+                case 'help':
+                    outputDiv.innerHTML += `
+<span style="color:#fff;">可用指令列表:</span>
+  <span style="color:var(--gold);">help</span>      - 显示帮助信息
+  <span style="color:var(--gold);">version</span>   - 显示版本号
+  <span style="color:var(--gold);">time</span>      - 显示当前时间
+  <span style="color:var(--gold);">list</span>      - 查看文件目录
+  <span style="color:var(--gold);">clear</span>     - 清屏
+\n`;
+                    break;
+
+                case 'version':
+                    outputDiv.innerHTML += `YUDING Secure Terminal v2.0.3\n`;
+                    break;
+
+                case 'time':
+                    const now = new Date();
+                    const year = 2030;
+                    const month = String(now.getMonth() + 1).padStart(2, '0');
+                    const day = String(now.getDate()).padStart(2, '0');
+                    const hours = String(now.getHours()).padStart(2, '0');
+                    const minutes = String(now.getMinutes()).padStart(2, '0');
+                    const seconds = String(now.getSeconds()).padStart(2, '0');
+                    outputDiv.innerHTML += `${year}-${month}-${day} ${hours}:${minutes}:${seconds}\n`;
+                    break;
+
+                case 'list':
+                case 'ls':
+                    showFileList(outputDiv);
+                    break;
+
+                case 'clear':
+                case 'cls':
+                    outputDiv.innerHTML = '';
+                    break;
+
+                default:
+                    outputDiv.innerHTML += `<span style="color:#f00;">未知指令: ${cmd}。输入 'help' 查看可用指令。</span>\n`;
+            }
+
+            // 滚动到底部
+            terminalBody.scrollTop = terminalBody.scrollHeight;
+        }
+
+        // 显示文件列表
+        function showFileList(outputDiv) {
+            outputDiv.innerHTML += `<span style="color:#fff;">文件目录 (${currentPath}):</span>\n`;
+
+            const currentDir = getCurrentDirectory();
+            if (!currentDir) {
+                outputDiv.innerHTML += `<span style="color:#f00;">错误: 无法访问当前目录</span>\n`;
+                return;
+            }
+
+            let listHtml = '<ul class="terminal-file-list">';
+            for (const [name, item] of Object.entries(currentDir)) {
+                if (name === '..' && !item) continue;
+
+                if (typeof item === 'object' && item.type === 'folder') {
+                    listHtml += `<li class="terminal-file-item folder" onclick="openFolder('${name}')">${name}</li>`;
+                } else if (typeof item === 'object' && item.type === 'file') {
+                    listHtml += `<li class="terminal-file-item file" onclick="openFile('${name}')">${name}</li>`;
+                } else if (name !== '..') {
+                    listHtml += `<li class="terminal-file-item folder" onclick="openFolder('${name}')">${name}</li>`;
+                }
+            }
+            listHtml += '</ul>';
+
+            outputDiv.innerHTML += listHtml + '\n';
+        }
+
+        // 获取当前目录
+        function getCurrentDirectory() {
+            if (currentPath === '/') {
+                return fileSystem['/'];
+            }
+            // 简化版：只支持根目录
+            return fileSystem['/'];
+        }
+
+        // 打开文件夹
+        function openFolder(folderName) {
+            const outputDiv = document.getElementById('terminalBody').querySelector('.terminal-output');
+
+            if (folderName === '..') {
+                currentPath = '/';
+                outputDiv.innerHTML += `返回上级目录...\n`;
+                showFileList(outputDiv);
+                return;
+            }
+
+            const currentDir = getCurrentDirectory();
+            const folder = currentDir[folderName];
+
+            if (!folder) {
+                outputDiv.innerHTML += `<span style="color:#f00;">错误: 文件夹不存在</span>\n`;
+                return;
+            }
+
+            if (folder.action === 'download') {
+                // 安防监控归档 - 检查是否已经下载过
+                const downloadedKey = 'yuding_monitor_downloaded';
+                const isDownloaded = localStorage.getItem(downloadedKey) === 'true';
+
+                if (isDownloaded) {
+                    outputDiv.innerHTML += `<span style="color:#0f0;">✓ ${folderName} 已下载。</span>\n`;
+                } else {
+                    showDownloadProgress(outputDiv, folderName);
+                    // 标记为已下载
+                    localStorage.setItem(downloadedKey, 'true');
+                    localStorage.setItem('stageKey', 'isEnd')
+                }
+            } else if (folder.action === 'cleaned') {
+                // 其他文件夹 - 已被清理
+                outputDiv.innerHTML += `<span style="color:#f00;">警告: ${folderName} 已被清理，数据不可恢复。</span>\n`;
+            } else if (folder.action === 'empty') {
+                outputDiv.innerHTML += `<span style="color:#f00;">错误: 文件夹为空</span>\n`;
+            } else {
+                // 进入子目录
+                currentPath = currentPath + folderName + '/';
+                outputDiv.innerHTML += `进入目录: ${folderName}\n`;
+
+                // 显示子目录内容
+                if (folder.children) {
+                    let listHtml = '<ul class="terminal-file-list">';
+                    for (const [name, item] of Object.entries(folder.children)) {
+                        if (name === '..') {
+                            listHtml += `<li class="terminal-file-item folder" onclick="openFolder('..')">..</li>`;
+                        } else if (item.type === 'folder') {
+                            listHtml += `<li class="terminal-file-item folder" onclick="handleSubFolderAction('${name}', '${item.action || ''}')">${name}</li>`;
+                        }
+                    }
+                    listHtml += '</ul>';
+                    outputDiv.innerHTML += listHtml + '\n';
+                }
+            }
+        }
+
+        // 处理子文件夹操作
+        function handleSubFolderAction(folderName, action) {
+            const outputDiv = document.getElementById('terminalBody').querySelector('.terminal-output');
+
+            if (action === 'download') {
+                // 检查是否已经下载过
+                const downloadedKey = 'yuding_monitor_downloaded';
+                const isDownloaded = localStorage.getItem(downloadedKey) === 'true';
+
+                if (isDownloaded) {
+                    outputDiv.innerHTML += `<span style="color:#0f0;">✓ ${folderName} 已下载。</span>\n`;
+                } else {
+                    showDownloadProgress(outputDiv, folderName);
+                    // 标记为已下载
+                    localStorage.setItem(downloadedKey, 'true');
+                }
+            } else if (action === 'cleaned') {
+                outputDiv.innerHTML += `<span style="color:#f00;">警告: ${folderName} 已被清理，数据不可恢复。</span>\n`;
+            }
+        }
+
+        // 显示下载进度
+        function showDownloadProgress(outputDiv, folderName) {
+            const progressId = 'progress-' + Date.now();
+
+            outputDiv.innerHTML += `正在下载 ${folderName}...\n`;
+            outputDiv.innerHTML += `
+<div class="terminal-progress-bar">
+    <div class="terminal-progress-fill" id="${progressId}-fill" style="width: 0%;"></div>
+    <div class="terminal-progress-text" id="${progressId}-text">0%</div>
+</div>
+`;
+
+            // 模拟下载进度
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += Math.random() * 15;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+
+                    const fill = document.getElementById(`${progressId}-fill`);
+                    const text = document.getElementById(`${progressId}-text`);
+                    if (fill) fill.style.width = '100%';
+                    if (text) text.textContent = '100%';
+
+                    outputDiv.innerHTML += `<span style="color:#0f0;">✓ 下载成功！文件已保存至本地。</span>\n`;
+                } else {
+                    const fill = document.getElementById(`${progressId}-fill`);
+                    const text = document.getElementById(`${progressId}-text`);
+                    if (fill) fill.style.width = progress + '%';
+                    if (text) text.textContent = Math.floor(progress) + '%';
+                }
+            }, 200);
+        }
+
+        // 打开文件
+        function openFile(fileName) {
+            const outputDiv = document.getElementById('terminalBody').querySelector('.terminal-output');
+            const currentDir = getCurrentDirectory();
+            const file = currentDir[fileName];
+
+            if (file && file.path) {
+                window.open(file.path, '_blank');
+                outputDiv.innerHTML += `<span style="color:#0f0;">已打开文件: ${fileName}</span>\n`;
+            } else {
+                outputDiv.innerHTML += `<span style="color:#f00;">错误: 文件不存在或无法访问</span>\n`;
+            }
         }
 
     </script>
