@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的网盘</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@5.0.1/index.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/ma-shan-zheng@5.0.1/index.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            color: #333;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 0 32px;
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon svg {
+            width: 22px;
+            height: 22px;
+            fill: white;
+        }
+
+        .header-title {
+            color: white;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .storage-info {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 13px;
+        }
+
+        .storage-bar {
+            width: 120px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .storage-bar-fill {
+            width: 15%;
+            height: 100%;
+            background: #ffd700;
+            border-radius: 2px;
+        }
+
+        .avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .avatar:hover {
+            background: rgba(255, 255, 255, 0.35);
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: flex;
+            margin-top: 64px;
+            min-height: calc(100vh - 64px);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 240px;
+            background: white;
+            border-right: 1px solid #e8e8e8;
+            padding: 20px 0;
+            position: fixed;
+            top: 64px;
+            bottom: 0;
+            left: 0;
+            overflow-y: auto;
+        }
+
+        .sidebar-section {
+            padding: 0 16px;
+            margin-bottom: 24px;
+        }
+
+        .sidebar-section-title {
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            padding: 0 12px;
+            margin-bottom: 8px;
+        }
+
+        .sidebar-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .sidebar-item:hover {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .sidebar-item.active {
+            background: #f0f0ff;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .sidebar-item svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-item .badge {
+            margin-left: auto;
+            background: #667eea;
+            color: white;
+            font-size: 11px;
+            padding: 1px 7px;
+            border-radius: 10px;
+        }
+
+        /* Content Area */
+        .content {
+            flex: 1;
+            margin-left: 240px;
+            padding: 28px 32px;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: #999;
+        }
+
+        .breadcrumb span {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .content-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .content-title {
+            font-size: 22px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 4px;
+            background: white;
+            border-radius: 8px;
+            padding: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+        }
+
+        .view-btn {
+            padding: 6px 10px;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .view-btn.active {
+            background: #667eea;
+        }
+
+        .view-btn.active svg {
+            fill: white;
+        }
+
+        .view-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: #999;
+        }
+
+        /* File Grid */
+        .file-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .file-card {
+            background: white;
+            border-radius: 16px;
+            padding: 24px 20px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .file-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .file-card.pdf::before {
+            background: linear-gradient(90deg, #e74c3c, #c0392b);
+        }
+
+        .file-card.letter::before {
+            background: linear-gradient(90deg, #f39c12, #e67e22);
+        }
+
+        .file-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+            border-color: #667eea;
+        }
+
+        .file-card:hover::before {
+            opacity: 1;
+        }
+
+        .file-icon {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 16px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .file-card.pdf .file-icon {
+            background: linear-gradient(135deg, #ffeaea 0%, #ffd4d4 100%);
+        }
+
+        .file-card.letter .file-icon {
+            background: linear-gradient(135deg, #fff8e6 0%, #ffedbf 100%);
+        }
+
+        .file-icon svg {
+            width: 36px;
+            height: 36px;
+        }
+
+        .file-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 6px;
+            word-break: break-all;
+        }
+
+        .file-meta {
+            font-size: 12px;
+            color: #aaa;
+        }
+
+        /* File List View */
+        .file-list {
+            display: none;
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .file-list.active {
+            display: block;
+        }
+
+        .file-grid.active {
+            display: grid;
+        }
+
+        .file-grid:not(.active) {
+            display: none;
+        }
+
+        .file-list-header {
+            display: grid;
+            grid-template-columns: 1fr 120px 140px 100px;
+            padding: 12px 24px;
+            background: #fafafa;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 12px;
+            color: #999;
+            font-weight: 500;
+        }
+
+        .file-list-item {
+            display: grid;
+            grid-template-columns: 1fr 120px 140px 100px;
+            padding: 14px 24px;
+            align-items: center;
+            border-bottom: 1px solid #f5f5f5;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .file-list-item:hover {
+            background: #f8f8ff;
+        }
+
+        .file-list-item:last-child {
+            border-bottom: none;
+        }
+
+        .file-list-name {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .file-list-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .file-list-icon.pdf {
+            background: #ffeaea;
+        }
+
+        .file-list-icon.letter {
+            background: #fff8e6;
+        }
+
+        .file-list-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .file-list-meta {
+            font-size: 13px;
+            color: #999;
+        }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal {
+            background: white;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 800px;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.3s ease;
+            overflow: hidden;
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px 28px;
+            border-bottom: 1px solid #f0f0f0;
+            flex-shrink: 0;
+        }
+
+        .modal-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .modal-title-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-title-icon.pdf {
+            background: #ffeaea;
+        }
+
+        .modal-title-icon.letter {
+            background: #fff8e6;
+        }
+
+        .modal-title-icon svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .modal-close {
+            width: 36px;
+            height: 36px;
+            border: none;
+            background: #f5f5f5;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #e0e0e0;
+            transform: rotate(90deg);
+        }
+
+        .modal-close svg {
+            width: 16px;
+            height: 16px;
+            fill: #666;
+        }
+
+        .modal-body {
+            padding: 28px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        /* Letter Styles */
+        .letter-content {
+            background: linear-gradient(180deg, #fefcf3 0%, #fdf6e3 100%);
+            border: 1px solid #e8dcc8;
+            border-radius: 12px;
+            padding: 48px 44px;
+            position: relative;
+            box-shadow: inset 0 0 40px rgba(139, 119, 80, 0.05);
+        }
+
+        .letter-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image:
+                repeating-linear-gradient(transparent,
+                    transparent 31px,
+                    rgba(139, 119, 80, 0.08) 31px,
+                    rgba(139, 119, 80, 0.08) 32px);
+            pointer-events: none;
+            border-radius: 12px;
+        }
+
+        .letter-greeting {
+            font-family: 'Ma Shan Zheng', cursive;
+            font-size: 20px;
+            color: #4a3728;
+            margin-bottom: 24px;
+            line-height: 2;
+        }
+
+        .letter-body {
+            font-family: 'Ma Shan Zheng', cursive;
+            font-size: 18px;
+            color: #4a3728;
+            line-height: 2;
+            text-align: justify;
+        }
+
+        .letter-body p {
+            margin-bottom: 16px;
+            text-indent: 2em;
+        }
+
+        .letter-closing {
+            font-family: 'Ma Shan Zheng', cursive;
+            font-size: 18px;
+            color: #4a3728;
+            line-height: 2;
+            text-align: right;
+            margin-top: 32px;
+        }
+
+        .letter-closing p {
+            margin-bottom: 4px;
+        }
+
+        .letter-stamp {
+            position: absolute;
+            top: 20px;
+            right: 24px;
+            width: 60px;
+            height: 60px;
+            border: 3px solid #c0392b;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transform: rotate(-15deg);
+            opacity: 0.3;
+        }
+
+        .letter-stamp span {
+            font-family: 'Ma Shan Zheng', cursive;
+            color: #c0392b;
+            font-size: 12px;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        /* PDF Styles */
+        .pdf-content {
+            background: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 40px;
+            font-size: 14px;
+            line-height: 1.8;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .pdf-watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-30deg);
+            font-size: 60px;
+            color: rgba(0, 0, 0, 0.03);
+            font-weight: 900;
+            white-space: nowrap;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .pdf-header-section {
+            text-align: center;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 3px double #333;
+        }
+
+        .pdf-company {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+
+        .pdf-doc-title {
+            font-size: 22px;
+            font-weight: 900;
+            color: #c0392b;
+            letter-spacing: 4px;
+            margin: 8px 0;
+        }
+
+        .pdf-divider {
+            border: none;
+            border-top: 2px solid #333;
+            margin: 16px 0;
+        }
+
+        .pdf-thin-divider {
+            border: none;
+            border-top: 1px solid #ddd;
+            margin: 12px 0;
+        }
+
+        .pdf-meta-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+            font-size: 13px;
+        }
+
+        .pdf-section-title {
+            font-weight: 700;
+            color: #1a1a1a;
+            margin: 16px 0 8px;
+            font-size: 14px;
+            padding: 4px 8px;
+            background: #f5f5f5;
+            border-left: 3px solid #667eea;
+        }
+
+        .pdf-field {
+            display: flex;
+            margin-bottom: 4px;
+            font-size: 13px;
+        }
+
+        .pdf-field-label {
+            color: #666;
+            min-width: 130px;
+            flex-shrink: 0;
+        }
+
+        .pdf-field-value {
+            color: #1a1a1a;
+            font-weight: 500;
+        }
+
+        .pdf-field-value.highlight {
+            color: #c0392b;
+            font-weight: 700;
+        }
+
+        .pdf-clause {
+            margin: 4px 0;
+            font-size: 13px;
+            padding-left: 8px;
+        }
+
+        .pdf-special {
+            background: #fff8e6;
+            border: 1px solid #f0dca0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            margin: 12px 0;
+        }
+
+        .pdf-special-title {
+            font-weight: 700;
+            color: #c0392b;
+            margin-bottom: 4px;
+            font-size: 13px;
+        }
+
+        .pdf-special-text {
+            font-size: 13px;
+            color: #4a3728;
+            line-height: 1.7;
+        }
+
+        .pdf-footer {
+            text-align: center;
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 2px solid #333;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .pdf-stamp {
+            display: inline-block;
+            border: 2px solid #c0392b;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 16px auto 0;
+            color: #c0392b;
+            font-size: 10px;
+            text-align: center;
+            line-height: 1.3;
+            opacity: 0.6;
+            transform: rotate(-8deg);
+        }
+
+        .pdf-status-badge {
+            display: inline-block;
+            background: #27ae60;
+            color: white;
+            font-size: 11px;
+            padding: 2px 10px;
+            border-radius: 10px;
+            font-weight: 600;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+
+            .content {
+                margin-left: 0;
+            }
+
+            .file-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .modal {
+                max-height: 95vh;
+                border-radius: 16px;
+            }
+
+            .letter-content {
+                padding: 28px 20px;
+            }
+
+            .pdf-content {
+                padding: 20px;
+            }
+
+            .file-list-header,
+            .file-list-item {
+                grid-template-columns: 1fr 100px;
+            }
+
+            .file-list-header> :nth-child(3),
+            .file-list-header> :nth-child(4),
+            .file-list-item> :nth-child(3),
+            .file-list-item> :nth-child(4) {
+                display: none;
+            }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ccc;
+        }
+
+        /* Empty state animation */
+        .file-card {
+            animation: cardIn 0.4s ease backwards;
+        }
+
+        .file-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .file-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        @keyframes cardIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <div class="header-title">我的网盘</div>
+        </div>
+        <div class="header-right">
+            <div class="storage-info">
+                <div class="storage-bar">
+                    <div class="storage-bar-fill"></div>
+                </div>
+            </div>
+            <div class="avatar">林</div>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-section">
+                <div class="sidebar-section-title">导航</div>
+                <div class="sidebar-item active">
+                    <svg viewBox="0 0 24 24" fill="#667eea">
+                        <path
+                            d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
+                    </svg>
+                    全部文件
+                    <span class="badge">2</span>
+                </div>
+                <div class="sidebar-item">
+                    <svg viewBox="0 0 24 24" fill="#999">
+                        <path
+                            d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
+                    </svg>
+                    收藏
+                </div>
+                <div class="sidebar-item">
+                    <svg viewBox="0 0 24 24" fill="#999">
+                        <path
+                            d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z" />
+                    </svg>
+                    最近
+                </div>
+                <div class="sidebar-item">
+                    <svg viewBox="0 0 24 24" fill="#999">
+                        <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z" />
+                    </svg>
+                    回收站
+                </div>
+        </aside>
+
+        <!-- Content -->
+        <main class="content">
+            <div class="breadcrumb">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="#999">
+                    <path d="M10 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z" />
+                </svg>
+                全部文件 / <span>我的文件</span>
+            </div>
+
+            <div class="content-header">
+                <div class="content-title">我的文件</div>
+                <div class="view-toggle">
+                    <button class="view-btn active" id="gridViewBtn" onclick="switchView('grid')">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z" />
+                        </svg>
+                    </button>
+                    <button class="view-btn" id="listViewBtn" onclick="switchView('list')">
+                        <svg viewBox="0 0 24 24">
+                            <path
+                                d="M4 14h4v-4H4v4zm0 5h4v-4H4v4zM4 9h4V5H4v4zm5 5h12v-4H9v4zm0 5h12v-4H9v4zM9 5v4h12V5H9z" />
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Grid View -->
+            <div class="file-grid active" id="fileGrid">
+                <div class="file-card pdf" onclick="openFile('pdf')">
+                    <div class="file-icon">
+                        <svg viewBox="0 0 24 24" fill="#e74c3c">
+                            <path
+                                d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.42 14.6L8.4 13.42l1.42-1.42 2.18 2.18 4.58-4.58 1.42 1.42-5.42 5.58z" />
+                            <text x="5" y="18" font-size="7" fill="#e74c3c" font-weight="bold">PDF</text>
+                        </svg>
+                    </div>
+                    <div class="file-name">教育金保险单.pdf</div>
+                    <div class="file-meta">128 KB · 2008-09-29</div>
+                </div>
+                <div class="file-card letter" onclick="openFile('letter')">
+                    <div class="file-icon">
+                        <svg viewBox="0 0 24 24" fill="#e67e22">
+                            <path
+                                d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                        </svg>
+                    </div>
+                    <div class="file-name">家书 · 2008年9月</div>
+                    <div class="file-meta">3.2 KB · 2008-09-29</div>
+                </div>
+            </div>
+
+            <!-- List View -->
+            <div class="file-list" id="fileList">
+                <div class="file-list-header">
+                    <div>文件名</div>
+                    <div>大小</div>
+                    <div>修改日期</div>
+                    <div>类型</div>
+                </div>
+                <div class="file-list-item" onclick="openFile('pdf')">
+                    <div class="file-list-name">
+                        <div class="file-list-icon pdf">
+                            <svg viewBox="0 0 24 24" fill="#e74c3c">
+                                <path
+                                    d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.42 14.6L8.4 13.42l1.42-1.42 2.18 2.18 4.58-4.58 1.42 1.42-5.42 5.58z" />
+                            </svg>
+                        </div>
+                        教育金保险单.pdf
+                    </div>
+                    <div class="file-list-meta">128 KB</div>
+                    <div class="file-list-meta">2008-09-20</div>
+                    <div class="file-list-meta">PDF</div>
+                </div>
+                <div class="file-list-item" onclick="openFile('letter')">
+                    <div class="file-list-name">
+                        <div class="file-list-icon letter">
+                            <svg viewBox="0 0 24 24" fill="#e67e22">
+                                <path
+                                    d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                            </svg>
+                        </div>
+                        家书 · 2008年9月
+                    </div>
+                    <div class="file-list-meta">3.2 KB</div>
+                    <div class="file-list-meta">2008-09-20</div>
+                    <div class="file-list-meta">信件</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- PDF Modal -->
+    <div class="modal-overlay" id="pdfModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <div class="modal-title-icon pdf">
+                        <svg viewBox="0 0 24 24" fill="#e74c3c">
+                            <path
+                                d="M20 2H8c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-8.42 14.6L8.4 13.42l1.42-1.42 2.18 2.18 4.58-4.58 1.42 1.42-5.42 5.58z" />
+                        </svg>
+                    </div>
+                    教育金保险单.pdf
+                </div>
+                <button class="modal-close" onclick="closeModal('pdfModal')">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="pdf-content">
+                    <div class="pdf-watermark">AN_TAI_INSURANCE</div>
+
+                    <div class="pdf-header-section">
+                        <div class="pdf-company">江州安泰人寿保险股份有限公司</div>
+                        <div class="pdf-doc-title">人身保险保险单</div>
+                        <hr class="pdf-divider">
+                        <div class="pdf-meta-row">
+                            <span>保单号码：AT-2008-0920-<b>709436</b></span>
+                            <span>签发日期：2008年9月20日</span>
+                        </div>
+                        <div class="pdf-meta-row">
+                            <span>签发机构：江州安泰人寿保险股份有限公司 滨江支公司</span>
+                        </div>
+                    </div>
+
+                    <div class="pdf-section-title">【投保人信息】</div>
+                    <div class="pdf-field"><span class="pdf-field-label">姓 名：</span><span
+                            class="pdf-field-value">杨伟江</span></div>
+                    <div class="pdf-field"><span class="pdf-field-label">证件类型：</span><span
+                            class="pdf-field-value">居民身份证</span></div>
+                    <div class="pdf-field"><span class="pdf-field-label">证件号码：</span><span
+                            class="pdf-field-value">34012319780808XXXX</span></div>
+                    <div class="pdf-field"><span class="pdf-field-label">联系电话：</span><span
+                            class="pdf-field-value">138XXXX5678）</span></div>
+                    <div class="pdf-field"><span class="pdf-field-label">住 址：</span><span
+                            class="pdf-field-value">东江省临江市青云镇XX村XX号</span></div>
+
+                    <hr class="pdf-thin-divider">
+                    <div class="pdf-section-title">【被保险人信息】</div>
+                    <div class="pdf-field"><span class="pdf-field-label">姓 名：</span><span
+                            class="pdf-field-value">杨敏</span></div>
+                    <div class="pdf-field"><span class="pdf-field-label">与投保人关系：</span><span
+                            class="pdf-field-value">父女</span></div>
+                    <div class="pdf-field"><span class="pdf-field-label">出生日期：</span><span
+                            class="pdf-field-value">2007年7月2日</span></div>
+                    <div class="pdf-field"><span class="pdf-field-label">证件号码：</span><span
+                            class="pdf-field-value">34012320070202XXXX</span></div>
+
+                    <hr class="pdf-thin-divider">
+                    <div class="pdf-section-title">【保险计划详情】</div>
+                    <div class="pdf-field"><span class="pdf-field-label">险种名称：</span><span
+                            class="pdf-field-value">安泰"锦绣未来"少儿教育金保险（2008版）</span></div>
+                    <div class="pdf-field"><span class="pdf-field-label">保险期间：</span><span
+                            class="pdf-field-value">至被保险人年满25周岁</span></div>
+                    <div class="pdf-field"><span class="pdf-field-label">交费期间：</span><span
+                            class="pdf-field-value">10年</span></div>
+                    <div class="pdf-field"><span class="pdf-field-label">交费方式：</span><span
+                            class="pdf-field-value">年交</span></div>
+                    <div class="pdf-field"><span class="pdf-field-label">年交保费：</span><span
+                            class="pdf-field-value highlight">人民币 2,000.00 元（大写：贰仟元整）</span></div>
+                    <div class="pdf-field"><span class="pdf-field-label">基本保额：</span><span
+                            class="pdf-field-value highlight">人民币 50,000.00 元</span></div>
+
+                    <hr class="pdf-thin-divider">
+                    <div class="pdf-section-title">【保险责任】</div>
+                    <div class="pdf-clause">1. 教育金领取：被保险人年满18、19、20、21周岁时，每年按基本保额的20%给付教育金。</div>
+                    <div class="pdf-clause">2. 创业/婚嫁金：被保险人年满25周岁时，给付基本保额的20%作为创业/婚嫁金，合同终止。</div>
+
+                    <hr class="pdf-thin-divider">
+                    <div class="pdf-special">
+                        <div class="pdf-special-title">★ 【特别约定（豁免条款）】</div>
+                        <div class="pdf-special-text">如投保人在交费期间内因意外或疾病身故，本公司将豁免剩余各期应交保费，本保单继续有效，被保险人仍可按约定领取各项保险金。</div>
+                    </div>
+
+                    <hr class="pdf-thin-divider">
+                    <div class="pdf-section-title">【首期保费支付】</div>
+                    <div class="pdf-field"><span class="pdf-field-label">支付金额：</span><span
+                            class="pdf-field-value">2,000.00 元</span></div>
+                    <div class="pdf-field"><span class="pdf-field-label">支付日期：</span><span
+                            class="pdf-field-value">2008年9月20日</span></div>
+                    <div class="pdf-field"><span class="pdf-field-label">支付状态：</span><span
+                            class="pdf-status-badge">已支付</span></div>
+
+                    <div class="pdf-footer">
+                        <hr class="pdf-divider" style="margin-bottom:12px;">
+                        （盖章：江州安泰人寿保险股份有限公司 业务专用章）
+                        <div class="pdf-stamp">
+                            江州安泰<br>人寿保险<br>业务专用章
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Letter Modal -->
+    <div class="modal-overlay" id="letterModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <div class="modal-title-icon letter">
+                        <svg viewBox="0 0 24 24" fill="#e67e22">
+                            <path
+                                d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z" />
+                        </svg>
+                    </div>
+                    家书 · 2008年9月
+                </div>
+                <button class="modal-close" onclick="closeModal('letterModal')">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
+                    </svg>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="letter-content">
+
+                    <div class="letter-greeting">秀兰（妻子）：<br>见字如面。</div>
+
+                    <div class="letter-body">
+                        <p>我在江州挺好的，活虽然累，但苏总人不错，不拖欠工资，伙食也还行，你不用担心我。</p>
+
+                        <p>昨天发了上个月的工钱，我抽空去市里逛了逛。江州真大啊，高楼大厦看得人眼晕。我在街心公园看到好多城里的小娃娃，穿得漂漂亮亮的，听旁边的人说，城里的父母从小就给娃买什么"教育保险"，等孩子长大了上大学、结婚，都能领一大笔钱。
+                        </p>
+
+                        <p>我当时就想，咱们敏敏虽然生在村里，但也不能比城里的娃差。敏敏现在才一岁多，还不会叫爸爸，但我每次干完活躺在工棚里，脑子里全是她冲我笑的样子。</p>
+
+                        <p>我托同乡打听了一下，给敏敏买了一份那个"教育金保险"。一年交两千块钱，交十年。等敏敏十八岁考上大学了，每年就能领一笔钱，一直领到大学毕业。要是她以后想读研，还能接着领。</p>
+
+                        <p>秀兰，钱的事你别心疼，我在工地省着点花，少抽两包烟就出来了。我这么拼命干活，不就是为了让敏敏以后能走出大山，不用像她爸一样卖苦力吗？</p>
+
+                        <p>保单我夹在信里了，你收好。等年底工地结了账，我就回去看你们。给敏敏多买点好吃的，告诉她，爸爸在江州给她攒了一份大礼物。</p>
+
+                        <p>天冷了，你多穿点。</p>
+                    </div>
+
+                    <div class="letter-closing">
+                        <p>伟江</p>
+                        <p>2008年9月20日 夜</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchView(view) {
+            const grid = document.getElementById('fileGrid');
+            const list = document.getElementById('fileList');
+            const gridBtn = document.getElementById('gridViewBtn');
+            const listBtn = document.getElementById('listViewBtn');
+
+            if (view === 'grid') {
+                grid.classList.add('active');
+                list.classList.remove('active');
+                gridBtn.classList.add('active');
+                listBtn.classList.remove('active');
+            } else {
+                grid.classList.remove('active');
+                list.classList.add('active');
+                gridBtn.classList.remove('active');
+                listBtn.classList.add('active');
+            }
+        }
+
+        function openFile(type) {
+            if (type === 'pdf') {
+                document.getElementById('pdfModal').classList.add('active');
+            } else if (type === 'letter') {
+                document.getElementById('letterModal').classList.add('active');
+            }
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Close modal on overlay click
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function (e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            });
+        });
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay.active').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+                document.body.style.overflow = '';
+            }
+        });
+    </script>
+
+</body>
+
+</html>

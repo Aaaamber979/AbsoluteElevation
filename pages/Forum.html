@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>江城热线论坛 - 江州人的网上家园</title>
+    <link rel="stylesheet" href="../css/Forum.css">
+    <style>
+        /* ================= 主体内容区 ================= */
+        .container {
+            max-width: 980px;
+            margin: 15px auto;
+            display: flex;
+            gap: 10px;
+        }
+
+        .main-content {
+            flex: 1;
+            background: white;
+            border: 1px solid #D0D0D0;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 面包屑导航 */
+        .breadcrumb {
+            padding: 10px 15px;
+            background: #f8f8f8;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .breadcrumb a {
+            color: #1E50A2;
+            text-decoration: none;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb span {
+            margin: 0 5px;
+            color: #999;
+        }
+
+        /* 帖子列表表格 */
+        .forum-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .forum-table thead {
+            background: linear-gradient(to bottom, #f0f4fa, #e0e8f5);
+            border-bottom: 2px solid #1E50A2;
+        }
+
+        .forum-table th {
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: bold;
+            color: #1E50A2;
+            font-size: 13px;
+            border-right: 1px solid #D0D0D0;
+        }
+
+        .forum-table th:last-child {
+            border-right: none;
+        }
+
+        .forum-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e8e8e8;
+            border-right: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+
+        .forum-table td:last-child {
+            border-right: none;
+        }
+
+        .forum-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .icon-col {
+            width: 40px;
+            text-align: center;
+            font-size: 18px;
+        }
+
+        .title-col {
+            min-width: 300px;
+        }
+
+        .post-title {
+            color: #1E50A2;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 13px;
+        }
+
+        .post-title:hover {
+            text-decoration: underline;
+            color: #ff6600;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 1px 5px;
+            font-size: 11px;
+            margin-right: 5px;
+            border-radius: 2px;
+            font-weight: normal;
+        }
+
+        .tag-top {
+            background: #ff4444;
+            color: white;
+        }
+
+        .tag-hot {
+            background: #ff9500;
+            color: white;
+        }
+
+        .tag-new {
+            background: #28c840;
+            color: white;
+        }
+
+        .author-col {
+            width: 100px;
+            color: #666;
+        }
+
+        .stats-col {
+            width: 100px;
+            text-align: center;
+            color: #666;
+        }
+
+        .time-col {
+            width: 150px;
+            color: #999;
+            font-size: 11px;
+        }
+
+        /* ================= 右侧边栏 ================= */
+        .sidebar {
+            width: 220px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-box {
+            background: white;
+            border: 1px solid #D0D0D0;
+            margin-bottom: 10px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+        }
+
+        .sidebar-title {
+            background: linear-gradient(to bottom, #4A86E8, #1E50A2);
+            color: white;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: bold;
+            border-bottom: 1px solid #1a3d7a;
+        }
+
+        .sidebar-content {
+            padding: 10px;
+        }
+
+        .stat-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px dotted #e0e0e0;
+            font-size: 12px;
+        }
+
+        .stat-item:last-child {
+            border-bottom: none;
+        }
+
+        .hot-topic {
+            padding: 6px 0;
+            border-bottom: 1px dotted #e8e8e8;
+        }
+
+        .hot-topic:last-child {
+            border-bottom: none;
+        }
+
+        .hot-topic a {
+            color: #cc0000;
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .hot-topic a:hover {
+            text-decoration: underline;
+        }
+
+        .ad-box {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: center;
+            background: #fafafa;
+        }
+
+        .ad-text {
+            font-size: 11px;
+            color: #999;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- 顶部导航区 -->
+    <div class="header">
+        <div class="header-top">
+            <div class="logo-area">
+                <div class="logo">🌊 江城热线</div>
+                <div class="slogan">江州人的网上家园</div>
+            </div>
+            <div class="user-status">
+                <!-- 搜索框 -->
+                <div class="search-box">
+                    <input type="text" class="search-input" placeholder="搜索帖子...">
+                    <button class="search-btn">搜索</button>
+                </div>
+
+                <!-- 用户状态 -->
+                <div id="userStatusArea">
+                    <div>欢迎您，游客 [<a href="#" onclick="showLoginModal(); return false;">登录</a>] [<a href="#">注册</a>]
+                    </div>
+                    <div class="user-links">
+                        <a href="#">帮助</a> |
+                        <a href="#">设为首页</a> |
+                        <a href="#">加入收藏</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="nav-menu">
+            <div class="nav-menu-inner">
+                <a href="#">首页</a>
+                <a href="#">论坛</a>
+                <a href="#">交友</a>
+                <a href="#">网络</a>
+                <a href="#">游戏</a>
+                <a href="#">商城</a>
+                <a href="#">空间</a>
+                <a href="#">群组</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主体内容区 -->
+    <div class="container">
+        <!-- 左侧主内容 -->
+        <div class="main-content">
+            <!-- 面包屑导航 -->
+            <div class="breadcrumb">
+                <a href="#">论坛首页</a> <span>&gt;</span>
+                <a href="#">本地生活</a> <span>&gt;</span>
+                <strong>江州都市话题</strong>
+            </div>
+
+            <!-- 帖子列表 -->
+            <table class="forum-table">
+                <thead>
+                    <tr>
+                        <th class="title-col">主题</th>
+                        <th class="author-col">作者</th>
+                        <th class="stats-col">回复/查看</th>
+                        <th class="time-col">最后回复</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="title-col">
+                            <span class="tag tag-top">置顶</span>
+                            <a href="#" class="post-title">【版规】江州都市话题发帖须知（必读）</a>
+                        </td>
+                        <td class="author-col">管理员</td>
+                        <td class="stats-col">128 / 5623</td>
+                        <td class="time-col">2008-9-15 14:30</td>
+                    </tr>
+                    <tr>
+                        <td class="title-col">
+                            <span class="tag tag-hot">精华</span>
+                            <a href="#" class="post-title">【活动】618狂欢，江城购物街优惠券狂送！</a>
+                        </td>
+                        <td class="author-col">江州通</td>
+                        <td class="stats-col">342 / 12580</td>
+                        <td class="time-col">2030-6-11 09:15</td>
+                    </tr>
+                    <tr>
+                        <td class="title-col">
+                            <a href="ForumPost.html?detail=aboutprivatemailnew"
+                                class="post-title">无语！之前在privatemail注册邮箱没想到这么容易被盗号！</a>
+                        </td>
+                        <td class="author-col">毫无隐私小鸟</td>
+                        <td class="stats-col">23 / 456</td>
+                        <td class="time-col">2030-7-11 08:42</td>
+                    </tr>
+                    <tr>
+                        <td class="title-col">
+                            <span class="tag tag-new">新</span>
+                            <a href="#" class="post-title">有没有人知道誉鼎集团最近的项目？</a>
+                        </td>
+                        <td class="author-col">好奇宝宝</td>
+                        <td class="stats-col">5 / 89</td>
+                        <td class="time-col">2030-7-11 07:20</td>
+                    </tr>
+                    <tr>
+                        <td class="title-col">
+                            <span class="tag tag-new">新</span>
+                            <a href="ForumPost.html?detail=abouthai_gu5" class="post-title">听说海伯利安大厦正在准备定向爆破？</a>
+                        </td>
+                        <td class="author-col">小顾报道</td>
+                        <td class="stats-col">67 / 1234</td>
+                        <td class="time-col">2030-7-10 22:15</td>
+                    </tr>
+                    <tr>
+                        <td class="title-col">
+                            <a href="#" class="post-title">求助：如何考取结构工程师证书？</a>
+                        </td>
+                        <td class="author-col">追梦青年</td>
+                        <td class="stats-col">18 / 345</td>
+                        <td class="time-col">2030-7-10 19:30</td>
+                    </tr>
+                    <tr>
+                        <td class="title-col">
+                            <a href="#" class="post-title">周末去爬山，有人一起吗？</a>
+                        </td>
+                        <td class="author-col">户外爱好者</td>
+                        <td class="stats-col">34 / 567</td>
+                        <td class="time-col">2030-7-10 16:45</td>
+                    </tr>
+                    <tr>
+                        <td class="title-col">
+                            <a href="#" class="post-title">台风对江城影响大吗，真的要屯物资吗？</a>
+                        </td>
+                        <td class="author-col">并非囤囤鼠</td>
+                        <td class="stats-col">14 / 217</td>
+                        <td class="time-col">2030-7-11 16:45</td>
+                    </tr>
+                    <tr>
+                        <td class="title-col">
+                            <a href="#" class="post-title">油价怎么又涨了？</a>
+                        </td>
+                        <td class="author-col">世界波</td>
+                        <td class="stats-col">124 / 217</td>
+                        <td class="time-col">2030-7-12 11:45</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- 分页 -->
+            <div class="pagination">
+                <span class="current">1</span>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <a href="#">4</a>
+                <a href="#">5</a>
+                <span>...</span>
+                <a href="#">下一页</a>
+            </div>
+        </div>
+
+        <!-- 右侧边栏 -->
+        <div class="sidebar">
+            <!-- 论坛统计 -->
+            <div class="sidebar-box">
+                <div class="sidebar-title">📊 论坛统计</div>
+                <div class="sidebar-content">
+                    <div class="stat-item">
+                        <span>今日发帖:</span>
+                        <strong style="color: #ff6600;">156</strong>
+                    </div>
+                    <div class="stat-item">
+                        <span>昨日发帖:</span>
+                        <strong>234</strong>
+                    </div>
+                    <div class="stat-item">
+                        <span>总帖数:</span>
+                        <strong>45,678</strong>
+                    </div>
+                    <div class="stat-item">
+                        <span>在线人数:</span>
+                        <strong style="color: #28c840;">1,234</strong>
+                    </div>
+                    <div class="stat-item">
+                        <span>最高在线:</span>
+                        <strong>3,456</strong>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 热门话题 -->
+            <div class="sidebar-box">
+                <div class="sidebar-title">🔥 热门话题</div>
+                <div class="sidebar-content">
+                    <div class="hot-topic">
+                        <a href="#">寻找喜欢无限流小说的同好</a>
+                    </div>
+                    <div class="hot-topic">
+                        <a href="#">最新研判!台风登陆时间最新出炉！</a>
+                    </div>
+                    <div class="hot-topic">
+                        <a href="#">江州房价走势分析</a>
+                    </div>
+                    <div class="hot-topic">
+                        <a href="#">2030年最期待的十件事</a>
+                    </div>
+                    <div class="hot-topic">
+                        <a href="#">寻找老同学聚会</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 广告位 -->
+            <div class="sidebar-box">
+                <div class="sidebar-title">💼 赞助商链接</div>
+                <div class="sidebar-content">
+                    <div class="ad-box">
+                        <div style="font-size: 14px; color: #1E50A2; font-weight: bold;">
+                            🏢 誉鼎城市发展控股
+                        </div>
+                        <div class="ad-text">城市梦想，由此启航</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 底部版权区 -->
+    <div class="footer">
+        <div class="footer-info">
+            <div>
+                <a href="#">联系我们</a> |
+                <a href="#">免责声明</a> |
+                <a href="#">隐私政策</a> |
+                <a href="#">广告服务</a>
+            </div>
+            <div style="margin-top: 10px;">
+                © 2008-2030 江城热线论坛 All Rights Reserved.
+            </div>
+            <div class="server-status">
+                Powered by Discuz! 7.2 | Processed in 0.035s, 2 queries, Gzip enabled
+            </div>
+        </div>
+    </div>
+
+    <!-- 登录弹窗 -->
+    <div id="loginModal" class="login-modal">
+        <div class="login-box">
+            <div class="login-title">论坛登录</div>
+            <button class="wechat-login-btn" onclick="wechatLogin()">
+                <svg class="wechat-icon" viewBox="0 0 24 24" fill="white">
+                    <path
+                        d="M8.5,13.5A1.5,1.5 0 1,1 10,15A1.5,1.5 0 0,1 8.5,13.5M14.5,13.5A1.5,1.5 0 1,1 16,15A1.5,1.5 0 0,1 14.5,13.5M12,2C6.5,2 2,6 2,10.5C2,12.5 3,14.5 4.5,16L3.5,19L7,17.5C8.5,18 10,18.5 12,18.5C17.5,18.5 22,14.5 22,10C22,5.5 17.5,2 12,2M12,4C16.5,4 20,7 20,10C20,13 16.5,16 12,16C10.5,16 9,15.5 7.5,15L6,15.5L6.5,14C5.5,13 5,11.5 5,10.5C5,7 8.5,4 12,4Z" />
+                </svg>
+                <span id="loginBtnText">微信登录</span>
+                <div class="loading-spinner" id="loginSpinner"></div>
+            </button>
+            <div class="login-success" id="loginSuccess">✓ 登录成功！</div>
+        </div>
+    </div>
+    <script src="../js/util.js"></script>
+    <script src="../js/Forum.js"></script>
+    <script src="../data/ForumData.js"></script>
+    <script>
+        // 页面加载时初始化公共功能
+        initForumCommon();
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,2704 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>誉鼎 - OA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@5.0.18/index.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+            background: #F5F5F5;
+            color: #333;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* ========== 顶部菜单栏 ========== */
+        .header {
+            height: 60px;
+            background: #fff;
+            border-bottom: 1px solid #e8e8e8;
+            display: flex;
+            align-items: center;
+            padding: 0 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            width: 220px;
+        }
+
+        .logo {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #1890ff, #096dd9);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        .sys-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #222;
+        }
+
+        .header-center {
+            flex: 1;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .header-center .sep {
+            margin: 0 6px;
+            color: #bbb;
+        }
+
+        .header-center .current {
+            color: #1890ff;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: #e6f7ff;
+            color: #1890ff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .user-dept {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .logout-btn {
+            padding: 4px 12px;
+            border: 1px solid #d9d9d9;
+            background: #fff;
+            border-radius: 3px;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            color: #f5222d;
+            border-color: #f5222d;
+        }
+
+        /* ========== 主体布局 ========== */
+        .main {
+            display: flex;
+            min-height: calc(100vh - 60px);
+        }
+
+        /* ========== 左侧导航 ========== */
+        .sidebar {
+            width: 220px;
+            background: #fff;
+            border-right: 1px solid #e8e8e8;
+            padding: 16px 0;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .search-box {
+            margin: 0 16px 12px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            height: 32px;
+            padding: 0 10px 0 30px;
+            border: 1px solid #d9d9d9;
+            border-radius: 3px;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: #1890ff;
+        }
+
+        .search-box::before {
+            content: "🔍";
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            opacity: 0.5;
+        }
+
+        .menu {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .menu-group-title {
+            padding: 14px 16px 6px;
+            font-size: 12px;
+            color: #aaa;
+            letter-spacing: 1px;
+        }
+
+        .menu-item {
+            padding: 10px 16px;
+            font-size: 14px;
+            color: #555;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            border-left: 3px solid transparent;
+            transition: all 0.15s;
+            user-select: none;
+        }
+
+        .menu-item .icon {
+            margin-right: 10px;
+            width: 18px;
+            display: inline-block;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .menu-item .arrow {
+            margin-left: auto;
+            font-size: 10px;
+            color: #bbb;
+            transition: transform 0.2s;
+        }
+
+        .menu-item:hover {
+            background: #fafafa;
+            color: #1890ff;
+        }
+
+        .menu-item.active {
+            background: #e6f7ff;
+            color: #1890ff;
+            border-left-color: #1890ff;
+            font-weight: 500;
+        }
+
+        .menu-item.expanded .arrow {
+            transform: rotate(90deg);
+        }
+
+        .sub-menu-wrap {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.25s ease;
+        }
+
+        .sub-menu-wrap.open {
+            max-height: 200px;
+        }
+
+        .sub-menu {
+            padding: 8px 16px 8px 48px;
+            font-size: 13px;
+            color: #888;
+            cursor: pointer;
+            border-left: 3px solid transparent;
+            transition: all 0.15s;
+            user-select: none;
+        }
+
+        .sub-menu:hover {
+            color: #1890ff;
+            background: #fafafa;
+        }
+
+        .sub-menu.active {
+            background: #e6f7ff;
+            color: #1890ff;
+            border-left-color: #1890ff;
+        }
+
+        .version {
+            padding: 10px 16px;
+            font-size: 11px;
+            color: #bbb;
+            border-top: 1px solid #f0f0f0;
+            margin-top: auto;
+        }
+
+        /* ========== 内容区 ========== */
+        .content {
+            flex: 1;
+            padding: 16px;
+            min-width: 0;
+            overflow-y: auto;
+        }
+
+        /* 统计卡片 */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .stat-card {
+            background: #fff;
+            border-radius: 4px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            cursor: default;
+            transition: box-shadow 0.15s;
+        }
+
+        .stat-card:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: #fff;
+            flex-shrink: 0;
+        }
+
+        .stat-icon.c1 {
+            background: #1890ff;
+        }
+
+        .stat-icon.c2 {
+            background: #faad14;
+        }
+
+        .stat-icon.c3 {
+            background: #52c41a;
+        }
+
+        .stat-icon.c4 {
+            background: #f5222d;
+        }
+
+        .stat-icon.c5 {
+            background: #722ed1;
+        }
+
+        .stat-icon.c6 {
+            background: #13c2c2;
+        }
+
+        .stat-icon.c7 {
+            background: #eb2f96;
+        }
+
+        .stat-icon.c8 {
+            background: #fa541c;
+        }
+
+        .stat-num {
+            font-size: 22px;
+            font-weight: 600;
+            color: #222;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #888;
+            margin-top: 2px;
+        }
+
+        .stat-sub {
+            font-size: 11px;
+            color: #bbb;
+        }
+
+        /* 主体卡片 */
+        .card {
+            background: #fff;
+            border-radius: 4px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            margin-bottom: 16px;
+        }
+
+        .card-title {
+            padding: 14px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #222;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title .extra {
+            font-size: 12px;
+            color: #1890ff;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .card-title .extra:hover {
+            text-decoration: underline;
+        }
+
+        .card-body {
+            padding: 16px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 1px solid #e8e8e8;
+            padding: 0 16px;
+        }
+
+        .tab {
+            padding: 12px 20px;
+            font-size: 14px;
+            color: #666;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -1px;
+            user-select: none;
+            transition: color 0.15s;
+        }
+
+        .tab:hover {
+            color: #1890ff;
+        }
+
+        .tab.active {
+            color: #1890ff;
+            border-bottom-color: #1890ff;
+            font-weight: 500;
+        }
+
+        /* 表格 */
+        .table-wrap {
+            padding: 0;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        thead {
+            background: #fafafa;
+        }
+
+        th {
+            padding: 10px 16px;
+            text-align: left;
+            font-weight: 500;
+            color: #555;
+            border-bottom: 1px solid #e8e8e8;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 12px 16px;
+            border-bottom: 1px dashed #eee;
+            color: #444;
+        }
+
+        tbody tr {
+            transition: background 0.1s;
+        }
+
+        tbody tr:hover td {
+            background: #f0f7ff;
+        }
+
+        .title-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .unread-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #1890ff;
+            flex-shrink: 0;
+        }
+
+        .title-unread {
+            font-weight: 600;
+            color: #222;
+        }
+
+        .title-link {
+            color: #1890ff;
+            cursor: pointer;
+        }
+
+        .title-link:hover {
+            text-decoration: underline;
+        }
+
+        /* 状态标签 */
+        .tag {
+            display: inline-block;
+            padding: 1px 8px;
+            border-radius: 2px;
+            font-size: 12px;
+        }
+
+        .tag-blue {
+            color: #1890ff;
+            background: #e6f7ff;
+            border: 1px solid #91d5ff;
+        }
+
+        .tag-green {
+            color: #52c41a;
+            background: #f6ffed;
+            border: 1px solid #b7eb8f;
+        }
+
+        .tag-yellow {
+            color: #faad14;
+            background: #fffbe6;
+            border: 1px solid #ffe58f;
+        }
+
+        .tag-red {
+            color: #f5222d;
+            background: #fff1f0;
+            border: 1px solid #ffa39e;
+        }
+
+        .tag-gray {
+            color: #999;
+            background: #fafafa;
+            border: 1px solid #d9d9d9;
+        }
+
+        .tag-purple {
+            color: #722ed1;
+            background: #f9f0ff;
+            border: 1px solid #d3adf7;
+        }
+
+        .op-link {
+            color: #1890ff;
+            cursor: pointer;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+
+        .op-link:hover {
+            text-decoration: underline;
+        }
+
+        .op-link.danger {
+            color: #f5222d;
+        }
+
+        /* Tab 内容面板 */
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* 页面面板 */
+        .page-panel {
+            display: none;
+        }
+
+        .page-panel.active {
+            display: block;
+        }
+
+        /* 分页 */
+        .pagination {
+            padding: 14px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .page-btn {
+            min-width: 28px;
+            height: 28px;
+            padding: 0 8px;
+            border: 1px solid #d9d9d9;
+            background: #fff;
+            color: #1890ff;
+            font-size: 12px;
+            border-radius: 3px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page-btn:hover {
+            border-color: #1890ff;
+        }
+
+        .page-btn.active {
+            background: #1890ff;
+            color: #fff;
+            border-color: #1890ff;
+        }
+
+        .page-btn.disabled {
+            color: #d9d9d9;
+            cursor: not-allowed;
+        }
+
+        .page-info {
+            font-size: 12px;
+            color: #999;
+            margin: 0 8px;
+        }
+
+        /* ========== 右侧快捷面板 ========== */
+        .quick-panel {
+            width: 280px;
+            border-left: 1px dashed #d9d9d9;
+            background: #fff;
+            padding: 16px;
+            flex-shrink: 0;
+            overflow-y: auto;
+        }
+
+        .panel-module {
+            margin-bottom: 20px;
+        }
+
+        .panel-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #222;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .panel-title .more {
+            font-size: 12px;
+            color: #999;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        .panel-title .more:hover {
+            color: #1890ff;
+        }
+
+        /* 日历 */
+        .calendar {
+            font-size: 12px;
+        }
+
+        .cal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .cal-header .nav {
+            cursor: pointer;
+            color: #999;
+            padding: 2px 6px;
+        }
+
+        .cal-header .nav:hover {
+            color: #1890ff;
+        }
+
+        .cal-weekdays {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            text-align: center;
+            color: #999;
+            margin-bottom: 4px;
+            font-size: 11px;
+        }
+
+        .cal-days {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 2px;
+        }
+
+        .cal-day {
+            text-align: center;
+            padding: 5px 0;
+            border-radius: 3px;
+            cursor: pointer;
+            color: #555;
+        }
+
+        .cal-day:hover {
+            background: #f0f7ff;
+        }
+
+        .cal-day.other {
+            color: #ccc;
+        }
+
+        .cal-day.today {
+            background: #1890ff;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .cal-day.has-event {
+            position: relative;
+        }
+
+        .cal-day.has-event::after {
+            content: "";
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: #fa541c;
+        }
+
+        .cal-day.today.has-event::after {
+            background: #fff;
+        }
+
+        /* 9宫格 */
+        .app-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .app-item {
+            text-align: center;
+            padding: 10px 4px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+
+        .app-item:hover {
+            background: #f0f7ff;
+        }
+
+        .app-icon {
+            width: 36px;
+            height: 36px;
+            margin: 0 auto 4px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            color: #fff;
+        }
+
+        .app-name {
+            font-size: 12px;
+            color: #555;
+        }
+
+        /* 通知列表 */
+        .notify-list {
+            max-height: 420px;
+            overflow-y: auto;
+        }
+
+        .notify-item {
+            padding: 8px 0;
+            border-bottom: 1px dashed #f0f0f0;
+            font-size: 12px;
+        }
+
+        .notify-item:last-child {
+            border-bottom: none;
+        }
+
+        .notify-title {
+            color: #333;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 3px;
+        }
+
+        .notify-dot {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: #f5222d;
+        }
+
+        .notify-time {
+            color: #bbb;
+            font-size: 11px;
+            padding-left: 11px;
+        }
+
+        /* ========== 特殊组件 ========== */
+        /* 工作台 快捷入口 */
+        .quick-entry {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .entry-card {
+            background: #fff;
+            border-radius: 4px;
+            padding: 20px 16px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .entry-card:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .entry-icon {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .entry-name {
+            font-size: 13px;
+            color: #444;
+        }
+
+        /* 双栏布局 */
+        .row-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        /* 信息表单 */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0;
+        }
+
+        .info-item {
+            padding: 12px 16px;
+            border-bottom: 1px dashed #f0f0f0;
+            display: flex;
+            align-items: center;
+        }
+
+        .info-label {
+            width: 100px;
+            color: #888;
+            font-size: 13px;
+            flex-shrink: 0;
+        }
+
+        .info-value {
+            color: #333;
+            font-size: 13px;
+        }
+
+        /* 打卡大按钮 */
+        .clock-in-area {
+            text-align: center;
+            padding: 30px 16px;
+        }
+
+        .clock-btn {
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #1890ff, #096dd9);
+            color: #fff;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            font-weight: 600;
+            box-shadow: 0 4px 16px rgba(24, 144, 255, 0.3);
+            transition: all 0.2s;
+            margin-bottom: 12px;
+        }
+
+        .clock-btn:hover {
+            transform: scale(1.04);
+            box-shadow: 0 6px 24px rgba(24, 144, 255, 0.4);
+        }
+
+        .clock-btn:active {
+            transform: scale(0.97);
+        }
+
+        .clock-time {
+            font-size: 24px;
+            font-weight: 600;
+            color: #222;
+        }
+
+        .clock-date {
+            font-size: 13px;
+            color: #888;
+            margin-top: 4px;
+        }
+
+        /* 设置表单 */
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+        }
+
+        .form-label {
+            width: 100px;
+            font-size: 13px;
+            color: #555;
+            text-align: right;
+            padding-right: 12px;
+            flex-shrink: 0;
+        }
+
+        .form-input {
+            height: 32px;
+            padding: 0 10px;
+            border: 1px solid #d9d9d9;
+            border-radius: 3px;
+            font-size: 13px;
+            outline: none;
+            width: 280px;
+        }
+
+        .form-input:focus {
+            border-color: #1890ff;
+        }
+
+        .form-btn {
+            padding: 6px 20px;
+            background: #1890ff;
+            color: #fff;
+            border: none;
+            border-radius: 3px;
+            font-size: 13px;
+            cursor: pointer;
+            margin-left: 112px;
+        }
+
+        .form-btn:hover {
+            background: #40a9ff;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #bbb;
+        }
+
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .empty-state .text {
+            font-size: 14px;
+        }
+
+        /* 进度条 */
+        .progress-bar {
+            height: 6px;
+            background: #f0f0f0;
+            border-radius: 3px;
+            overflow: hidden;
+            width: 120px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .progress-fill.green {
+            background: #52c41a;
+        }
+
+        .progress-fill.blue {
+            background: #1890ff;
+        }
+
+        .progress-fill.yellow {
+            background: #faad14;
+        }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #d9d9d9;
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        /* ========== BBS 讨论区专用样式 ========== */
+        .bbs-flag {
+            display: inline-block;
+            padding: 1px 6px;
+            border-radius: 2px;
+            font-size: 11px;
+            color: #fff;
+            font-weight: 500;
+            flex-shrink: 0;
+            line-height: 1.4;
+        }
+
+        .bbs-reward {
+            display: inline-block;
+            padding: 2px 8px;
+            background: #fffbe6;
+            border: 1px solid #ffe58f;
+            color: #d48806;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* 编辑弹窗样式 */
+        .edit-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .edit-modal.show {
+            display: flex;
+        }
+
+        .edit-modal-content {
+            background: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .edit-modal-header {
+            background: linear-gradient(to right, #0a3d62, #1e5a8a);
+            color: white;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .edit-modal-title {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .edit-modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+        }
+
+        .edit-modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+
+        .edit-modal-body {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: calc(90vh - 140px);
+        }
+
+        .edit-form-group {
+            margin-bottom: 16px;
+        }
+
+        .edit-form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+        }
+
+        .edit-form-input,
+        .edit-form-textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .edit-form-input:focus,
+        .edit-form-textarea:focus {
+            outline: none;
+            border-color: #0a3d62;
+            box-shadow: 0 0 0 2px rgba(10, 61, 98, 0.1);
+        }
+
+        .edit-form-textarea {
+            min-height: 200px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+
+        .edit-modal-footer {
+            padding: 16px 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .edit-btn {
+            padding: 8px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .edit-btn-cancel {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .edit-btn-cancel:hover {
+            background: #e0e0e0;
+        }
+
+        .edit-btn-save {
+            background: #0a3d62;
+            color: white;
+        }
+
+        .edit-btn-save:hover {
+            background: #1e5a8a;
+        }
+
+        /* ========== 日程模块 ========== */
+        .schedule-module {
+            display: flex;
+            background: #ffffff;
+            border-radius: 12px;
+            border: 1px solid #e8e8e8;
+            overflow: hidden;
+            min-height: 600px;
+        }
+
+        /* 日程左侧导航 */
+        .schedule-nav {
+            width: 220px;
+            padding: 28px 24px;
+            border-right: 1px solid #f1f5f9;
+            flex-shrink: 0;
+            background: #fafbfc;
+        }
+
+        .schedule-nav-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 20px;
+            letter-spacing: 1px;
+        }
+
+        .schedule-nav-list {
+            list-style: none;
+            margin-bottom: 28px;
+        }
+
+        .schedule-nav-list li {
+            padding: 10px 14px;
+            margin-bottom: 2px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #475569;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .schedule-nav-list li:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .schedule-nav-list li.schedule-nav-active {
+            background: #0f172a;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        .schedule-year-label {
+            font-size: 16px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 12px;
+        }
+
+        .schedule-month-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
+        }
+
+        .schedule-month-item {
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #64748b;
+            transition: all 0.2s;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .schedule-month-item:hover {
+            background: #f1f5f9;
+            color: #0f172a;
+        }
+
+        .schedule-month-item.schedule-month-active {
+            background: #0f172a;
+            color: #ffffff;
+            font-weight: 600;
+        }
+
+        /* 日程右侧内容 */
+        .schedule-main {
+            flex: 1;
+            min-width: 0;
+            padding: 28px 32px;
+            overflow-y: auto;
+        }
+
+        .schedule-main-header {
+            margin-bottom: 24px;
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .schedule-main-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #0f172a;
+            letter-spacing: 0.5px;
+        }
+
+        .schedule-main-subtitle {
+            font-size: 13px;
+            color: #94a3b8;
+            margin-top: 6px;
+            font-weight: 400;
+        }
+
+        .schedule-stats {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .schedule-stat-item {
+            text-align: right;
+        }
+
+        .schedule-stat-num {
+            font-size: 20px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .schedule-stat-label {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+
+        .schedule-cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .schedule-card {
+            background: #ffffff;
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 2px 12px rgba(15, 23, 42, 0.05);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid #f1f5f9;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            animation: scheduleFadeIn 0.35s ease both;
+        }
+
+        .schedule-card:nth-child(1) {
+            animation-delay: 0.03s;
+        }
+
+        .schedule-card:nth-child(2) {
+            animation-delay: 0.08s;
+        }
+
+        .schedule-card:nth-child(3) {
+            animation-delay: 0.13s;
+        }
+
+        .schedule-card:nth-child(4) {
+            animation-delay: 0.18s;
+        }
+
+        .schedule-card:nth-child(5) {
+            animation-delay: 0.23s;
+        }
+
+        @keyframes scheduleFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .schedule-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: linear-gradient(180deg, #3b82f6, #6366f1);
+            border-radius: 3px 0 0 3px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .schedule-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(15, 23, 42, 0.1);
+            border-color: #e2e8f0;
+        }
+
+        .schedule-card:hover::before {
+            opacity: 1;
+        }
+
+        .schedule-card-date {
+            font-size: 36px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 2px;
+            line-height: 1;
+        }
+
+        .schedule-card-date-label {
+            font-size: 12px;
+            color: #94a3b8;
+            margin-bottom: 18px;
+            font-weight: 500;
+        }
+
+        .schedule-card-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .schedule-card-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            background: #f8fafc;
+            border-radius: 10px;
+            transition: background 0.2s ease;
+        }
+
+        .schedule-card-item:hover {
+            background: #f1f5f9;
+        }
+
+        .schedule-item-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .schedule-icon-flight {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .schedule-icon-hotel {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .schedule-icon-meeting {
+            background: #ede9fe;
+            color: #7c3aed;
+        }
+
+        .schedule-icon-office {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .schedule-icon-sign {
+            background: #fce7f3;
+            color: #db2777;
+        }
+
+        .schedule-icon-visit {
+            background: #ffedd5;
+            color: #ea580c;
+        }
+
+        .schedule-icon-review {
+            background: #e0e7ff;
+            color: #4338ca;
+        }
+
+        .schedule-icon-award {
+            background: #fef9c3;
+            color: #a16207;
+        }
+
+        .schedule-item-icon svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .schedule-item-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .schedule-item-sub {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 2px;
+            font-weight: 400;
+        }
+
+        .schedule-empty {
+            text-align: center;
+            padding: 60px 20px;
+            color: #94a3b8;
+            grid-column: 1 / -1;
+        }
+
+        .schedule-empty svg {
+            width: 56px;
+            height: 56px;
+            margin-bottom: 12px;
+            opacity: 0.4;
+        }
+
+        /* ========== 右侧通知栏 ========== */
+        .schedule-aside {
+            width: 280px;
+            background: #ffffff;
+            border-left: 1px solid #e8e8e8;
+            padding: 20px;
+            flex-shrink: 0;
+            overflow-y: auto;
+        }
+
+        .schedule-aside-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .schedule-aside-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .schedule-aside-link {
+            font-size: 12px;
+            color: #94a3b8;
+            cursor: pointer;
+        }
+
+        .schedule-aside-link:hover {
+            color: #2563eb;
+        }
+
+        .schedule-apps-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .schedule-app-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            padding: 8px 4px;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .schedule-app-item:hover {
+            background: #f1f5f9;
+        }
+
+        .schedule-app-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: #fbbf24;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 18px;
+        }
+
+        .schedule-app-name {
+            font-size: 12px;
+            color: #475569;
+        }
+
+        .schedule-notice-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        .schedule-notice-item {
+            padding: 12px 0;
+            border-bottom: 1px dashed #f1f5f9;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .schedule-notice-item:hover {
+            opacity: 0.7;
+        }
+
+        .schedule-notice-item:last-child {
+            border-bottom: none;
+        }
+
+        .schedule-notice-title {
+            font-size: 13px;
+            color: #1e293b;
+            line-height: 1.5;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: flex-start;
+            gap: 6px;
+        }
+
+        .schedule-notice-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #ef4444;
+            flex-shrink: 0;
+            margin-top: 6px;
+        }
+
+        .schedule-notice-time {
+            font-size: 11px;
+            color: #94a3b8;
+            padding-left: 12px;
+        }
+
+        /* ========== 响应式 ========== */
+        @media (max-width: 1200px) {
+            .schedule-aside {
+                width: 240px;
+            }
+
+            .schedule-sidebar-oa {
+                width: 180px;
+            }
+        }
+
+        @media (max-width: 960px) {
+            .schedule-aside {
+                display: none;
+            }
+
+            .schedule-sidebar-oa {
+                width: 60px;
+            }
+
+            .schedule-menu-group-title,
+            .schedule-menu-item span {
+                display: none;
+            }
+
+            .schedule-menu-item {
+                justify-content: center;
+                padding: 12px 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ==================== 顶部菜单栏 ==================== -->
+    <div class="header">
+        <div class="header-left">
+            <div class="logo">OA</div>
+            <div class="sys-title">誉鼎</div>
+        </div>
+        <div class="header-center" id="breadcrumb">
+            <span>首页</span>
+            <span class="sep">&gt;</span>
+            <span class="current">工作台</span>
+        </div>
+        <div class="header-right">
+            <div class="user-info">
+                <div class="avatar">李</div>
+                <div>
+                    <div>婷</div>
+                    <div class="user-dept">总裁办秘书</div>
+                </div>
+            </div>
+            <button class="logout-btn">退出</button>
+        </div>
+    </div>
+
+    <div class="main">
+        <!-- ==================== 左侧导航 ==================== -->
+        <div class="sidebar">
+            <div class="menu" id="menuContainer">
+                <div class="menu-group-title">新 - 快速功能</div>
+                <div class="menu-item" data-page="bbs">
+                    <span class="icon">💬</span>誉鼎之家 - 讨论板
+                </div>
+                <div class="menu-group-title">常用功能</div>
+                <div class="menu-item active" data-page="workbench">
+                    <span class="icon">🏠</span>工作台
+                </div>
+                <div class="menu-item" data-page="schedule">
+                    <span class="icon">📅</span>出行安排
+                </div>
+                <div class="menu-item" data-page="mail">
+                    <span class="icon">📧</span>邮件
+                </div>
+
+                <div class="menu-group-title">人事管理</div>
+                <div class="menu-item" data-page="employee">
+                    <span class="icon">👥</span>员工信息
+                </div>
+            </div>
+            <div class="version">v3.2.1 © 2030</div>
+        </div>
+
+        <!-- ==================== 内容区 ==================== -->
+        <div class="content" id="contentArea">
+
+            <!-- ===== 工作台 ===== -->
+            <div class="page-panel active" data-page="workbench">
+                <div class="stats">
+                    <div class="stat-card">
+                        <div class="stat-icon c1">📋</div>
+                        <div>
+                            <div class="stat-num">8</div>
+                            <div class="stat-label">待办事项</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon c2">📨</div>
+                        <div>
+                            <div class="stat-num">4</div>
+                            <div class="stat-label">未读消息</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon c3">✅</div>
+                        <div>
+                            <div class="stat-num">31</div>
+                            <div class="stat-label">本月已完成</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon c4">⏰</div>
+                        <div>
+                            <div class="stat-num">3</div>
+                            <div class="stat-label">今日日程</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="quick-entry">
+                    <div class="entry-card" data-page="meeting">
+                        <div class="entry-icon">🏢</div>
+                        <div class="entry-name">预约会议</div>
+                    </div>
+                    <div class="entry-card" data-page="mail">
+                        <div class="entry-icon">📧</div>
+                        <div class="entry-name">写邮件</div>
+                    </div>
+                </div>
+                <div class="row-2">
+                    <div class="card">
+                        <div class="card-title">待办提醒<span class="extra" data-page="notice" data-subtab="todo">查看全部
+                                ›</span></div>
+                        <div class="card-body" style="padding:0;">
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell"><span class="unread-dot"></span><span
+                                                    class="title-unread">董事长行程通知</span></div>
+                                        </td>
+                                        <td><span class="tag tag-yellow">待处理</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell"><span class="unread-dot"></span><span
+                                                    class="title-unread">董事长出差流程</span></div>
+                                        </td>
+                                        <td><span class="tag tag-yellow">待处理</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell"><span class="title-text">江城传媒采访进度</span></div>
+                                        </td>
+                                        <td><span class="tag tag-blue">进行中</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">最近公告<span class="extra" data-page="notice">查看全部 ›</span></div>
+                        <div class="card-body" style="padding:0;">
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell"><span class="unread-dot"></span><span
+                                                    class="title-unread">董事长的出差资料</span></div>
+                                        </td>
+                                        <td style="color:#999;font-size:12px;">07-14</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell"><span class="unread-dot"></span><span
+                                                    class="title-unread">2030-07-14会议纪要</span></div>
+                                        </td>
+                                        <td style="color:#999;font-size:12px;">07-14</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell"><span class="title-text">福利补贴标准调整通知</span></div>
+                                        </td>
+                                        <td style="color:#999;font-size:12px;">07-10</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell"><span class="title-text">系统升级维护公告</span></div>
+                                        </td>
+                                        <td style="color:#999;font-size:12px;">07-13</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 内部邮件 ===== -->
+            <div class="page-panel" data-page="mail">
+                <div class="stats">
+                    <div class="stat-card" data-page="mail" data-subtab="inbox" style="cursor:pointer;">
+                        <div class="stat-icon c1">📥</div>
+                        <div>
+                            <div class="stat-num">14</div>
+                            <div class="stat-label">收件箱</div>
+                        </div>
+                    </div>
+                    <div class="stat-card" data-page="mail" data-subtab="draft" style="cursor:pointer;">
+                        <div class="stat-icon c5">📃</div>
+                        <div>
+                            <div class="stat-num">3</div>
+                            <div class="stat-label">已发送</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="tabs" id="mailTabs">
+                    </div>
+
+                    <!-- 收件箱 -->
+                    <div class="tab-panel active" data-panel="inbox">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>发件人</th>
+                                        <th style="width:40%">主题</th>
+                                        <th>时间</th>
+                                        <th>附件</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><b>总裁办</b></td>
+                                        <td>
+                                            <div class="title-cell"><span class="unread-dot"></span><span
+                                                    class="title-unread">RE: 董事长接下来的行程安排</span></div>
+                                        </td>
+                                        <td>昨天</td>
+                                        <td>📎 1</td>
+                                    </tr>
+                                    <tr>
+                                        <td>总裁办</td>
+                                        <td>行程购票</td>
+                                        <td>2030年7月2日</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>HR系统</td>
+                                        <td>您的6月工资单已生成</td>
+                                        <td>2030年7月2日</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>HR系统</td>
+                                        <td>端午节福利发放通知</td>
+                                        <td>2030年6月1日</td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>IT</td>
+                                        <td>OA默认密码重置 - 姓全拼(首字母大写)+出生年月日</td>
+                                        <td>2019年6月1日</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="pagination">
+                            <button class="page-btn active">1</button><button class="page-btn">2</button><button
+                                class="page-btn">3</button>
+                            <span class="page-info">共 14 条</span>
+                        </div>
+                    </div>
+
+                    <!-- 已发送 -->
+                    <div class="tab-panel" data-panel="draft">
+                        <div class="table-wrap">
+                            <table id="draftTable">
+                                <thead>
+                                    <tr>
+                                        <th style="width:40%">主题</th>
+                                        <th>收件人</th>
+                                        <th>最后编辑</th>
+                                        <th>大小</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- 动态生成草稿列表 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-panel" data-page="schedule">
+                <!-- 中间内容 -->
+                <main class="schedule-content">
+                    <div class="schedule-module">
+
+                        <!-- 日程左侧导航 -->
+                        <div class="schedule-nav">
+                            <div class="schedule-nav-title">日程管理</div>
+                            <ul class="schedule-nav-list">
+                                <li>我的日程</li>
+                                <li class="schedule-nav-active">董事长日程</li>
+                                <li>团队日程</li>
+                                <li>日历</li>
+                            </ul>
+
+                            <!-- 年份选择器 -->
+                            <div class="schedule-year-selector">
+                                <div class="schedule-year-label">
+                                    <span>年份</span>
+                                </div>
+                                <select class="schedule-year-select" id="scheduleYearSelect"></select>
+                            </div>
+
+                            <div class="schedule-month-grid" id="scheduleMonthGrid"></div>
+                        </div>
+
+                        <!-- 日程右侧内容 -->
+                        <div class="schedule-main">
+                            <div class="schedule-main-header">
+                                <div>
+                                    <h1 class="schedule-main-title" id="scheduleMainTitle">董事长日程 - 2030年9月</h1>
+                                    <div class="schedule-main-subtitle" id="scheduleMainSubtitle">共 3 项行程安排</div>
+                                </div>
+                                <div class="schedule-stats" id="scheduleStats"></div>
+                            </div>
+                            <div class="schedule-cards-grid" id="scheduleCardsGrid"></div>
+                        </div>
+
+                    </div>
+                </main>
+            </div>
+
+            <!-- ===== 员工信息 ===== -->
+            <div class="page-panel" data-page="employee">
+                <div class="card">
+                    <div class="card-title">个人档案</div>
+                    <div class="card-body" style="display:flex;gap:24px;">
+                        <div style="text-align:center;flex-shrink:0;">
+                            <div
+                                style="width:80px;height:80px;border-radius:50%;background:#e6f7ff;color:#1890ff;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:bold;margin:0 auto 8px;">
+                                李</div>
+                            <div style="font-size:16px;font-weight:600;">李婷</div>
+                            <div style="font-size:12px;color:#888;margin-top:2px;">工号: YD20150001</div>
+                            <span class="tag tag-green" style="margin-top:8px;">在职</span>
+                        </div>
+                        <div style="flex:1;">
+                            <div class="info-grid">
+                                <div class="info-item"><span class="info-label">姓 名</span><span
+                                        class="info-value">李婷</span></div>
+                                <div class="info-item"><span class="info-label">部 门</span><span
+                                        class="info-value">总裁办</span></div>
+                                <div class="info-item"><span class="info-label">职 位</span><span
+                                        class="info-value">秘书</span></div>
+                                <div class="info-item"><span class="info-label">直属上级</span><span
+                                        class="info-value">陈振华</span></div>
+                                <div class="info-item"><span class="info-label">入职日期</span><span
+                                        class="info-value">2015-01-05</span></div>
+                                <div class="info-item"><span class="info-label">合同到期</span><span
+                                        class="info-value">/</span>
+                                </div>
+                                <div class="info-item"><span class="info-label">联系电话</span><span
+                                        class="info-value">138****2412</span></div>
+                                <div class="info-item"><span class="info-label">电子邮箱</span><span
+                                        class="info-value">ting.li@yuding-holdings.cn</span></div>
+                                <div class="info-item"><span class="info-label">办公地点</span><span class="info-value">总部大楼
+                                        10F-B区</span></div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- 个人照片 -->
+                    <div class="card-title">个人照片墙</div>
+                    <div style="margin-top: 24px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 会议室 ===== -->
+            <div class="page-panel" data-page="meeting">
+                <div class="card">
+                    <div class="card-title">会议室预约<span class="extra">+ 新建预约</span></div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>会议室</th>
+                                    <th>位置</th>
+                                    <th>容量</th>
+                                    <th>设备</th>
+                                    <th>今日状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><b>会议室 A</b></td>
+                                    <td>3楼</td>
+                                    <td>20人</td>
+                                    <td>投影仪、白板、视频会议</td>
+                                    <td><span class="tag tag-green">空闲</span></td>
+                                    <td><span class="op-link">预约</span></td>
+                                </tr>
+                                <tr>
+                                    <td><b>会议室 B</b></td>
+                                    <td>3楼</td>
+                                    <td>10人</td>
+                                    <td>投影仪、白板</td>
+                                    <td><span class="tag tag-red">占用 14:00-16:00</span></td>
+                                    <td><span class="op-link">查看时段</span></td>
+                                </tr>
+                                <tr>
+                                    <td><b>会议室 C</b></td>
+                                    <td>4楼</td>
+                                    <td>6人</td>
+                                    <td>电视屏幕</td>
+                                    <td><span class="tag tag-green">空闲</span></td>
+                                    <td><span class="op-link">预约</span></td>
+                                </tr>
+                                <tr>
+                                    <td><b>大会议室</b></td>
+                                    <td>5楼</td>
+                                    <td>50人</td>
+                                    <td>LED屏、音响、直播设备</td>
+                                    <td><span class="tag tag-red">占用 14:00-15:30</span></td>
+                                    <td><span class="op-link">查看时段</span></td>
+                                </tr>
+                                <tr>
+                                    <td><b>培训室</b></td>
+                                    <td>2楼</td>
+                                    <td>30人</td>
+                                    <td>投影仪、音响、录播</td>
+                                    <td><span class="tag tag-yellow">维护中</span></td>
+                                    <td><span class="op-link" style="color:#ccc;">不可用</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-title">我的预约</div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>会议室</th>
+                                    <th>日期</th>
+                                    <th>时间</th>
+                                    <th>主题</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== BBS 讨论区 ===== -->
+            <div class="page-panel" data-page="bbs">
+
+                <!-- 主体卡片 -->
+                <div class="card">
+                    <div class="card-title">
+                        <span>💬 誉鼎之家 - 讨论板</span>
+                        <span class="extra"
+                            style="background:#1890ff;color:#fff;padding:4px 14px;border-radius:3px;font-size:12px;">✏️
+                            发表新帖</span>
+                    </div>
+
+                    <!-- 全部 -->
+                    <div class="tab-panel active" data-panel="bbs-all">
+                        <div class="table-wrap">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th style="width:48%">标题</th>
+                                        <th>板块</th>
+                                        <th>作者</th>
+                                        <th>回复 / 浏览</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell">
+                                                <span class="bbs-flag" style="background:#f5222d;">置顶</span>
+                                                <span class="title-unread">【公告】2030年度集团之星评选开始啦，快来提名你心中的TA！</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="tag tag-purple">团队建设</span></td>
+                                        <td>HR 小刘</td>
+                                        <td><b style="color:#1890ff;">328</b> / 2.1k</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell">
+                                                <span class="bbs-flag" style="background:#f5222d;">置顶</span>
+                                                <span class="title-unread">【版规】誉鼎之家讨论规范及公司相关规定（必读）</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="tag tag-gray">公告</span></td>
+                                        <td>管理员</td>
+                                        <td>56 / 8.9k</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell">
+                                                <span class="title-unread">端午节福利发放通知</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="tag tag-gray">公告</span></td>
+                                        <td>行政部-张姐</td>
+                                        <td>42 / 1.2k</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell">
+                                                <span class="title-unread">今年董事长依旧预约了缺席呢，好像没有见过董事长参加安全日。</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="tag tag-green">总裁办-讨论</span></td>
+                                        <td>总裁办-小李</td>
+                                        <td>89 / 1.2k</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell">
+                                                <span class="title-unread">今年安全日请的还是之前的道长嘛？公司是签了长期合同啊？~</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="tag tag-blue">公司-讨论</span></td>
+                                        <td>安保-小王</td>
+                                        <td><b style="color:#1890ff;">342</b> / 3.1k</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell">
+                                                <span class="title-unread">之前说食堂的菜，后勤部很快就给反馈了~</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="tag tag-yellow">意见建议</span></td>
+                                        <td>设计部-小王</td>
+                                        <td><b style="color:#1890ff;">142</b> / 1.1k</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell">
+                                                <span class="title-unread">苏总人这么好，还是创世人，为什么现在还是副总呢？</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="tag tag-yellow">意见建议</span></td>
+                                        <td>安保-大胆</td>
+                                        <td><b style="color:#1890ff;">126</b> / 2.3k</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell">
+                                                <span class="title-unread">我也好想退休啊，可是我还是个实习生</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="tag tag-blue">公司-讨论</span></td>
+                                        <td>人事部-大敢</td>
+                                        <td><b style="color:#1890ff;">205</b> / 1.6k</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell">
+                                                <span class="title-unread">这两天总有个记者电话来问海伯利安的事情。</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="tag tag-blue">公司-讨论</span></td>
+                                        <td>客服-小帅</td>
+                                        <td>23 / 386</td>
+                                    </tr>
+                                    <tr>
+                                        <td>
+                                            <div class="title-cell">
+                                                <span class="title-unread">2029年9月28日"安全生产与生命敬畏日"放假！</span>
+                                            </div>
+                                        </td>
+                                        <td><span class="tag tag-gray">公告</span></td>
+                                        <td>行政部-张姐</td>
+                                        <td>18 / 245</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="pagination">
+                            <button class="page-btn">«</button>
+                            <button class="page-btn">‹</button>
+                            <button class="page-btn active">1</button>
+                            <button class="page-btn">2</button>
+                            <button class="page-btn">3</button>
+                            <button class="page-btn">4</button>
+                            <button class="page-btn">5</button>
+                            <span class="page-info">共 53 条 / 第 1 页</span>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div><!-- end content -->
+
+        <!-- ==================== 右侧快捷面板 ==================== -->
+        <div class="quick-panel">
+            <div class="panel-module">
+                <div class="panel-title"><span>⚡ 常用应用</span><span class="more">设置 ›</span></div>
+                <div class="app-grid">
+                    <div class="app-item" data-page="mail">
+                        <div class="app-icon" style="background:#faad14">📧</div>
+                        <div class="app-name">邮件</div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-module">
+                <div class="panel-title"><span>🔔 系统通知</span><span class="more">全部 ›</span></div>
+                <div class="notify-list">
+                    <div class="notify-item">
+                        <div class="notify-title"><span class="notify-dot"></span>您有一条新的审批待处理</div>
+                        <div class="notify-time">2分钟前</div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="notify-title"><span class="notify-dot"></span>本月考勤一切正常</div>
+                        <div class="notify-time">3小时前</div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="notify-title">【重要】海伯利安拆迁决定</div>
+                        <div class="notify-time">2天前</div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="notify-title">关于加强极端天气的风险防范应对工作...</div>
+                        <div class="notify-time">4天前</div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="notify-title">年度体检通知已发布</div>
+                        <div class="notify-time">7天前</div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="notify-title">OA系统已接入誉鼎之家模块</div>
+                        <div class="notify-time">1年前</div>
+                    </div>
+                    <div class="notify-item">
+                        <div class="notify-title">总裁办新规</div>
+                        <div class="notify-time">4年前</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+<script>
+    // =================== 登录验证 ====================
+    const loginUser = localStorage.getItem('login-oa-user');
+    if (loginUser != 'YD20150001') {
+        alert('你...怎么进来的？');
+        window.location.href = 'YuDingOaLogin.html';
+    }
+
+    // ==================== 路由配置 ====================
+    const routeConfig = {
+        workbench: { breadcrumb: ['首页', '工作台'] },
+        notice: { breadcrumb: ['首页', '办公', '通知公告'] },
+        approval: { breadcrumb: ['首页', '办公', '审批流程'] },
+        mail: { breadcrumb: ['首页', '沟通协作', '内部邮件'] },
+        schedule: { breadcrumb: ['首页', '办公', '出行安排'] },
+        bbs: { breadcrumb: ['首页', '誉鼎之家'] }
+    };
+
+    // ==================== 面包屑更新 ====================
+    function updateBreadcrumb(page) {
+        const config = routeConfig[page];
+        if (!config) return;
+        const bc = document.getElementById('breadcrumb');
+        const parts = config.breadcrumb;
+        let html = '';
+        parts.forEach((p, i) => {
+            if (i > 0) html += '<span class="sep">&gt;</span>';
+            if (i === parts.length - 1) {
+                html += `<span class="current">${p}</span>`;
+            } else {
+                html += `<span>${p}</span>`;
+            }
+        });
+        bc.innerHTML = html;
+    }
+
+    // ==================== 页面切换核心函数 ====================
+    function navigateTo(page, subtab) {
+        // 1. 切换页面面板
+        document.querySelectorAll('.page-panel').forEach(p => p.classList.remove('active'));
+        const targetPanel = document.querySelector(`.page-panel[data-page="${page}"]`);
+        if (targetPanel) targetPanel.classList.add('active');
+
+        // 2. 更新左侧菜单选中状态
+        document.querySelectorAll('.menu-item').forEach(m => m.classList.remove('active'));
+        document.querySelectorAll('.sub-menu').forEach(s => s.classList.remove('active'));
+
+        const menuItem = document.querySelector(`.menu-item[data-page="${page}"]`);
+        if (menuItem) menuItem.classList.add('active');
+
+        // 3. 展开/折叠子菜单
+        document.querySelectorAll('.sub-menu-wrap').forEach(w => w.classList.remove('open'));
+        document.querySelectorAll('.menu-item.has-sub').forEach(m => m.classList.remove('expanded'));
+
+        if (page === 'mail' && subtab) {
+            switchMailTab(subtab);
+
+        }
+
+        // 4. 更新面包屑
+        updateBreadcrumb(page);
+
+        // 5. 滚动到顶部
+        document.getElementById('contentArea').scrollTop = 0;
+    }
+
+    // ==================== 内部邮件 Tab 切换 ====================
+    function switchMailTab(tabName) {
+        console.log('!!!!!')
+        const tabsContainer = document.getElementById('mailTabs');
+        if (!tabsContainer) return;
+        tabsContainer.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        const activeTab = tabsContainer.querySelector(`.tab[data-tab="${tabName}"]`);
+        if (activeTab) activeTab.classList.add('active');
+
+        const mailPage = document.querySelector('.page-panel[data-page="mail"]');
+        if (mailPage) {
+            mailPage.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+            const target = mailPage.querySelector(`.tab-panel[data-panel="${tabName}"]`);
+            if (target) target.classList.add('active');
+        }
+    }
+
+    // ==================== 通用 Tab 切换（审批等） ====================
+    function initTabSwitch(containerId) {
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        const parentPanel = container.closest('.page-panel');
+        container.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', function () {
+                container.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                const target = this.dataset.tab;
+                if (parentPanel) {
+                    parentPanel.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+                    const tp = parentPanel.querySelector(`.tab-panel[data-panel="${target}"]`);
+                    if (tp) tp.classList.add('active');
+                }
+            });
+        });
+    }
+
+    // ==================== 事件绑定 ====================
+    document.addEventListener('DOMContentLoaded', function () {
+        // 初始化草稿列表
+        renderDraftList();
+
+        // 一级菜单点击
+        document.querySelectorAll('.menu-item[data-page]').forEach(item => {
+            item.addEventListener('click', function () {
+                const page = this.dataset.page;
+                const toggle = this.dataset.toggle;
+
+                // 如果有子菜单，先切换展开状态
+                if (toggle) {
+                    const wrap = document.getElementById(toggle);
+                    // const isOpen = wrap.classList.contains('open');
+                    // 如果已经展开且是当前页面，只做折叠/展开
+                    wrap.classList.toggle('open');
+                    this.classList.toggle('expanded');
+                }
+
+                // 无论是否展开，都跳转页面
+                navigateTo(page);
+            });
+        });
+
+        // 二级菜单点击
+        document.querySelectorAll('.sub-menu[data-page]').forEach(item => {
+            item.addEventListener('click', function (e) {
+                e.stopPropagation();
+                const page = this.dataset.page;
+                const subtab = this.dataset.subtab;
+                navigateTo(page, subtab);
+            });
+        });
+
+        // 通用跳转（事件委托，避免重复绑定）
+        document.addEventListener('click', function (e) {
+            // 如果点击的是表格内的元素，不触发跳转
+            if (e.target.closest('.table-wrap')) {
+                return;
+            }
+
+            const target = e.target.closest('[data-page]');
+            if (!target) return;
+
+            // 排除菜单项和子菜单（它们有独立处理器）
+            if (target.classList.contains('menu-item') || target.classList.contains('sub-menu')) {
+                return;
+            }
+
+            const page = target.dataset.page;
+            const subtab = target.dataset.subtab;
+            if (page) {
+                navigateTo(page, subtab);
+            }
+        });
+
+        // 审批内部 Tab 点击
+        initTabSwitch('approvalTabs');
+
+        // 时钟
+        function updateClock() {
+            const now = new Date();
+            const h = String(now.getHours()).padStart(2, '0');
+            const m = String(now.getMinutes()).padStart(2, '0');
+            const s = String(now.getSeconds()).padStart(2, '0');
+            const clockEl = document.getElementById('clockTime');
+            if (clockEl) clockEl.textContent = `${h}:${m}:${s}`;
+        }
+        updateClock();
+        setInterval(updateClock, 1000);
+
+        // 初始化面包屑
+        updateBreadcrumb('workbench');
+
+    });
+
+
+    // 草稿数据
+    const drafts = [
+        {
+            to: 'hejia@jz-structure.cn',
+            subject: '海伯利安大厦定向爆破结构安全评估项目合同及资料确认',
+            content: ``,
+            date: '今天'
+        }, {
+            to: 'bonian.su@yuding-holdings.cn',
+            subject: 'Re：海伯利安大厦定向爆破安排',
+            content: ``,
+            date: '2030-07-11'
+        }, {
+            to: 'bonian.su@yuding-holdings.cn',
+            subject: '董事长通知今年0928安全日缺席',
+            content: ``,
+            date: '2029-09-28'
+        }
+    ];
+
+    // 动态生成草稿列表
+    function renderDraftList() {
+        const tbody = document.querySelector('#draftTable tbody');
+        if (!tbody) return;
+
+        tbody.innerHTML = drafts.map((draft, index) => {
+            return `
+                <tr>
+                    <td>
+                        <div class="title-cell"><span class="title-unread">${draft.subject}</span></div>
+                    </td>
+                    <td>${draft.to}</td>
+                    <td>${draft.date}</td>
+                    <td><span class="op-link danger">删除</span></td>
+                </tr>
+            `;
+        }).join('');
+    }
+
+
+    // 年份范围 2015-2030
+    const scheduleYearStart = 2015;
+    const scheduleYearEnd = 2030;
+    const scheduleMonthNames = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
+    const scheduleWeekNames = ['日', '一', '二', '三', '四', '五', '六'];
+
+    // 计算某年某月1日是星期几（0=日,1=一,...,6=六）
+    function scheduleGetFirstDayOfWeek(year, month) {
+        return new Date(year, month - 1, 1).getDay();
+    }
+
+    const scheduleIcons = {
+        flight: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2L16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>`,
+        hotel: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18M5 21V7l8-4v18M19 21V11l-6-4"/><path d="M9 9v.01M9 12v.01M9 15v.01M9 18v.01"/></svg>`,
+        meeting: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16"/></svg>`,
+        office: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01M16 6h.01M12 6h.01M12 10h.01M12 14h.01M16 10h.01M16 14h.01M8 10h.01M8 14h.01"/></svg>`,
+        sign: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>`,
+        visit: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>`,
+        review: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="13" x2="15" y2="13"/><line x1="9" y1="17" x2="13" y2="17"/></svg>`,
+        award: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="7"/><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/></svg>`
+    };
+    schedule_default = {
+
+    }
+
+    // 生成2015-2030年9月份的假数据
+    const scheduleData = {};
+    for (let year = scheduleYearStart; year <= scheduleYearEnd; year++) {
+        scheduleData[year] = {
+            9: [
+                {
+                    day: 28, items: [
+                        { type: 'meeting', text: '0928安全日', sub: '缺席' }
+                    ]
+                }
+
+            ]
+        };
+    }
+
+    let scheduleCurrentYear = 2030;
+    let scheduleCurrentMonth = 9;
+
+    // 初始化年份选择器
+    function scheduleInitYearSelect() {
+        const select = document.getElementById('scheduleYearSelect');
+        select.innerHTML = '';
+        for (let year = scheduleYearEnd; year >= scheduleYearStart; year--) {
+            const option = document.createElement('option');
+            option.value = year;
+            option.textContent = year + '年';
+            if (year === scheduleCurrentYear) option.selected = true;
+            select.appendChild(option);
+        }
+        select.addEventListener('change', (e) => {
+            scheduleCurrentYear = parseInt(e.target.value);
+            scheduleRenderMonths();
+            scheduleRenderSchedule();
+        });
+    }
+
+    function scheduleRenderMonths() {
+        const grid = document.getElementById('scheduleMonthGrid');
+        grid.innerHTML = '';
+        scheduleMonthNames.forEach((name, idx) => {
+            const month = idx + 1;
+            if (month === 9) {
+                const hasData = scheduleData[scheduleCurrentYear] && scheduleData[scheduleCurrentYear][month];
+                const div = document.createElement('div');
+                div.className = 'schedule-month-item'
+                    + (month === scheduleCurrentMonth ? ' schedule-month-active' : '')
+                    + (hasData ? ' schedule-month-has-data' : '');
+                div.textContent = name;
+                div.addEventListener('click', () => {
+                    scheduleCurrentMonth = month;
+                    scheduleRenderMonths();
+                    scheduleRenderSchedule();
+                });
+                grid.appendChild(div);
+            }
+
+        });
+    }
+
+    function scheduleGetWeekday(year, month, day) {
+        return new Date(year, month - 1, day).getDay();
+    }
+
+    function scheduleRenderStats() {
+        const days = (scheduleData[scheduleCurrentYear] && scheduleData[scheduleCurrentYear][scheduleCurrentMonth]) || [];
+        const totalItems = days.reduce((sum, d) => sum + d.items.length, 0);
+        const statsEl = document.getElementById('scheduleStats');
+        statsEl.innerHTML = `
+    <div class="schedule-stat-item">
+      <div class="schedule-stat-num">${days.length}</div>
+      <div class="schedule-stat-label">日程天数</div>
+    </div>
+    <div class="schedule-stat-item">
+      <div class="schedule-stat-num">${totalItems}</div>
+      <div class="schedule-stat-label">行程总数</div>
+    </div>
+  `;
+    }
+
+    function scheduleRenderSchedule() {
+        const title = document.getElementById('scheduleMainTitle');
+        const subtitle = document.getElementById('scheduleMainSubtitle');
+        const grid = document.getElementById('scheduleCardsGrid');
+
+        title.textContent = `董事长日程 - ${scheduleCurrentYear}年${scheduleCurrentMonth}月`;
+
+        const days = (scheduleData[scheduleCurrentYear] && scheduleData[scheduleCurrentYear][scheduleCurrentMonth]) || [];
+        const totalItems = days.reduce((sum, d) => sum + d.items.length, 0);
+        subtitle.textContent = days.length > 0
+            ? `共 ${days.length} 天 · ${totalItems} 项行程安排`
+            : '本月暂无行程安排';
+
+        scheduleRenderStats();
+
+        grid.innerHTML = '';
+
+        if (days.length === 0) {
+            grid.innerHTML = `
+      <div class="schedule-empty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="3" y="4" width="18" height="18" rx="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+        </svg>
+        <div>本月暂无行程安排</div>
+      </div>
+    `;
+            return;
+        }
+
+        days.forEach(dayData => {
+            const weekday = scheduleGetWeekday(scheduleCurrentYear, scheduleCurrentMonth, dayData.day);
+            const card = document.createElement('div');
+            card.className = 'schedule-card';
+
+            const itemsHtml = dayData.items.map(item => `
+      <div class="schedule-card-item">
+        <div class="schedule-item-icon schedule-icon-${item.type}">
+          ${scheduleIcons[item.type] || scheduleIcons.meeting}
+        </div>
+        <div>
+          <div class="schedule-item-text">${item.text}</div>
+          <div class="schedule-item-sub">${item.sub}</div>
+        </div>
+      </div>
+    `).join('');
+
+            card.innerHTML = `
+      <div class="schedule-card-date">${dayData.day}<span style="font-size:18px;font-weight:600;color:#64748b;">号</span></div>
+      <div class="schedule-card-date-label">${scheduleCurrentYear}年${scheduleCurrentMonth}月${dayData.day}日 · 星期${scheduleWeekNames[weekday]}</div>
+      <div class="schedule-card-items">${itemsHtml}</div>
+    `;
+
+            card.addEventListener('click', () => {
+                card.style.transform = 'scale(0.98)';
+                setTimeout(() => { card.style.transform = ''; }, 150);
+            });
+
+            grid.appendChild(card);
+        });
+    }
+
+    document.querySelectorAll('.schedule-menu-item').forEach(item => {
+        item.addEventListener('click', () => {
+            document.querySelectorAll('.schedule-menu-item').forEach(i => i.classList.remove('schedule-active'));
+            item.classList.add('schedule-active');
+        });
+    });
+
+    scheduleInitYearSelect();
+    scheduleRenderMonths();
+    scheduleRenderSchedule();
+
+</script>
+
+</html>

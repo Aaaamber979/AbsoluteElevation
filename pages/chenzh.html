@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>百科 - 陈振华</title>
+    <style>
+        /* 全局重置与基础样式 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #FFFFFF;
+            color: #222222;
+            line-height: 1.6;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        a {
+            text-decoration: none;
+            color: #1E50A2;
+            /* 主链接色 */
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        /* 左侧导航栏 (Sidebar) */
+        .sidebar {
+            width: 180px;
+            background-color: #F8F9FA;
+            /* 极浅灰背景区分 */
+            border-right: 1px solid #EAECF0;
+            padding: 20px 15px;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 30px;
+            display: block;
+            text-align: center;
+        }
+
+        .search-box {
+            margin-bottom: 25px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid #EAECF0;
+            border-radius: 4px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .search-box input:focus {
+            border-color: #1E50A2;
+        }
+
+        .nav-menu {
+            list-style: none;
+            flex-grow: 1;
+        }
+
+        .nav-menu li {
+            margin-bottom: 12px;
+        }
+
+        .nav-menu a {
+            color: #54595F;
+            font-size: 14px;
+            display: block;
+            padding: 5px 0;
+        }
+
+        .nav-menu a:hover {
+            color: #1E50A2;
+        }
+
+        .sidebar-footer {
+            font-size: 12px;
+            color: #888;
+            border-top: 1px solid #EAECF0;
+            padding-top: 15px;
+        }
+
+        .sidebar-footer div {
+            margin-bottom: 5px;
+        }
+
+        /* 主体内容区 (Main Content) */
+        .main-content {
+            margin-left: 180px;
+            /* 留出侧边栏宽度 */
+            flex: 1;
+            padding: 40px 60px;
+            max-width: 1200px;
+            /* 限制最大阅读宽度 */
+        }
+
+        /* 顶部标题区域 */
+        .page-header {
+            border-bottom: 1px solid #EAECF0;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 5px;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: #54595F;
+        }
+
+        /* 布局容器：正文 + 信息框 */
+        .content-wrapper {
+            display: flex;
+            align-items: flex-start;
+            gap: 30px;
+        }
+
+        /* 左侧正文区 */
+        .article-body {
+            flex: 1;
+            font-size: 16px;
+            line-height: 1.8;
+            text-align: justify;
+            color: #222222;
+        }
+
+        /* 目录样式 */
+        .toc-container {
+            background-color: #F8F9FA;
+            border: 1px solid #EAECF0;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            display: inline-block;
+            min-width: 200px;
+        }
+
+        .toc-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .toc-list {
+            list-style: none;
+            font-size: 14px;
+        }
+
+        .toc-list li {
+            margin-bottom: 5px;
+        }
+
+        .toc-list a {
+            color: #1E50A2;
+        }
+
+        /* 正文小标题 */
+        h2.section-heading {
+            font-size: 20px;
+            font-weight: bold;
+            border-bottom: 1px solid #EAECF0;
+            padding-bottom: 8px;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            color: #000;
+        }
+
+        p {
+            margin-bottom: 15px;
+        }
+
+        /* 引用标注 */
+        sup.reference {
+            font-size: 12px;
+            color: #1E50A2;
+            cursor: pointer;
+        }
+
+        /* 图片样式 */
+        figure {
+            margin: 20px 0;
+            text-align: center;
+            border: 1px solid #EAECF0;
+            padding: 5px;
+            background: #fff;
+            display: inline-block;
+            /* 让边框包裹图片 */
+        }
+
+        .centered-figure {
+            display: block;
+            text-align: center;
+            margin: 20px auto;
+        }
+
+        figure img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        figcaption {
+            font-size: 13px;
+            color: #54595F;
+            padding: 8px 0 2px 0;
+            text-align: left;
+        }
+
+        /* 右侧信息框 (Infobox) */
+        .infobox {
+            width: 300px;
+            background-color: #F8F9FA;
+            border: 1px solid #EAECF0;
+            padding: 0;
+            flex-shrink: 0;
+            font-size: 14px;
+        }
+
+        .infobox-image {
+            width: 100%;
+            height: auto;
+            border-bottom: 1px solid #EAECF0;
+            display: block;
+        }
+
+        .infobox-title {
+            background-color: #EAECF0;
+            padding: 10px;
+            font-weight: bold;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .infobox-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .infobox-table th,
+        .infobox-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #EAECF0;
+            vertical-align: top;
+            text-align: left;
+        }
+
+        .infobox-table th {
+            width: 90px;
+            color: #54595F;
+            font-weight: normal;
+        }
+
+        .infobox-table tr:last-child th,
+        .infobox-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* 底部区域 */
+        .footer-section {
+            margin-top: 50px;
+            border-top: 1px solid #EAECF0;
+            padding-top: 20px;
+            font-size: 14px;
+            color: #54595F;
+        }
+
+        .references-list {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .references-list li {
+            margin-bottom: 8px;
+            padding-left: 20px;
+            text-indent: -20px;
+        }
+
+        .stats-bar {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+            color: #888;
+            margin-top: 30px;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+                /* 移动端隐藏侧边栏，实际项目中可改为汉堡菜单 */
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+
+            .content-wrapper {
+                flex-direction: column;
+            }
+
+            .infobox {
+                width: 100%;
+                order: -1;
+                /* 移动端将信息框置顶或置于标题下 */
+                margin-bottom: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- 左侧导航栏 -->
+    <aside class="sidebar">
+        <a href="#" class="logo">Wiki百科</a>
+
+        <div class="search-box">
+            <input type="text" placeholder="搜索词条">
+        </div>
+
+        <ul class="nav-menu">
+            <li><a href="#">首页</a></li>
+            <li><a href="#">分类浏览</a></li>
+            <li><a href="#">特色词条</a></li>
+            <li><a href="#">随机词条</a></li>
+            <li><a href="#">帮助文档</a></li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <div><a href="#">语言切换</a></div>
+            <div><a href="#">移动端入口</a></div>
+        </div>
+    </aside>
+
+    <!-- 主体内容区 -->
+    <main class="main-content">
+        <!-- 顶部标题 -->
+        <header class="page-header">
+            <h1 class="page-title">陈振华</h1>
+            <div class="page-subtitle">誉鼎集团董事长</div>
+        </header>
+
+        <div class="content-wrapper">
+            <!-- 左侧正文 -->
+            <article class="article-body">
+                <!-- 目录 -->
+                <div class="toc-container">
+                    <div class="toc-title">目录</div>
+                    <ul class="toc-list">
+                        <li><a href="#culture">1. 教育背景</a></li>
+                        <li><a href="#work-exper">2. 职业经历</a></li>
+                        <li><a href="#main-contrib">3. 主要贡献</a></li>
+                        <li><a href="#character-revi">4. 人物评价</a></li>
+                    </ul>
+                </div>
+
+                <p>
+                    陈振华，1965年4月出生于江州省江州市，誉鼎城市发展控股集团有限公司创始人、董事长。陈振华是江州地区较早投身城市综合体开发的企业家之一，带领誉鼎集团从一家小型建筑企业发展成为总资产逾500亿元的大型城市运营商。
+                </p>
+
+                <h2 id="culture" class="section-heading">教育背景</h2>
+                <p>
+                <p>1983年-1987年：江州大学土木工程系，获工学学士学位</p>
+                <p>1995年-1997年：江州商学院，获工商管理硕士（EMBA）学位</p>
+                </p>
+
+                <h2 id="work-exper" class="section-heading">职业经历</h2>
+                <p>
+                <p>1987年-1992年：就职于江州市第二建筑工程公司，历任技术员、项目经理</p>
+                <p>1992年-1997年：任江州恒基建设集团工程部经理</p>
+                <p>1997年-2000年：创办振华建筑工程有限公司，担任总经理</p>
+                <p>2000年-至今：与苏柏年等人共同创办誉鼎房地产开发有限公司（誉鼎集团前身），担任董事长</p>
+                </p>
+
+                <h2 id="main-contrib" class="section-heading">主要贡献</h2>
+                <p>
+                <p><b>企业战略：</b>提出"深耕江州、辐射长三角"的发展战略，带领集团从区域性企业发展为全国性城市运营商</p>
+                <p><b>产品理念：</b>倡导"品质为先、安全为本"的开发理念，推动集团多个项目获得省级以上优质工程奖</p>
+                <p><b>团队建设：</b>建立现代企业治理结构，引入职业经理人制度，培养了一批优秀的管理人才</p>
+                </p>
+
+                <h2 id="character-revi" class="section-heading">人物评价</h2>
+                <p>
+                <p>
+                    陈振华被业界誉为"江州地产界的拓荒者"。他为人低调务实，注重企业长期发展，在集团内部以"稳健派"著称。多位业内专家表示："陈振华对行业趋势的判断极为敏锐，是江州房地产行业发展的重要见证者和推动者。"
+                </p>
+                </p>
+
+            </article>
+
+            <!-- 右侧信息框 -->
+            <aside class="infobox">
+                <div class="infobox-title">陈振华</div>
+                <img src="https://img.alicdn.com/imgextra/i4/O1CN01r6X9yL1hOqZ8vWjKl_!!6000000004269-0-tps-600-400.jpg"
+                    alt="Bauhaus Logo" class="infobox-image" style="background:#ddd; height: 150px; object-fit: cover;">
+                <table class="infobox-table">
+                    <tr>
+                        <th>出生年月</th>
+                        <td><b>1965年4月</b></td>
+                    </tr>
+                    <tr>
+                        <th>籍贯</th>
+                        <td>江州省江州市</td>
+                    </tr>
+                    <tr>
+                        <th>毕业院校</th>
+                        <td>江州大学土木工程系</td>
+                    </tr>
+                    <tr>
+                        <th>学历</th>
+                        <td>工商管理硕士（EMBA）</td>
+                    </tr>
+                    <tr>
+                        <th>主要职务</th>
+                        <td>誉鼎集团董事长</td>
+                    </tr>
+                </table>
+            </aside>
+        </div>
+    </main>
+
+</body>
+
+</html>

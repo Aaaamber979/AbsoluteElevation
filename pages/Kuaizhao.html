@@ -1,0 +1,1113 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>江州网页快照归档 · 2008—2014</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5.0.1/index.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-sans-sc@5.0.1/index.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5.0.1/index.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #f6f3ec;
+            --paper: #fbf8f1;
+            --ink: #1f1b16;
+            --ink-2: #4a4339;
+            --ink-3: #7a7266;
+            --ink-4: #a8a095;
+            --line: #e4ddd0;
+            --line-2: #ece6d9;
+            --accent: #8b2e20;
+            --blue: #2d4a7a;
+            --green: #3d6b4a;
+            --amber: #9a6a2a;
+        }
+
+        html,
+        body {
+            background: var(--bg);
+            color: var(--ink);
+            font-family: 'Noto Sans SC', -apple-system, sans-serif;
+            min-height: 100vh;
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            font-size: 14px;
+        }
+
+        .container {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 0 32px;
+        }
+
+        .page-header {
+            padding: 56px 0 32px;
+            border-bottom: 1px solid var(--line);
+        }
+
+        .header-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 28px;
+            gap: 24px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .brand-mark {
+            width: 40px;
+            height: 40px;
+            background: var(--ink);
+            color: var(--paper);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .brand-name {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: 2px;
+        }
+
+        .brand-sub {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--ink-4);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--paper);
+            border: 1px solid var(--line);
+            border-radius: 6px;
+            padding: 8px 12px;
+            width: 280px;
+            transition: border-color 0.2s;
+        }
+
+        .search-box:focus-within {
+            border-color: var(--ink-3);
+        }
+
+        .search-box svg {
+            width: 14px;
+            height: 14px;
+            fill: var(--ink-4);
+            flex-shrink: 0;
+        }
+
+        .search-box input {
+            border: none;
+            outline: none;
+            background: transparent;
+            font-family: inherit;
+            font-size: 13px;
+            color: var(--ink);
+            flex: 1;
+        }
+
+        .search-box input::placeholder {
+            color: var(--ink-4);
+        }
+
+        .page-kicker {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--accent);
+            letter-spacing: 3px;
+            margin-bottom: 8px;
+        }
+
+        .page-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 28px;
+            font-weight: 600;
+            letter-spacing: 4px;
+            margin-bottom: 10px;
+        }
+
+        .page-desc {
+            font-size: 13px;
+            color: var(--ink-3);
+            max-width: 640px;
+            line-height: 1.8;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 32px 0;
+        }
+
+        .stat-card {
+            background: var(--paper);
+            border: 1px solid var(--line-2);
+            border-radius: 8px;
+            padding: 18px 20px;
+            transition: border-color 0.2s;
+        }
+
+        .stat-card:hover {
+            border-color: var(--line);
+        }
+
+        .stat-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--ink-4);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .stat-value {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 26px;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .stat-value .unit {
+            font-size: 12px;
+            color: var(--ink-3);
+            font-weight: 400;
+            margin-left: 4px;
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+
+        .stat-note {
+            font-size: 11px;
+            color: var(--ink-4);
+            margin-top: 4px;
+        }
+
+        .filter-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+            border-bottom: 1px solid var(--line);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .year-tabs {
+            display: flex;
+            gap: 2px;
+            background: var(--paper);
+            border: 1px solid var(--line-2);
+            border-radius: 6px;
+            padding: 3px;
+        }
+
+        .year-tab {
+            padding: 6px 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--ink-3);
+            background: transparent;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .year-tab:hover {
+            color: var(--ink);
+        }
+
+        .year-tab.active {
+            background: var(--ink);
+            color: var(--paper);
+        }
+
+        .filter-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .status-filter {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+        }
+
+        .status-chip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            color: var(--ink-3);
+            transition: color 0.2s;
+            user-select: none;
+        }
+
+        .status-chip:hover {
+            color: var(--ink);
+        }
+
+        .status-chip.active {
+            color: var(--ink);
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+        }
+
+        .status-dot.ok {
+            background: var(--green);
+        }
+
+        .status-dot.changed {
+            background: var(--amber);
+        }
+
+        .status-dot.lost {
+            background: var(--ink-4);
+        }
+
+        .status-dot.flagged {
+            background: var(--accent);
+        }
+
+        .result-count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--ink-4);
+            letter-spacing: 1px;
+        }
+
+        .snapshot-list {
+            padding: 8px 0 80px;
+        }
+
+        .year-group {
+            margin-bottom: 32px;
+        }
+
+        .year-header {
+            display: flex;
+            align-items: baseline;
+            gap: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--line);
+            margin-bottom: 4px;
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            z-index: 10;
+        }
+
+        .year-label {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 20px;
+            font-weight: 600;
+            letter-spacing: 2px;
+        }
+
+        .year-count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--ink-4);
+            letter-spacing: 1px;
+        }
+
+        .year-note {
+            margin-left: auto;
+            font-size: 11px;
+            color: var(--ink-4);
+            font-style: italic;
+        }
+
+        .snapshot-item {
+            display: grid;
+            grid-template-columns: 24px 1fr auto;
+            gap: 16px;
+            align-items: center;
+            padding: 14px 8px;
+            border-bottom: 1px solid var(--line-2);
+            cursor: pointer;
+            transition: background 0.15s;
+            border-radius: 4px;
+        }
+
+        .snapshot-item:hover {
+            background: var(--paper);
+        }
+
+        .snapshot-item:hover .snap-url {
+            color: var(--blue);
+        }
+
+        .snap-status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            justify-self: center;
+        }
+
+        .snap-status-indicator.ok {
+            background: var(--green);
+        }
+
+        .snap-status-indicator.changed {
+            background: var(--amber);
+        }
+
+        .snap-status-indicator.lost {
+            background: var(--ink-4);
+        }
+
+        .snap-status-indicator.flagged {
+            background: var(--accent);
+            box-shadow: 0 0 0 3px rgba(139, 46, 32, 0.12);
+        }
+
+        .snap-main {
+            min-width: 0;
+        }
+
+        .snap-title-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 4px;
+            flex-wrap: wrap;
+        }
+
+        .snap-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .snap-tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 3px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 500;
+        }
+
+        .snap-tag.flagged {
+            background: rgba(139, 46, 32, 0.08);
+            color: var(--accent);
+        }
+
+        .snap-tag.archived {
+            background: rgba(45, 74, 122, 0.08);
+            color: var(--blue);
+        }
+
+        .snap-tag.deleted {
+            background: rgba(0, 0, 0, 0.05);
+            color: var(--ink-4);
+        }
+
+        .snap-url {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--ink-3);
+            transition: color 0.15s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: block;
+        }
+
+        .snap-desc {
+            font-size: 12px;
+            color: var(--ink-4);
+            margin-top: 4px;
+            line-height: 1.6;
+        }
+
+        .snap-meta {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--ink-4);
+            flex-shrink: 0;
+        }
+
+        .snap-date {
+            letter-spacing: 0.5px;
+        }
+
+        .snap-size {
+            font-size: 10px;
+        }
+
+        .snap-status-label {
+            font-size: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .snap-status-label.ok {
+            color: var(--green);
+        }
+
+        .snap-status-label.changed {
+            color: var(--amber);
+        }
+
+        .snap-status-label.lost {
+            color: var(--ink-4);
+        }
+
+        .snap-status-label.flagged {
+            color: var(--accent);
+        }
+
+        .snapshot-item.flagged {
+            background: rgba(139, 46, 32, 0.02);
+        }
+
+        .snapshot-item.flagged:hover {
+            background: rgba(139, 46, 32, 0.05);
+        }
+
+        .snapshot-item.lost .snap-title {
+            color: var(--ink-3);
+        }
+
+        .snapshot-item.lost .snap-url {
+            text-decoration: line-through;
+            text-decoration-color: var(--ink-4);
+        }
+
+        .snap-note {
+            grid-column: 2 / 3;
+            margin-top: 6px;
+            padding: 8px 12px;
+            background: var(--bg);
+            border-left: 2px solid var(--accent);
+            font-size: 12px;
+            color: var(--ink-2);
+            line-height: 1.7;
+            font-style: italic;
+        }
+
+        .snap-note .note-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 9px;
+            color: var(--accent);
+            letter-spacing: 2px;
+            font-style: normal;
+            margin-right: 8px;
+        }
+
+        .page-footer {
+            border-top: 1px solid var(--line);
+            padding: 32px 0 48px;
+            text-align: center;
+        }
+
+        .footer-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--ink-4);
+            letter-spacing: 3px;
+            line-height: 2;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 20px;
+            }
+
+            .page-title {
+                font-size: 22px;
+                letter-spacing: 2px;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .header-top {
+                flex-direction: column;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .snapshot-item {
+                grid-template-columns: 16px 1fr;
+                gap: 12px;
+            }
+
+            .snap-meta {
+                grid-column: 2 / 3;
+                flex-direction: row;
+                align-items: center;
+                gap: 10px;
+                margin-top: 6px;
+            }
+
+            .filter-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .year-tabs {
+                flex-wrap: wrap;
+            }
+        }
+
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--line);
+            border-radius: 3px;
+        }
+
+        .snapshot-item {
+            animation: fadeIn 0.4s ease backwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <header class="page-header">
+            <div class="header-top">
+                <div class="brand" id="brand"></div>
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24">
+                        <path
+                            d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                    </svg>
+                    <input type="text" placeholder="搜索域名、标题或关键词..." id="searchInput">
+                </div>
+            </div>
+            <div id="titleBlock"></div>
+        </header>
+
+        <section class="stats" id="stats"></section>
+
+        <div class="filter-bar">
+            <div class="year-tabs" id="yearTabs"></div>
+            <div class="filter-right">
+                <div class="status-filter" id="statusFilter"></div>
+                <div class="result-count" id="resultCount"></div>
+            </div>
+        </div>
+
+        <main class="snapshot-list" id="snapshotList"></main>
+
+        <footer class="page-footer">
+            <div class="footer-text" id="footerText"></div>
+        </footer>
+    </div>
+
+    <script>
+        // ============================================================
+        //  DATA - 所有内容由该 JSON 驱动
+        // ============================================================
+        const ARCHIVE_DATA = {
+            brand: {
+                mark: 'JZ',
+                name: '江州网页归档',
+                sub: 'Jiangzhou Web Archive'
+            },
+            title: {
+                kicker: 'ARCHIVE · SNAPSHOT LIST',
+                heading: '江州注册网页快照',
+                description: '收录 2008 至 2014 年间，于江州地区备案注册的网页历史快照。共计 <strong>{total}</strong> 条记录，涵盖企业官网、新闻门户、论坛帖文、政府公告等类型。部分条目存在内容变更或原始页面丢失的情况，已做相应标注。'
+            },
+            stats: [
+                { label: 'Total Snapshots', value: 23, unit: '条', note: '覆盖 7 个年份' },
+                { label: 'Domains', value: 14, unit: '个', note: '含 3 个已注销域名' },
+                { label: 'Flagged', value: 4, unit: '条', note: '内容存在异常', color: 'accent' },
+                { label: 'Lost', value: 5, unit: '条', note: '原始页面不可访问', color: 'muted' }
+            ],
+            statuses: [
+                { key: 'all', label: '全部', dot: 'ink-3' },
+                { key: 'ok', label: '可用', dot: 'ok' },
+                { key: 'changed', label: '已变更', dot: 'changed' },
+                { key: 'lost', label: '已丢失', dot: 'lost' },
+                { key: 'flagged', label: '已标记', dot: 'flagged' }
+            ],
+            statusLabels: {
+                ok: '可用',
+                changed: '已变更',
+                lost: '已丢失',
+                flagged: '已标记'
+            },
+            tagLabels: {
+                flagged: 'FLAGGED',
+                archived: 'CHANGED',
+                deleted: 'DELETED'
+            },
+            footer: 'JIANGZHOU WEB ARCHIVE · 2008 — 2014<br>本归档由独立调查员维护 · 仅供研究参考 · 原件所有权归原站点所有',
+            years: [
+                {
+                    year: 2008,
+                    labelZh: '二〇〇八',
+                    note: '',
+                    items: [
+                        {
+                            title: '海伯利安大厦 官方网站',
+                            url: 'http://www.hyperion-tower.jz.cn/index.html',
+                            desc: '开发商：江州誉鼎置业 · 项目介绍 / 招商租赁 / 物业公告',
+                            date: '2008-09-20',
+                            size: '412 KB',
+                            status: 'flagged'
+                        },
+                        {
+                            title: '江州安泰人寿 · 锦绣未来教育金（2008版）',
+                            url: 'http://www.antai-life.jz.cn/product/jinxiu-weilai-2008.html',
+                            desc: '少儿教育金保险产品页 · 投保须知 / 豁免条款 / 保费试算',
+                            date: '2008-09-21',
+                            size: '186 KB',
+                            status: 'ok'
+                        },
+                        {
+                            title: '誉鼎公司 官方网站',
+                            url: 'http://www.yuding-company.com/about.html',
+                            desc: '公司介绍 / 董事长致辞 / 旗下产业 / 社会责任',
+                            date: '2008-10-05',
+                            size: '628 KB',
+                            status: 'ok'
+                        },
+                        {
+                            title: '临江吃喝玩乐论坛 · 论坛',
+                            url: 'http://www.ljchwl.com',
+                            desc: '临江本地吃喝玩乐社区。',
+                            date: '2008-11-14',
+                            size: '94 KB',
+                            status: 'lost',
+                            tag: 'deleted'
+                        },
+                        {
+                            title: '江城花卉养殖爱好者论坛',
+                            url: 'http://www.jcflower.net',
+                            desc: '本地花友交流君子兰、多肉植物养护经验，分享周末花鸟市场淘货心得的垂直社区。',
+                            date: '2008-12-02',
+                            size: '58 KB',
+                            status: 'ok'
+                        }
+                    ]
+                },
+                {
+                    year: 2009,
+                    labelZh: '二〇〇九',
+                    note: '',
+                    items: [
+                        {
+                            title: '江城天气预报历史数据',
+                            url: 'http://www.jcqx.com',
+                            desc: '提供江州市过去十年每日气温、降水概率、风向风力等气象历史数据的查询存档。',
+                            date: '2009-04-18',
+                            size: '124 KB',
+                            status: 'ok'
+                        },
+                        {
+                            title: '江城美食攻略网',
+                            url: 'http://www.jcfood88.com',
+                            desc: '分享本地老字号小吃、大排档地址及网友真实评价的民间交流平台。',
+                            date: '2009-07-03',
+                            size: '76 KB',
+                            status: 'changed',
+                            tag: 'archived'
+                        },
+                        {
+                            title: '誉鼎置业 · 滨江项目招商页',
+                            url: 'http://www.yuding-realty.com/binjiang-project.html',
+                            desc: '域名已注销，页面不可访问',
+                            date: '2009-11-20',
+                            size: '248 KB',
+                            status: 'lost',
+                            tag: 'deleted'
+                        }
+                    ]
+                },
+                {
+                    year: 2010,
+                    labelZh: '二〇一〇',
+                    note: '',
+                    items: [
+                        {
+                            title: '江州市第三中学教务处',
+                            url: 'http://www.jcz3.edu.cn',
+                            desc: '发布学校期中期末考试安排、校园秋季运动会通知及优秀学生表彰名单的官方网站。',
+                            date: '2010-03-11',
+                            size: '168 KB',
+                            status: 'flagged'
+                        },
+                        {
+                            title: '江州市工商局 · 企业登记信息公示系统',
+                            url: 'http://aic.jiangzhou.gov.cn/query/result.asp?id=YT-2010-0920',
+                            desc: '查询编号 AT-2008-0920-709436 关联企业信息',
+                            date: '2010-06-22',
+                            size: '52 KB',
+                            status: 'ok'
+                        },
+                        {
+                            title: '誉鼎集团 · 2010 年度社会招聘',
+                            url: 'http://www.yuding-group.com/hr/2010-campus.html',
+                            desc: '岗位：行政专员、物业管家、安保主管（海伯利安项目专项）',
+                            date: '2010-09-08',
+                            size: '142 KB',
+                            status: 'ok'
+                        },
+                        {
+                            title: '个人博客 · 「夜行人」',
+                            url: 'http://blog.sina.com.cn/u/jiangzhou-nightwalker',
+                            desc: '连载多篇夜间观察笔记',
+                            date: '2010-11-05',
+                            size: '88 KB',
+                            status: 'lost',
+                            tag: 'deleted'
+                        }
+                    ]
+                },
+                {
+                    year: 2011,
+                    labelZh: '二〇一一',
+                    note: '',
+                    items: [
+                        {
+                            title: '同城旧货跳蚤市场',
+                            url: 'http://www.2shou-jc.cn',
+                            desc: '提供二手自行车、旧家电、旧书籍等闲置物品买卖信息的本地分类信息网。',
+                            date: '2011-04-15',
+                            size: '96 KB',
+                            status: 'changed',
+                            tag: 'archived'
+                        },
+                        {
+                            title: '江州市城乡规划局 · 滨江片区规划公示',
+                            url: 'http://ghj.jiangzhou.gov.cn/public/201108/binjiang-fs-03.html',
+                            desc: '海伯利安大厦地块用地性质说明',
+                            date: '2011-08-09',
+                            size: '1.2 MB',
+                            status: 'ok'
+                        }
+                    ]
+                },
+                {
+                    year: 2012,
+                    labelZh: '二〇一二',
+                    note: '',
+                    items: [
+                        {
+                            title: '江城公共交通查询网',
+                            url: 'http://www.jcbus.net',
+                            desc: '提供市区公交线路实时查询、站点临时调整公告及长途客车时刻表的交通服务网站。',
+                            date: '2012-05-17',
+                            size: '204 KB',
+                            status: 'flagged',
+                        },
+                        {
+                            title: '安泰人寿 · 在线保单查询系统',
+                            url: 'http://www.antai-life.jz.cn/service/policy-query.asp',
+                            desc: '输入保单号可查询保单状态 · 页面含「锦绣未来」系列产品入口',
+                            date: '2012-08-14',
+                            size: '68 KB',
+                            status: 'ok'
+                        },
+                        {
+                            title: '江城妈妈网（育儿交流版块）',
+                            url: 'http://www.jcmama.cn',
+                            desc: '本地新手父母交流婴幼儿喂养经验、分享市区各大幼儿园入园政策及母婴用品团购信息的平台。',
+                            date: '2012-11-22',
+                            size: '312 KB',
+                            status: 'changed',
+                            tag: 'archived'
+                        }
+                    ]
+                },
+                {
+                    year: 2013,
+                    labelZh: '二〇一三',
+                    note: '',
+                    items: [
+                        {
+                            title: '江城流浪宠物领养救助站',
+                            url: 'http://www.jcpet.info',
+                            desc: '发布本地街头流浪猫狗救助信息、待领养宠物档案及志愿者线下喂食活动安排的公益网站。',
+                            date: '2013-03-09',
+                            size: '108 KB'
+                        },
+                        {
+                            title: '江城体育彩票开奖历史查询',
+                            url: 'http://www.jclottery.net',
+                            desc: '提供本地体彩七星彩、大乐透等玩法的历史开奖号码统计、走势图分析及中奖网点查询服务。',
+                            date: '2013-06-18',
+                            size: '92 KB',
+                            status: 'ok'
+                        },
+                        {
+                            title: '江城二手房源信息发布平台',
+                            url: 'http://www.jcfang.cn',
+                            desc: '提供市区老旧小区个人房源直租、商铺转让及厂房出租信息的本地分类信息网站（无中介）。',
+                            date: '2013-10-12',
+                            size: '156 KB',
+                            status: 'ok'
+                        }
+                    ]
+                },
+                {
+                    year: 2014,
+                    labelZh: '二〇一四',
+                    note: '',
+                    items: [
+                        {
+                            title: '江城电脑城每日装机报价单',
+                            url: 'http://www.jcpc.com',
+                            desc: '每日更新本地最大电子卖场内CPU、显卡、内存等电脑硬件的零售指导价及装机配置推荐。',
+                            date: '2014-04-27',
+                            size: '486 KB',
+                            status: 'changed',
+                            tag: 'archived'
+                        },
+                        {
+                            title: '玄 承 付 - 官网',
+                            url: '<a href="Xuan.html">http://www.xuanchengfu.com/</a>',
+                            desc: '2014年停止更新',
+                            date: '2014-12-31',
+                            size: '64 KB',
+                            status: 'changed',
+                            tag: 'archived'
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // ============================================================
+        //  RENDER - 从 JSON 渲染所有 UI
+        // ============================================================
+        const $ = (id) => document.getElementById(id);
+
+        // 品牌
+        function renderBrand() {
+            const b = ARCHIVE_DATA.brand;
+            $('brand').innerHTML = `
+        <div class="brand-mark">${b.mark}</div>
+        <div>
+            <div class="brand-name">${b.name}</div>
+            <div class="brand-sub">${b.sub}</div>
+        </div>
+    `;
+        }
+
+        // 标题
+        function renderTitle() {
+            const t = ARCHIVE_DATA.title;
+            const total = ARCHIVE_DATA.years.reduce((sum, y) => sum + y.items.length, 0);
+            const desc = t.description.replace('{total}', total);
+            $('titleBlock').innerHTML = `
+        <div class="page-kicker">${t.kicker}</div>
+        <h1 class="page-title">${t.heading}</h1>
+        <p class="page-desc">${desc}</p>
+    `;
+        }
+
+        // 统计
+        function renderStats() {
+            $('stats').innerHTML = ARCHIVE_DATA.stats.map(s => {
+                const colorStyle = s.color === 'accent' ? 'color:var(--accent);'
+                    : s.color === 'muted' ? 'color:var(--ink-4);' : '';
+                return `
+            <div class="stat-card">
+                <div class="stat-label">${s.label}</div>
+                <div class="stat-value" style="${colorStyle}">${s.value}<span class="unit">${s.unit}</span></div>
+                <div class="stat-note">${s.note}</div>
+            </div>
+        `;
+            }).join('');
+        }
+
+        // 年份标签
+        function renderYearTabs() {
+            const tabs = [{ year: 'all', label: '全部' }]
+                .concat(ARCHIVE_DATA.years.map(y => ({ year: y.year, label: y.year })));
+            $('yearTabs').innerHTML = tabs.map(t =>
+                `<button class="year-tab${t.year === 'all' ? ' active' : ''}" data-year="${t.year}">${t.label}</button>`
+            ).join('');
+
+            $('yearTabs').addEventListener('click', (e) => {
+                if (!e.target.classList.contains('year-tab')) return;
+                document.querySelectorAll('.year-tab').forEach(tab => tab.classList.remove('active'));
+                e.target.classList.add('active');
+                state.year = e.target.dataset.year;
+                renderList();
+            });
+        }
+
+        // 状态筛选
+        function renderStatusFilter() {
+            $('statusFilter').innerHTML = ARCHIVE_DATA.statuses.map((s, i) => {
+                const dotStyle = s.dot === 'ink-3' ? 'background:var(--ink-3);' : '';
+                return `
+            <label class="status-chip${i === 0 ? ' active' : ''}" data-status="${s.key}">
+                <span class="status-dot ${s.dot}" style="${dotStyle}"></span>${s.label}
+            </label>
+        `;
+            }).join('');
+
+            $('statusFilter').addEventListener('click', (e) => {
+                const chip = e.target.closest('.status-chip');
+                if (!chip) return;
+                document.querySelectorAll('.status-chip').forEach(c => c.classList.remove('active'));
+                chip.classList.add('active');
+                state.status = chip.dataset.status;
+                renderList();
+            });
+        }
+
+        // 列表
+        function renderList() {
+            const { year, status, search } = state;
+            const q = search.toLowerCase();
+            let totalCount = 0;
+
+            const html = ARCHIVE_DATA.years.map(yg => {
+                if (year !== 'all' && String(yg.year) !== String(year)) return '';
+
+                const filtered = yg.items.filter(item => {
+                    const statusOk = status === 'all' || item.status === status;
+                    const searchOk = !q ||
+                        item.title.toLowerCase().includes(q) ||
+                        item.url.toLowerCase().includes(q) ||
+                        (item.desc || '').toLowerCase().includes(q);
+                    return statusOk && searchOk;
+                });
+
+                if (filtered.length === 0) return '';
+                totalCount += filtered.length;
+
+                const itemsHtml = filtered.map((item, i) => {
+                    const tag = item.tag || (item.status === 'flagged' ? 'flagged' : item.status === 'changed' ? 'archived' : item.status === 'lost' ? 'deleted' : null);
+                    const tagHtml = tag ? `<span class="snap-tag ${tag}">${ARCHIVE_DATA.tagLabels[tag]}</span>` : '';
+                    const noteHtml = item.note ? `
+                <div class="snap-note">
+                    <span class="note-label">NOTE</span>${item.note}
+                </div>
+            ` : '';
+
+                    return `
+                <div class="snapshot-item ${item.status}" style="animation-delay:${i * 30}ms">
+                    <div class="snap-status-indicator ${item.status}"></div>
+                    <div class="snap-main">
+                        <div class="snap-title-row">
+                            <span class="snap-title">${item.title}</span>
+                            ${tagHtml}
+                        </div>
+                        <div class="snap-url">${item.url}</div>
+                        <div class="snap-desc">${item.desc}</div>
+                        ${noteHtml}
+                    </div>
+                    <div class="snap-meta">
+                        <div class="snap-date">${item.date}</div>
+                        <div class="snap-size">${item.size}</div>
+                        <div class="snap-status-label ${item.status}">${ARCHIVE_DATA.statusLabels[item.status]}</div>
+                    </div>
+                </div>
+            `;
+                }).join('');
+
+                return `
+            <div class="year-group" data-year="${yg.year}">
+                <div class="year-header">
+                    <div class="year-label">${yg.labelZh}</div>
+                    <div class="year-count">${filtered.length} SNAPSHOTS</div>
+                    <div class="year-note">${yg.note}</div>
+                </div>
+                ${itemsHtml}
+            </div>
+        `;
+            }).join('');
+
+            $('snapshotList').innerHTML = html || `<div style="padding:40px;text-align:center;color:var(--ink-4);font-size:13px;">— 无匹配记录 —</div>`;
+            $('resultCount').textContent = totalCount + ' 条记录';
+        }
+
+        // 底部
+        function renderFooter() {
+            $('footerText').innerHTML = ARCHIVE_DATA.footer;
+        }
+
+        // ============================================================
+        //  STATE & INIT
+        // ============================================================
+        const state = { year: 'all', status: 'all', search: '' };
+
+        let searchTimer;
+        $('searchInput').addEventListener('input', (e) => {
+            clearTimeout(searchTimer);
+            searchTimer = setTimeout(() => {
+                state.search = e.target.value.trim();
+                renderList();
+            }, 150);
+        });
+
+        // 启动
+        renderBrand();
+        renderTitle();
+        renderStats();
+        renderYearTabs();
+        renderStatusFilter();
+        renderList();
+        renderFooter();
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>调查手记 · 海伯利安大厦</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/noto-serif-sc@5.0.1/index.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/zhi-mang-xing@5.0.1/index.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/jetbrains-mono@5.0.1/index.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #f5f1e8;
+            --paper: #fbf8f0;
+            --ink: #2b2620;
+            --ink-light: #5a5147;
+            --ink-faint: #9a9084;
+            --line: #e0d8c8;
+            --accent: #8b2e20;
+            --accent-soft: #b8544a;
+            --highlight: #d4a857;
+            --shadow: rgba(43, 38, 32, 0.08);
+        }
+
+        html,
+        body {
+            background: var(--bg);
+            color: var(--ink);
+            font-family: 'Noto Serif SC', 'Songti SC', serif;
+            min-height: 100vh;
+            line-height: 1.8;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 顶部标题区 */
+        .page-header {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 72px 40px 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 1px;
+            background: var(--ink);
+        }
+
+        .case-label {
+            display: inline-block;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 4px;
+            color: var(--ink-faint);
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            padding: 4px 12px;
+            border: 1px solid var(--line);
+            border-radius: 2px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            font-weight: 600;
+            letter-spacing: 8px;
+            color: var(--ink);
+            margin-bottom: 12px;
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: var(--ink-light);
+            letter-spacing: 2px;
+            margin-bottom: 28px;
+        }
+
+        .page-meta {
+            display: flex;
+            justify-content: center;
+            gap: 32px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--ink-faint);
+            letter-spacing: 1px;
+        }
+
+        .page-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .dot {
+            width: 4px;
+            height: 4px;
+            background: var(--accent);
+            border-radius: 50%;
+        }
+
+        /* 分割线 */
+        .divider {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 0 40px;
+        }
+
+        .divider-line {
+            height: 1px;
+            background: linear-gradient(to right, transparent, var(--line) 20%, var(--line) 80%, transparent);
+        }
+
+        /* 时间线主体 */
+        .timeline {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 48px 40px 80px;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 48px;
+            bottom: 80px;
+            left: 118px;
+            width: 1px;
+            background: var(--line);
+        }
+
+        .entry {
+            position: relative;
+            padding-left: 100px;
+            margin-bottom: 56px;
+        }
+
+        .entry:last-child {
+            margin-bottom: 0;
+        }
+
+        .entry-date {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100px;
+            text-align: right;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--ink-light);
+            letter-spacing: 0.5px;
+            padding-top: 4px;
+        }
+
+        .entry-date .year {
+            display: block;
+            font-size: 10px;
+            color: var(--ink-faint);
+            margin-bottom: 2px;
+        }
+
+        .entry-dot {
+            position: absolute;
+            left: 114px;
+            top: 8px;
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: var(--paper);
+            border: 1.5px solid var(--ink-light);
+            z-index: 2;
+        }
+
+        .entry.alert .entry-dot {
+            border-color: var(--accent);
+            background: var(--accent);
+            box-shadow: 0 0 0 4px rgba(139, 46, 32, 0.12);
+        }
+
+        .entry-content {
+            background: var(--paper);
+            padding: 28px 32px;
+            border-radius: 2px;
+            box-shadow: 0 1px 2px var(--shadow);
+            border: 1px solid rgba(0, 0, 0, 0.02);
+        }
+
+        .entry-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--ink);
+            margin-bottom: 14px;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .entry-title .tag {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            padding: 2px 8px;
+            background: var(--bg);
+            color: var(--ink-faint);
+            border-radius: 2px;
+            letter-spacing: 1px;
+            font-weight: 400;
+        }
+
+        .entry.alert .entry-title .tag {
+            background: rgba(139, 46, 32, 0.08);
+            color: var(--accent);
+        }
+
+        .entry-text {
+            font-size: 15px;
+            color: var(--ink-light);
+            line-height: 2;
+            text-align: justify;
+        }
+
+        .entry-text p {
+            margin-bottom: 10px;
+        }
+
+        .entry-text p:last-child {
+            margin-bottom: 0;
+        }
+
+        /* 重点信息高亮 */
+        .hl {
+            color: var(--ink);
+            font-weight: 500;
+            border-bottom: 1px dashed var(--highlight);
+            padding-bottom: 1px;
+        }
+
+        .hl-red {
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        /* 观察列表 */
+        .observation-list {
+            margin: 14px 0 4px;
+            padding-left: 0;
+            list-style: none;
+        }
+
+        .observation-list li {
+            position: relative;
+            padding: 8px 0 8px 22px;
+            font-size: 14px;
+            color: var(--ink-light);
+            border-bottom: 1px dashed var(--line);
+        }
+
+        .observation-list li:last-child {
+            border-bottom: none;
+        }
+
+        .observation-list li::before {
+            content: '';
+            position: absolute;
+            left: 4px;
+            top: 18px;
+            width: 8px;
+            height: 1px;
+            background: var(--ink-faint);
+        }
+
+        .observation-list .note {
+            display: block;
+            font-size: 12px;
+            color: var(--ink-faint);
+            font-style: italic;
+            margin-top: 2px;
+            padding-left: 0;
+        }
+
+        /* 藏头诗 */
+        .poem-block {
+            margin: 20px 0 8px;
+            padding: 20px 24px;
+            background: var(--bg);
+            border-left: 2px solid var(--accent);
+            font-family: 'Zhi Mang Xing', 'Noto Serif SC', cursive;
+        }
+
+        .poem-line {
+            font-size: 19px;
+            color: var(--ink);
+            line-height: 2.2;
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        .poem-line .first-char {
+            color: var(--accent);
+            font-weight: 700;
+            margin-right: 2px;
+        }
+
+        .poem-line.blurred {
+            color: var(--ink-faint);
+        }
+
+        .poem-line.blurred .blurred-text {
+            filter: blur(3px);
+            user-select: none;
+            display: inline-block;
+        }
+
+        .poem-caption {
+            margin-top: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            color: var(--ink-faint);
+            letter-spacing: 1px;
+        }
+
+        /* 隐藏字提示 */
+        .hidden-hint {
+            display: inline-block;
+            margin-top: 14px;
+            padding: 6px 12px;
+            background: rgba(139, 46, 32, 0.06);
+            border: 1px dashed rgba(139, 46, 32, 0.3);
+            color: var(--accent-soft);
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            letter-spacing: 1px;
+            border-radius: 2px;
+        }
+
+        /* 最终疑问 */
+        .final-question {
+            margin-top: 20px;
+            padding: 18px 24px;
+            background: var(--paper);
+            border: 1px solid var(--line);
+            border-left: 3px solid var(--accent);
+            font-size: 15px;
+            color: var(--ink);
+            letter-spacing: 1px;
+            font-weight: 500;
+        }
+
+        .final-question .code {
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--accent);
+            font-size: 17px;
+            letter-spacing: 2px;
+            margin: 0 2px;
+        }
+
+        .final-question .ellipsis {
+            color: var(--accent);
+            letter-spacing: 3px;
+        }
+
+        /* 底部 */
+        .page-footer {
+            max-width: 780px;
+            margin: 0 auto;
+            padding: 32px 40px 64px;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            color: var(--ink-faint);
+            letter-spacing: 2px;
+        }
+
+        .page-footer::before {
+            content: '顾黎';
+            display: block;
+            margin-bottom: 12px;
+            letter-spacing: 4px;
+        }
+
+        /* 响应式 */
+        @media (max-width: 640px) {
+            .page-header {
+                padding: 48px 24px 32px;
+            }
+
+            .page-title {
+                font-size: 24px;
+                letter-spacing: 4px;
+            }
+
+            .page-meta {
+                flex-direction: column;
+                gap: 8px;
+            }
+
+            .timeline {
+                padding: 32px 24px 60px;
+            }
+
+            .timeline::before {
+                left: 28px;
+                top: 32px;
+                bottom: 60px;
+            }
+
+            .entry {
+                padding-left: 0;
+                margin-bottom: 40px;
+            }
+
+            .entry-date {
+                position: relative;
+                left: 0;
+                width: auto;
+                text-align: left;
+                padding-left: 44px;
+                margin-bottom: 12px;
+            }
+
+            .entry-dot {
+                left: 24px;
+                top: 6px;
+            }
+
+            .entry-content {
+                padding: 22px 20px;
+            }
+
+            .poem-line {
+                font-size: 17px;
+            }
+        }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--line);
+            border-radius: 3px;
+        }
+
+        /* 入场动画 */
+        .entry {
+            animation: fadeUp 0.6s ease backwards;
+        }
+
+        .entry:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .entry:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .entry:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .entry:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .entry:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        @keyframes fadeUp {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="page-header">
+        <div class="case-label">CASE FILE · 2008</div>
+        <h1 class="page-title">调 查 手 记</h1>
+        <p class="page-subtitle">海伯利安大厦 · 违规改建疑云</p>
+        <div class="page-meta">
+            <span><span class="dot"></span>状态 · <del>进行中</del></span>
+        </div>
+    </header>
+
+    <div class="divider">
+        <div class="divider-line"></div>
+    </div>
+
+    <main class="timeline">
+
+        <!-- 08-09-15 -->
+        <article class="entry">
+            <div class="entry-date">
+                <span class="year">2008</span>
+                09-15
+            </div>
+            <div class="entry-dot"></div>
+            <div class="entry-content">
+                <h2 class="entry-title">
+                    线报 · 外围蹲点
+                    <span class="tag">DAY 01</span>
+                </h2>
+                <div class="entry-text">
+                    <p>接到线人爆料，称海伯利安大厦疑似存在违规改建。连续三天在外围蹲点，异常如下：</p>
+                    <ul class="observation-list">
+                        <li>
+                            靠近大厦北侧外墙时，能隐约听到沉闷的机器轰鸣声
+                        </li>
+                        <li>
+                            每天凌晨 02:00 — 04:00，大厦背面货运通道有封闭式货车进出
+                        </li>
+                    </ul>
+                    <p style="margin-top:14px;"><span class="note"
+                            style="font-style:italic;color:var(--ink-faint);font-size:13px;">※
+                            备注：上述异常亦可解释为正常的企业运作。</span></p>
+                </div>
+            </div>
+        </article>
+
+        <!-- 08-09-19 -->
+        <article class="entry">
+            <div class="entry-date">
+                <span class="year">2008</span>
+                09-19
+            </div>
+            <div class="entry-dot"></div>
+            <div class="entry-content">
+                <h2 class="entry-title">
+                    内部排查 · 无果
+                    <span class="tag">DAY 05</span>
+                </h2>
+                <div class="entry-text">
+                    <p>今日尝试以"消防检查与"物业维修"为由进入大厦内部排查。</p>
+                    <p>从 1 楼至 10 楼的公共区域，乃至地下车库，均未找到机器声的来源。大厦图纸显示：低区为商业，高区为办公，中间的<span class="hl">设备层</span>与避难层皆上锁。</p>
+                    <p style="margin-top:14px;"><span class="note"
+                            style="font-style:italic;color:var(--ink-faint);font-size:13px;">※
+                            爆料存疑——否则便是隐蔽性做得太好了。</span></p>
+                </div>
+            </div>
+        </article>
+
+        <!-- 08-09-24 -->
+        <article class="entry alert">
+            <div class="entry-date">
+                <span class="year">2008</span>
+                09-24
+            </div>
+            <div class="entry-dot"></div>
+            <div class="entry-content">
+                <h2 class="entry-title">
+                    外围蹲点
+                    <span class="tag">DAY 10</span>
+                </h2>
+                <div class="entry-text">
+                    <p>今日在大厦外围休息时，偶然拍到一辆黑色轿车驶入大厦地下车库。下车者为<span class="hl-red">誉鼎集团副总裁苏柏年</span>，同行尚有一名<span
+                            class="hl">身着灰色道袍</span>的男子。二人径直前往内部未开放区域的专用电梯。
+                    </p>
+                    <p>今日相机聚焦不佳，帆布包上的字看不清楚。隐约辨得几句——</p>
+
+                    <div class="poem-block">
+                        <div class="poem-line"><span class="first-char">玄</span>机深藏不露声，</div>
+                        <div class="poem-line"><span class="first-char">承</span>蒙夜色掩真形。</div>
+                        <div class="poem-line blurred"><span class="first-char">付</span>诸<span
+                                class="blurred-text">□□□□□</span>，</div>
+                        <div class="poem-line blurred"><span class="blurred-text">□□□□□□□</span>。</div>
+                        <div class="poem-caption">— 帆布包题字 · 后两句模糊不可辨 —</div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- 08-09-26 -->
+        <article class="entry alert">
+            <div class="entry-date">
+                <span class="year">2008</span>
+                09-26
+            </div>
+            <div class="entry-dot"></div>
+            <div class="entry-content">
+                <h2 class="entry-title">
+                    外围蹲点
+                    <span class="tag">DAY 12</span>
+                </h2>
+                <div class="entry-text">
+                    <p>不知是否已被发现——那道士今日似乎朝我这边望了一眼。</p>
+                    <p>今日相机对焦尚可，能看清帆布包上的字。却是<span class="hl">另一首诗</span>——</p>
+
+                    <div class="poem-block">
+                        <div class="poem-line"><span class="first-char">玄</span>门深锁莫强窥，</div>
+                        <div class="poem-line"><span class="first-char">承</span>负因果自有期。</div>
+                        <div class="poem-line"><span class="first-char">付</span>与清风化劫灰，</div>
+                        <div class="poem-line">永镇幽泉无处归。</div>
+                        <div class="poem-caption">— 帆布包题字 · 全文清晰 —</div>
+                    </div>
+
+                </div>
+            </div>
+        </article>
+
+        <!-- 08-09-27 -->
+        <article class="entry alert">
+            <div class="entry-date">
+                <span class="year">2008</span>
+                09-27
+            </div>
+            <div class="entry-dot"></div>
+            <div class="entry-content">
+                <h2 class="entry-title">
+                    ???
+                    <span class="tag">DAY 13</span>
+                </h2>
+                <div class="entry-text">
+                    <div class="final-question">
+                        <span class="code">19</span><span class="ellipsis">···</span><span class="code">清</span><span
+                            class="ellipsis">···</span><br>
+                        这到底是什么行动？
+                    </div>
+                </div>
+            </div>
+        </article>
+
+    </main>
+
+    <footer class="page-footer">
+        手记原件
+    </footer>
+
+</body>
+
+</html>

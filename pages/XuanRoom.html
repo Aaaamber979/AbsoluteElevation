@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>私密沟通室 - 网页快照</title>
+    <style>
+        /* --- 1. 全局重置与基础样式 --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: "SimSun", "宋体", "Microsoft YaHei", sans-serif;
+            background-color: #F5F5F5;
+            color: #333;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow: hidden;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+            cursor: pointer;
+        }
+
+        ul {
+            list-style: none;
+        }
+
+        .snapshot-banner {
+            background: #FFF9E6;
+            border-bottom: 1px solid #FFD700;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .snapshot-banner .close-btn {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        /* --- 3. 页面头部 --- */
+        .site-header {
+            background: linear-gradient(to bottom, #8B0000, #A52A2A);
+            height: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #D4AF37;
+            position: relative;
+        }
+
+        .site-header h1 {
+            font-family: "KaiTi", "楷体", serif;
+            font-size: 28px;
+            margin: 0;
+            letter-spacing: 2px;
+        }
+
+        .site-header .status {
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 12px;
+            color: #ccc;
+            display: flex;
+            align-items: center;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background: #999;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        /* --- 4. 主体聊天区 --- */
+        .main-container {
+            max-width: 800px;
+            margin: 20px auto;
+            background: #FDFBF7;
+            border: 1px solid #D4AF37;
+            display: flex;
+            flex-direction: column;
+            height: 600px;
+            /* 固定高度以演示滚动 */
+        }
+
+        .chat-info-bar {
+            background: #F5F0E6;
+            padding: 10px 20px;
+            border-bottom: 1px dashed #D4AF37;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #666;
+        }
+
+        .chat-area {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 滚动条样式 */
+        .chat-area::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .chat-area::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        .chat-area::-webkit-scrollbar-thumb {
+            background: #D4AF37;
+        }
+
+        .system-msg {
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+            font-style: italic;
+            margin: 10px 0;
+        }
+
+        .message-block {
+            max-width: 80%;
+            margin-bottom: 16px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            position: relative;
+        }
+
+        .msg-guanzhu {
+            align-self: flex-start;
+            background: #fff;
+            border-left: 3px solid #D4AF37;
+        }
+
+        .msg-user {
+            align-self: flex-end;
+            background: #FFF5F5;
+            border: 1px solid #8B0000;
+        }
+
+        .msg-header {
+            font-size: 12px;
+            margin-bottom: 5px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .msg-guanzhu .msg-header {
+            color: #D4AF37;
+        }
+
+        .msg-user .msg-header {
+            color: #8B0000;
+        }
+
+        .msg-timestamp {
+            font-family: monospace;
+            color: #999;
+            font-weight: normal;
+        }
+
+        .msg-body {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #333;
+        }
+
+        .msg-guanzhu-reveal {
+            align-self: flex-start;
+            background: #fff;
+            border-left: 3px solid #ff0000;
+        }
+
+        .msg-guanzhu-reveal .msg-header {
+            color: #ff0000;
+        }
+
+        .msg-guanzhu-reveal .msg-body {
+            color: #ff0000;
+            font-weight: bold;
+        }
+
+        /* --- 5. 底部输入区 --- */
+        .input-area {
+            background: #F0F0F0;
+            border-top: 1px solid #ccc;
+            padding: 10px;
+            display: flex;
+        }
+
+        .input-area textarea {
+            width: 85%;
+            height: 60px;
+            background: #E8E8E8;
+            border: 1px solid #ccc;
+            resize: none;
+            padding: 5px;
+            color: #999;
+            font-family: inherit;
+        }
+
+        .input-area button {
+            width: 15%;
+            height: 60px;
+            background: #999;
+            color: #fff;
+            border: none;
+            cursor: not-allowed;
+            font-family: inherit;
+        }
+
+        /* --- 6. 水印 --- */
+        .watermark {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid #fff;
+            border-radius: 4px;
+            padding: 5px 10px;
+            color: #fff;
+            font-size: 10px;
+            text-align: center;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .watermark .title {
+            font-weight: bold;
+            display: block;
+            font-size: 11px;
+        }
+
+        .watermark .time {
+            color: #ccc;
+            font-family: monospace;
+        }
+
+        /* --- 1. 模拟浏览器地址栏 (Fixed Top) --- */
+        .browser-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 32px;
+            background-color: #F5F5F5;
+            border-bottom: 1px solid #ccc;
+            display: flex;
+            align-items: center;
+            padding: 0 10px;
+            z-index: 2000;
+            font-family: Arial, sans-serif;
+        }
+
+        .browser-controls {
+            display: flex;
+            gap: 8px;
+            margin-right: 15px;
+            color: #666;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .address-input-container {
+            flex: 1;
+            background: #fff;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            padding: 0 8px;
+            font-size: 12px;
+            color: #333;
+        }
+
+        .snapshot-tag {
+            background-color: #FFF3E0;
+            border: 1px solid #FFB74D;
+            color: #E65100;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 1px 4px;
+            border-radius: 2px;
+            margin-right: 8px;
+        }
+
+        .url-text {
+            font-family: "Consolas", "Courier New", monospace;
+            color: #333;
+        }
+
+        .url-input {
+            flex: 1;
+            /* 占据剩余宽度 */
+            border: none;
+            outline: none;
+            /* 去除浏览器默认的聚焦边框 */
+            background: transparent;
+            font-family: monospace;
+            /* 使用等宽字体，符合地址栏特征 */
+            font-size: 14px;
+            color: #333;
+            padding: 0 8px;
+            height: 100%;
+        }
+
+        #intro {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #333;
+            font-family: serif;
+            font-size: 22px;
+            letter-spacing: 14px;
+            z-index: 40;
+            transition: opacity 1.2s;
+            cursor: pointer;
+        }
+
+        #intro:hover {
+            color: #000
+        }
+
+        .eye-container-div {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 30;
+            /* 层级高于黑幕，确保眼睛能显示出来 */
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        #eye {
+            color: #ff1a1a;
+            font-family: 'Courier New', monospace;
+            white-space: pre;
+            text-shadow: 0 0 5px #ff0000, 0 0 12px #ff0000, 0 0 20px #cc0000;
+            line-height: 1.1;
+        }
+
+        #blackout {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 20;
+            opacity: 0;
+            /* 初始透明，不遮挡 */
+            transition: opacity 1.8s;
+            pointer-events: none;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                text-shadow: 0 0 5px #ff0000, 0 0 12px #ff0000, 0 0 20px #cc0000;
+                color: #ff1a1a
+            }
+
+            50% {
+                text-shadow: 0 0 10px #ff0000, 0 0 25px #ff0000, 0 0 40px #ff0000, 0 0 60px #cc0000;
+                color: #ff3333
+            }
+        }
+
+        .pulsing {
+            animation: pulse 2s ease-in-out infinite
+        }
+    </style>
+</head>
+
+<body>
+    <div class="browser-bar">
+        <div class="browser-controls">
+            <span>&#8592;</span> <!-- Left Arrow -->
+            <span>&#8594;</span> <!-- Right Arrow -->
+            <span>&#8635;</span> <!-- Refresh -->
+        </div>
+        <div class="address-input-container">
+            <span class="snapshot-tag">快照</span>
+            <input type="text" class="url-input" value="www.xuanchengfu.org/disciples/bain1an5u" spellcheck="false" />
+        </div>
+    </div>
+
+    <div class="archive-banner" id="archiveBanner">
+        <div class="banner-left">
+            <span>⚠️</span>
+            <span>您正在查看网页快照 | 原始网站已不可访问 | 快照时间：2014-12-31</span>
+        </div>
+        <div class="close-banner" onclick="closeBanner()">×</div>
+    </div>
+
+    <!-- 3. 页面头部 -->
+    <header class="site-header">
+        <h1>愿望沟通室</h1>
+        <div class="status">
+            <div class="status-dot"></div> 只读
+        </div>
+    </header>
+
+    <!-- 4. 主体聊天区 -->
+    <div class="main-container">
+        <div class="chat-info-bar">
+            <span>会话参与者：bain1an5u 与 观主</span>
+            <span>会话创建时间：[2008-09-29]</span>
+        </div>
+
+        <div class="chat-area">
+            <div class="system-msg">--- [2008-09-26 18:00] 会话已建立并加密归档 ---</div>
+            <div class="message-block msg-guanzhu">
+                <div class="msg-header">
+                    <span>观主</span>
+                    <span class="msg-timestamp">[2008-09-26 18:00]</span>
+                </div>
+                <div class="msg-body">
+                    蠢材，自己被记者调查都不知道吗？
+                </div>
+            </div>
+
+            <div class="message-block msg-user">
+                <div class="msg-header">
+                    <span>bain1an5u</span>
+                    <span class="msg-timestamp">[2008-09-26 18:05]</span>
+                </div>
+                <div class="msg-body">
+                    弟子愚钝。只顾搜寻19清了。
+                </div>
+            </div>
+
+            <div class="system-msg">--- [2008-09-29 14:00] 会话已建立并加密归档 ---</div>
+            <div class="message-block msg-guanzhu">
+                <div class="msg-header">
+                    <span>观主</span>
+                    <span class="msg-timestamp">[2008-09-29 14:00]</span>
+                </div>
+                <div class="msg-body">
+                    事情已经按之前的方案处理完毕了吗？
+                </div>
+            </div>
+
+            <div class="message-block msg-user">
+                <div class="msg-header">
+                    <span>bain1an5u</span>
+                    <span class="msg-timestamp">[2008-09-29 14:05]</span>
+                </div>
+                <div class="msg-body">
+                    是的，道长。现场已经稳固了。也用了您的方法用材质进行物理隔绝，不会有任何气息外泄。
+                </div>
+            </div>
+
+            <div class="message-block msg-user">
+                <div class="msg-header">
+                    <span>bain1an5u</span>
+                    <span class="msg-timestamp">[2008-09-29 14:05]</span>
+                </div>
+                <div class="msg-body">
+                    <b>“500玄”</b>和<b>“19清”</b>均已奉上。
+                </div>
+            </div>
+
+            <div class="message-block msg-guanzhu">
+                <div class="msg-header">
+                    <span>观主</span>
+                    <span class="msg-timestamp">[2008-09-29 14:08]</span>
+                </div>
+                <div class="msg-body">
+                    善。<b>19"清"</b>既已入局，封喉闭口，得无声之财。
+                </div>
+            </div>
+
+            <div class="message-block msg-guanzhu">
+                <div class="msg-header">
+                    <span>观主</span>
+                    <span class="msg-timestamp">[2008-09-29 14:10]</span>
+                </div>
+                <div class="msg-body">
+                    记住因为你的疏忽有<b>"1混"</b>杂念，从今往后，每年9月28日，你和我亲自来主持仪式，绝不能中断，每次还需上交<b>100"玄"</b>。
+                </div>
+            </div>
+
+            <div class="message-block msg-user">
+                <div class="msg-header">
+                    <span>bain1an5u</span>
+                    <span class="msg-timestamp">[2008-09-29 14:12]</span>
+                </div>
+                <div class="msg-body">
+                    弟子知道了。
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. 底部输入区 -->
+        <div class="input-area">
+            <textarea placeholder="" disabled></textarea>
+            <button disabled>发送</button>
+        </div>
+    </div>
+
+    <!-- 6. 水印 -->
+    <div class="watermark">
+        <span class="title">WEB ARCHIVE SNAPSHOT</span>
+        <span class="time">2014-12-31 23:59:59</span>
+    </div>
+
+    <div id="eye-container" class="eye-container-div">
+        <pre id="eye"></pre>
+    </div>
+    <div id="blackout"></div>
+
+    <script>
+        const $ = id => document.getElementById(id);
+
+        // 观主揭示的消息内容
+        const revealMessages = [
+            '看到你了......',
+            '你的生辰真不错……怪不得玄尊这么青睐你，能让你在这么多信息里看到有用的。',
+            '看来我的弟子气运已尽。',
+            '当初我就知道那"1混"会毁了一切的。',
+            '你应该在找他的OA密码吧？卖个人情给你，密码是为<b>19入局之人的天干地支</b>。',
+            '我也得走了。',
+            '还需要我给别的提示？',
+            '没有了。'
+        ];
+
+        // 检查是否已经显示过消息
+        function hasRevealedMessages() {
+            return localStorage.getItem('xuanroom_revealed') === 'true';
+        }
+
+        // 保存消息状态
+        function saveRevealState() {
+            localStorage.setItem('xuanroom_revealed', 'true');
+        }
+
+        // 添加观主消息到聊天区
+        function addGuanzhuMessage(text, index) {
+            const chatArea = document.querySelector('.chat-area');
+            if (!chatArea) {
+                console.error('Chat area not found');
+                return;
+            }
+
+            const messageBlock = document.createElement('div');
+            messageBlock.className = 'message-block msg-guanzhu-reveal';
+
+            const header = document.createElement('div');
+            header.className = 'msg-header';
+            header.innerHTML = `
+                <span>unknow</span>
+                <span class="msg-timestamp">[unknown]</span>
+            `;
+
+            const body = document.createElement('div');
+            body.className = 'msg-body';
+            body.textContent = text;
+
+            messageBlock.appendChild(header);
+            messageBlock.appendChild(body);
+            chatArea.appendChild(messageBlock);
+
+            // 滚动到底部
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+
+        // 显示所有揭示消息
+        async function showRevealMessages() {
+            for (let i = 0; i < revealMessages.length; i++) {
+                await sleep(1000); // 0.5秒间隔
+                addGuanzhuMessage(revealMessages[i], i);
+            }
+            // 保存状态
+            saveRevealState();
+        }
+
+        const eyeLines = [
+            "    .         ..   .  ...:--+==--=+*###****-====-:::=++=:-:+==-====+=*=--=++*#%#%**########*=+++*+**",
+            "            ...:. ..:..:::==---=+*+---===-=--:.:..::.:::.:===-:--====-:----====###*###**%##**++++***",
+            " ....:......  .....::--::-=-.   ..::-:::. ...  :.    ..   ..   ...:--::-+=--==*###**###*#%#*++++**##",
+            " ..:::......  .:.....:.:.::.         ...                       ........::::--=+++*######%%%#*+***###",
+            ".      ....  ...  .....   ...                                         .   .....:-----=*#+**=++**####",
+            "   ::.......           ...::                                   .                ....::---=++########",
+            " ...........       ..::                                      :=-:...                   .:-=+++***###",
+            " .:. :.::....   ..::.     ::-                                 --+-=+-..                  ....:-=+++*",
+            " . :.... ..   .:::. ... .-##-                                  :=%*-:..                     ..:=+*##",
+            ".......  .. :.:-:. .:.:=%@@+         ..        .                :**=--.:. .                 ..:--=*#",
+            "        ....::.. ....=%@@@@:        ....  .#.                   .*%%#**==*=:                 ..:--=+",
+            ".   .  .:.:-::.   :+#@@@@@#.    ..:.::.:. .-                    -@@@@@@@@%#*:                 .:::-:",
+            ".. ...:-.==-.   .-=*%@@@@@#.    :..:.. :                        =%%%%%%@%##%#=.            ..:.--=++",
+            "..::-=+-=+=-. .:++*%%@@@@@@-    .  . ..                         *@@@@@@@@@%#%#:     .. ... ..:-=+++*",
+            ":--=+++*#-... -*#%@@@@@@@@@*      .......             ....:.   =@@@@@@@@%###+-.   .-===--:::::=+*##*",
+            "-===++#*-. :+-+#@@@@@@@@@@@@*     ......... .           ..    -@@@@@@%##%**+-:....::-=+*+=-===+**+*+",
+            ":::-=++:  .===+*#@@@@@@@@@@@@#.       ....:..:...::.:.      .*@@@@@@%@%##*+=-:::::::-+*+**++***#****",
+            "..:---. :-.:--.-=#@@@@@@@@@@@@@=          :-:::..::.       :#@@@@@@@@@%**+=-:::: :---=++++*+*#%#***#",
+            " .::-:. :.  :...-*%%####%%%@@@@@%=.       .             .-#@@@@@@@%%#*+-==---..::===++==*+++=+##*+*#",
+            " ...:..  .....:-...--:-+=**#*#%###*+-:.               .-+*##%%%%#***==+-==:::-----==***+=*#*++#%%*=*",
+            "  ..:--:--===++*=======**#*+===++-:---=---:....::..::==--:-=+##*#==***=----==-=++=--=#%#*+#%#*+#####",
+            " ..:-=---=+=***#%%%##**%%%%#*#***:-:=*--=+-:::--=--:..:-++****=---::::-====-=+=+=**+==*##***+#######",
+            " .  :-::.--=*+****%##%###**%%%%#*=-=+#+:+-=-:.::.-:.:  .:.-........::.-===-=-++*******=+***#*#****#*",
+            "     . ..:-=++==+=+++**+*++*#***+==:+#+=*-:==---:::. -...:..::..::.:=:.-=+===+###%#*##****+%%######*"
+        ];
+
+        let phase = 'idle';
+
+        function calculateFontSize() {
+            const containerWidth = window.innerWidth * 0.95;
+            const containerHeight = window.innerHeight * 0.95;
+            const lineHeight = 1.1;
+            const charWidthRatio = 0.6;
+
+            const maxLines = eyeLines.length;
+            const maxChars = Math.max(...eyeLines.map(l => l.length));
+
+            const fontSizeByHeight = containerHeight / (maxLines * lineHeight);
+            const fontSizeByWidth = containerWidth / (maxChars * charWidthRatio);
+
+            return Math.min(fontSizeByHeight, fontSizeByWidth);
+        }
+
+        function renderEye(linesToShow) {
+            $('eye').textContent = linesToShow.join('\n');
+        }
+
+        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+        async function run() {
+            const fontSize = calculateFontSize();
+            $('eye').style.fontSize = fontSize + 'px';
+
+            phase = 'waiting';
+
+            $('blackout').style.opacity = '1';
+            await sleep(1000);
+
+            $('eye-container').style.opacity = '1';
+            await sleep(600);
+
+            const revealDelay = Math.max(50, Math.floor(2000 / eyeLines.length));
+            for (let i = 0; i < eyeLines.length; i++) {
+                renderEye(eyeLines.slice(0, i + 1));
+                await sleep(100);
+            }
+
+            $('eye').classList.add('pulsing');
+            await sleep(2000);
+
+            $('blackout').style.transition = 'opacity 1.5s';
+            $('blackout').style.opacity = '0';
+
+            $('eye').classList.remove('pulsing');
+            $('eye-container').style.opacity = '0';
+            $('eye-container').classList.remove('eye-container-div');
+
+            renderEye([]);
+
+            await sleep(1500);
+            phase = 'idle';
+
+            // 黑幕消失后，显示观主揭示消息
+            await showRevealMessages();
+        }
+
+        // 页面加载完成后执行
+        window.addEventListener('load', function () {
+            setTimeout(() => {
+                // 检查是否已经显示过消息
+                if (hasRevealedMessages()) {
+                    // 已显示过，直接显示消息，不调用run()
+                    $('eye-container').classList.remove('eye-container-div');
+                    showRevealMessages();
+                } else {
+                    // 未显示过，执行完整流程
+                    run();
+                }
+            }, 1000);
+        });
+
+
+    </script>
+</body>
+
+</html>

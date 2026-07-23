@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>誉鼎集团 | OA登录</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #0a3d62;
+      --primary-light: #1e5a8a;
+      --accent: #c9a961;
+      --accent-dark: #a88a42;
+      --text: #2c3e50;
+      --text-light: #6c7a89;
+      --bg: #ffffff;
+      --bg-soft: #f7f9fc;
+      --border: #e5e9f0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: var(--text);
+      background: var(--bg);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    img {
+      max-width: 100%;
+      display: block;
+    }
+
+    /* ============ LOGIN PAGE ============ */
+    .login-page {
+      display: flex;
+      position: fixed;
+      inset: 0;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #0a3d62, #1e5a8a);
+      z-index: 2000;
+      overflow: auto;
+    }
+
+    .login-container {
+      width: 90%;
+      max-width: 1000px;
+      background: #fff;
+      border-radius: 20px;
+      overflow: hidden;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, 0.3);
+    }
+
+    .login-visual {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      padding: 60px 48px;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-visual::before {
+      content: '';
+      position: absolute;
+      top: -30%;
+      right: -30%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(201, 169, 97, 0.2) 0%, transparent 70%);
+      font-size: 32px;
+      margin-bottom: 16px;
+      position: relative;
+      z-index: 1;
+      border-radius: 50%;
+      color: rgba(255, 255, 255, 0.85);
+      line-height: 1.8;
+      margin-bottom: 40px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .login-features {
+      position: relative;
+      z-index: 1;
+    }
+
+    .login-feature {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      padding: 14px 0;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .login-feature-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(201, 169, 97, 0.2);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--accent);
+      font-size: 18px;
+    }
+
+    .login-feature-text strong {
+      display: block;
+      font-size: 14px;
+      margin-bottom: 2px;
+    }
+
+    .login-feature-text span {
+      font-size: 12px;
+      opacity: 0.75;
+    }
+
+    .login-form-wrap {
+      padding: 60px 48px;
+    }
+
+    .login-close:hover {
+      background: rgba(255, 255, 255, 0.2);
+      transform: rotate(90deg);
+    }
+
+    .login-form-wrap h3 {
+      font-size: 26px;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .login-form-wrap .sub {
+      color: var(--text-light);
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      color: var(--text);
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 14px;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(10, 61, 98, 0.1);
+    }
+
+    .form-options {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      margin-bottom: 24px;
+    }
+
+    .form-options label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-light);
+      cursor: pointer;
+    }
+
+    .form-options a {
+      color: var(--primary);
+    }
+
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      letter-spacing: 1px;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(10, 61, 98, 0.3);
+    }
+
+    /* Toast 提示样式 */
+    .toast {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 16px 32px;
+      background: rgba(0, 0, 0, 0.85);
+      color: white;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 500;
+      z-index: 9999;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+      animation: toastFadeIn 0.3s ease-out;
+      pointer-events: none;
+      text-align: center;
+      min-width: 200px;
+    }
+
+    @keyframes toastFadeIn {
+      from {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.9);
+      }
+
+      to {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+      }
+    }
+
+    /* 加载动画 */
+    .loading-spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- LOGIN PAGE -->
+  <div class="login-page" id="loginPage">
+    <div class="login-container">
+      <div class="login-visual">
+        <h2>员工 OA 办公系统</h2>
+        <p>欢迎回到誉鼎大家庭。一站式协同办公平台，让工作更高效、更便捷。</p>
+        <div class="login-features">
+          <div class="login-feature">
+            <div class="login-feature-icon">📋</div>
+            <div class="login-feature-text">
+              <strong>流程审批</strong>
+              <span>随时随地处理工作事务</span>
+            </div>
+          </div>
+          <div class="login-feature">
+            <div class="login-feature-icon">💬</div>
+            <div class="login-feature-text">
+              <strong>内部沟通</strong>
+              <span>高效协同，信息即时触达</span>
+            </div>
+          </div>
+          <div class="login-feature">
+            <div class="login-feature-icon">📊</div>
+            <div class="login-feature-text">
+              <strong>数据看板</strong>
+              <span>业务数据一目了然</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="login-form-wrap">
+        <h3>员工登录</h3>
+        <p class="sub">请使用您的员工账号登录 OA 系统</p>
+        <form onsubmit="return handleLogin()">
+          <div class="form-group">
+            <label>员工工号 / 邮箱</label>
+            <input type="text" placeholder="请输入您的工号或企业邮箱" required>
+          </div>
+          <div class="form-group">
+            <label>登录密码</label>
+            <input type="password" placeholder="请输入密码" required>
+          </div>
+          <div class="form-options">
+            <label><input type="checkbox"> 记住账号</label>
+            <a id="forgetPassword" href="#">忘记密码？</a>
+          </div>
+          <button type="submit" class="btn-submit">登 录</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+</body>
+<script src="../js/util.js"></script>
+<script>
+  // 获取当前系统时间（年份改为2030）
+  function getCurrentTime() {
+    const now = new Date();
+    return 2030 + '-' +
+      String(now.getMonth() + 1).padStart(2, '0') + '-' +
+      String(now.getDate()).padStart(2, '0') + ' ' +
+      String(now.getHours()).padStart(2, '0') + ':' +
+      String(now.getMinutes()).padStart(2, '0');
+  }
+  /* ============ LOGIN ============ */
+  // 显示Toast提示
+  function showToast(message, duration = 2000) {
+    // 移除旧的toast
+    const existingToast = document.querySelector('.toast');
+    if (existingToast) {
+      existingToast.remove();
+    }
+
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.textContent = message;
+    document.body.appendChild(toast);
+
+    // 自动消失
+    setTimeout(() => {
+      if (toast.parentNode) {
+        toast.remove();
+      }
+    }, duration);
+  }
+
+  // 显示加载提示并跳转
+  function showLoadingAndRedirect(message, redirectUrl) {
+    // 移除旧的toast
+    const existingToast = document.querySelector('.toast');
+    if (existingToast) {
+      existingToast.remove();
+    }
+
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+    toast.innerHTML = `<span class="loading-spinner"></span>${message}`;
+    document.body.appendChild(toast);
+
+    // 0.5秒后跳转
+    setTimeout(() => {
+      window.location.href = redirectUrl;
+    }, 500);
+  }
+
+  function handleLogin() {
+    const username = document.querySelector('input[type="text"]').value;
+    const password = document.querySelector('input[type="password"]').value;
+
+    // 将username和password拼接后取MD5进行验证
+    const credentials = username + password;
+    const credentialsMD5 = md5(credentials);
+
+    const user1MD5 = '22fcd974fbc37ce41498743498cb23d0';
+    const user2MD5 = 'e2cda1a3d2ec8612c7f282cd044522cc';
+    const user3MD5 = '56999fc8637d4449c57fc9de6bf37ac7';
+
+    if (credentialsMD5 === user1MD5) {
+      // 账号被禁用标记
+      const isban = localStorage.getItem('isban');
+      if (isban === 'true') {
+        showToast('IP异常，当前账号已被禁用，请联系管理员！', 3000);
+        return false; // 阻止表单提交
+      }
+
+      // 正常登录逻辑,标记登录时间
+      localStorage.setItem('login-oa-user', 'YD20080021');
+      localStorage.setItem('login-oa-time', getCurrentTime());
+      showLoadingAndRedirect('正在跳转...', 'YuDingOa.html');
+      return false; // 阻止表单默认提交，由showLoadingAndRedirect处理跳转
+
+    } else if (credentialsMD5 === user2MD5) {
+      showToast('欢迎登录，苏总', 1000);
+      localStorage.setItem('login-oa-user', 'YD20000005');
+      localStorage.setItem('login-oa-time', getCurrentTime());
+
+      // 延迟0.8秒后显示加载状态并跳转
+      setTimeout(() => {
+        showLoadingAndRedirect('正在跳转...', 'YuDingOaSu.html');
+      }, 800);
+
+      return false; // 阻止表单默认提交
+
+    } else if (credentialsMD5 === user3MD5) {
+      localStorage.setItem('login-oa-user', 'YD20150001');
+      localStorage.setItem('login-oa-time', getCurrentTime());
+
+      // 延迟0.8秒后显示加载状态并跳转
+      setTimeout(() => {
+        showLoadingAndRedirect('正在跳转...', 'YuDingOaLi.html');
+      }, 800);
+
+      return false; // 阻止表单默认提交
+
+    } else {
+      showToast('用户名或密码错误', 2000);
+      return false; // 阻止表单提交
+    }
+  }
+
+  document.getElementById('forgetPassword').addEventListener('click', function () {
+    showToast(`默认密码: YYYYMMDD`);
+  })
+</script>
+
+</html>
