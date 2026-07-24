@@ -1420,9 +1420,9 @@
                             <span>加密访问 · ENCRYPTED</span>
                         </div>
                         <div class="vault-item-detail">
-                            未知存储。需要令牌验证。
+                            未知存储。需要验证。
                         </div>
-                        <button class="vault-btn" onclick="showModal('vault-token')">需要动态令牌</button>
+                        <button class="vault-btn" onclick="showModal('vault-token')">需要令牌</button>
                     </div>
 
                     <!-- 入口3 日志清理 -->
@@ -1495,8 +1495,8 @@
                     a = `<button class="btn-act btn-sign" onclick="toManage()">进入目录</button>`;
                     break;
                 case 'vault-token':
-                    t = 'DYNAMIC TOKEN · 动态令牌验证';
-                    b = `请输入您实体令牌设备上显示的 8 位动态验证码。<br><br><input type="password" id="tokenInput" maxlength="8" style="width:100%;padding:12px;background:rgba(0,0,0,0.4);border:1px solid var(--border-strong);color:var(--gold);font-family:monospace;font-size:20px;text-align:center;letter-spacing:8px;outline:none;" placeholder="········"><br><br>`;
+                    t = 'DYNAMIC TOKEN · 验证';
+                    b = `请输入您的 8 位密码。<br><br><input type="password" id="tokenInput" maxlength="8" style="width:100%;padding:12px;background:rgba(0,0,0,0.4);border:1px solid var(--border-strong);color:var(--gold);font-family:monospace;font-size:20px;text-align:center;letter-spacing:8px;outline:none;" placeholder="········"><br><br>`;
                     a = `<button class="btn-act btn-hold" onclick="closeModal()">取消</button>
                  <button class="btn-act btn-sign" onclick="confirmToken()">验证</button>`;
                     break;
@@ -1548,7 +1548,7 @@
                 const body = document.getElementById('modalBody');
                 body.innerHTML = `<div style="text-align:center;padding:20px 0;">
                     <div style="color:var(--red);font-size:24px;margin-bottom:16px;">✗</div>
-                    <div style="color:var(--text);letter-spacing:2px;">令牌验证失败</div>
+                    <div style="color:var(--text);letter-spacing:2px;">验证失败</div>
                 </div>`;
                 const actions = document.getElementById('modalActions');
                 actions.innerHTML = `<button class="btn-act btn-sign" onclick="closeModal()">确 定</button>`;
