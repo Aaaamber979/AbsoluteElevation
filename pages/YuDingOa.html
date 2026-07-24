@@ -1401,7 +1401,7 @@
                     <div class="user-dept">后勤部</div>
                 </div>
             </div>
-            <button class="logout-btn">退出</button>
+            <button class="logout-btn" onclick="handleLogout()">退出</button>
         </div>
     </div>
 
@@ -2910,6 +2910,12 @@
     function askQuestion(q) {
         document.getElementById('chatInput').value = q;
         sendMessage();
+    }
+
+    // 退出登录
+    function handleLogout() {
+        // 跳转到登录页面
+        window.location.href = 'YuDingOaLogin.html';
     }
 </script>
 

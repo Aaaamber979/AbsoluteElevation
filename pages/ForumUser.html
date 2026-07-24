@@ -893,14 +893,14 @@
             const input = document.getElementById('messageInput');
 
             // 设置第一条消息为待发送状态
-            input.value = '你好，你是记者吗？关于海伯利安你知道哪些？我朋友的父亲好像08年在那栋楼失踪了。';
+            input.value = '你好，你是记者吗？我朋友的父亲在海伯利安工作，不知道你能不能帮忙找一下他？';
             input.readOnly = true;
             input.placeholder = '输入消息...';
             hideHint();
 
             // 监听发送按钮点击
             window._stageOneMessages = [
-                '你好，你是记者吗？关于海伯利安你知道哪些？我朋友的父亲好像08年在那栋楼失踪了。',
+                '你好，你是记者吗？我朋友的父亲在海伯利安工作，不知道你能不能帮忙找一下他？',
                 '杨伟江。'
             ];
             window._currentMessageIndex = 0;
@@ -941,8 +941,8 @@
                                 input.placeholder = '输入消息...';
                             } else if (currentIndex === 1) {
                                 // 第二条消息的回复
-                                appendMessage('other', '<a href="ForumPost.html?detail=whereisyang">江城热线-【吐槽】</a>这篇帖子应该和她父亲相关？或许我们可以一起追查，这篇帖子里的公司应该也是誉鼎，应该有线索：<a href="ForumPost.html?detail=aboutli">江城热线-【八卦】</a>');
-                                saveChatMessage('other', '<a href="ForumPost.html?detail=whereisyang">江城热线-【吐槽】</a>这篇帖子应该和她父亲相关？或许我们可以一起追查，这篇帖子里的公司应该也是誉鼎，应该有线索：<a href="ForumPost.html?detail=aboutli">江城热线-【八卦】</a>');
+                                appendMessage('other', '<a href="ForumPost.html?detail=whereisyang">江城热线-【吐槽】</a>我有收录过这篇，可能和她父亲相关？但是看起来08年应该不在誉鼎上班了。或许我们可以一起查，这篇帖子里的公司应该也是誉鼎集团的，应该有线索：<a href="ForumPost.html?detail=aboutli">江城热线-【八卦】</a>');
+                                saveChatMessage('other', '<a href="ForumPost.html?detail=whereisyang">江城热线-【吐槽】</a>我有收录过这篇，可能和她父亲相关？但是看起来08年应该不在誉鼎上班了。或许我们可以一起查，这篇帖子里的公司应该也是誉鼎集团的，应该有线索：<a href="ForumPost.html?detail=aboutli">江城热线-【八卦】</a>');
 
                                 // 阶段一完成
                                 delete window._stageOneMessages;
@@ -994,14 +994,14 @@
                                     showTypingIndicator();
                                     setTimeout(() => {
                                         hideTypingIndicator();
-                                        appendMessage('other', '我想过追查那个道长，但是这么多年了，早就搬空了。发的求助帖子也限制了，我以为是涉及传道被论坛屏蔽的。<a href="ForumPost.html?detail=abouthai_gu4">江城热线-【求助】</a>');
-                                        saveChatMessage('other', '我想过追查那个道长，但是这么多年了，早就搬空了。发的求助帖子也限制了，我以为是涉及传道被论坛屏蔽的。<a href="ForumPost.html?detail=abouthai_gu4">江城热线-【求助】</a>');
+                                        appendMessage('other', '我追查过那个道长，但是这么多年了，早就搬空了。发的求助帖子也限制了，我以为是涉及传道被论坛屏蔽的。<a href="ForumPost.html?detail=abouthai_gu4">江城热线-【求助】</a>');
+                                        saveChatMessage('other', '我追查过那个道长，但是这么多年了，早就搬空了。发的求助帖子也限制了，我以为是涉及传道被论坛屏蔽的。<a href="ForumPost.html?detail=abouthai_gu4">江城热线-【求助】</a>');
                                         setTimeout(() => {
                                             showTypingIndicator();
                                             setTimeout(() => {
                                                 hideTypingIndicator();
-                                                appendMessage('other', '刚刚找到了一个快照入口，里面收入了2008-2014在江州注册的网页快照，或许会有帮助。<a href="Kuaizhao.html">江州快照</a>');
-                                                saveChatMessage('other', '刚刚找到了一个快照入口，里面收入了2008-2014在江州注册的网页快照，或许会有帮助。<a href="Kuaizhao.html">江州快照</a>');
+                                                appendMessage('other', '刚刚在翻档案的时候找到了一个快照入口，里面收入了2008-2014在江州注册的网页快照，或许会有帮助。<a href="Kuaizhao.html">江州快照</a>');
+                                                saveChatMessage('other', '刚刚在翻档案的时候找到了一个快照入口，里面收入了2008-2014在江州注册的网页快照，或许会有帮助。<a href="Kuaizhao.html">江州快照</a>');
                                                 setTimeout(() => {
                                                     hideTypingIndicator();
                                                     appendMessage('me', '好的，我先试试！有结果再和你说！');
@@ -1052,7 +1052,7 @@
                                                 triggerStage('allEnd');
                                                 setTimeout(() => {
                                                     fadeAndRedirect();
-                                                }, 2000);
+                                                }, 5000);
                                             }, 1000);
                                         }, 500);
                                     }, 1000);
